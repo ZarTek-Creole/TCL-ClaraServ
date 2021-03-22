@@ -28,40 +28,69 @@ proc Clara:scriptdir {} {
 }
 
 ################
+# Clara Config #
+################
+proc Clara:config { } {
+	global Clara
+	set CONF_LIST	[list "ip" "info" "link" "port" "pass" "pseudo" "real" "ident" "host" "salon" "mode" "cmode" "console" "site" "version" "auteur" "equipe"]
+			# ![info exists Admin(pseudo)]	[info exists Admin(password)]
+	foreach CONF $CONF_LIST {
+		putlog "-> $CONF"
+		if { ![info exists Clara($CONF)] } {
+			putlog "\[ Erreur \] Configuration de Clara Service Incorrecte... '$CONF' Paramettre manquant"
+			exit
+		}
+		if { $Clara($CONF) == "" } {
+			putlog "\[ Erreur \] Configuration de Clara Service Incorrecte... '$CONF' Valeur vide"
+			exit
+		}
+	}
+}
+################
 # Clara Source #
 ################
-
-source [Clara:scriptdir]Clara.conf
-
+if { [file exists [Clara:scriptdir]Clara.conf] } {
+	source [Clara:scriptdir]Clara.conf
+	Clara:config 
+} else {
+	if { [file exists [Clara:scriptdir]Clara.Example.conf] } {
+		putlog "Editez, configurer et renomer 'Clara.Example.conf' en 'Clara.conf' dans '[Clara:scriptdir]'"
+		exit
+	} else {
+		putlog "Fichier de configuration '[Clara:scriptdir]Clara.conf' manquant."
+	}
+}
 
 ####################
 #--> Procedures <--#
 ####################
 proc connexion {} {
 	global Clara Admin botnick
-	if {![catch "connect $Clara(ip) $Clara(port)" Clara(idx)]} {
-		putdcc $Clara(idx) "PASS $Clara(pass)"
-		putdcc $Clara(idx) "SERVER $Clara(link) 1 :$Clara(info)"
-		putdcc $Clara(idx) ":$Clara(link) NICK $Clara(pseudo) 1 [unixtime] $Clara(ident) $Clara(host) $Clara(link) :$Clara(real)"
-		putdcc $Clara(idx) ":$Clara(pseudo) MODE $Clara(pseudo) $Clara(mode)"
-		putdcc $Clara(idx) ":$Clara(pseudo) JOIN $Clara(salon)"
+	set eva(counter)		0
+		if {![catch "connect $Clara(ip) $Clara(port)" Clara(idx)]} {
+			putdcc $Clara(idx) "PASS $Clara(pass)"
+			putdcc $Clara(idx) "SERVER $Clara(link) 1 :$Clara(info)"
+			putdcc $Clara(idx) ":$Clara(link) NICK $Clara(pseudo) 1 [unixtime] $Clara(ident) $Clara(host) $Clara(link) :$Clara(real)"
+			putdcc $Clara(idx) ":$Clara(pseudo) MODE $Clara(pseudo) $Clara(mode)"
+			putdcc $Clara(idx) ":$Clara(pseudo) JOIN $Clara(salon)"
 
-		set fichier(salon) "scripts/Clara/db/salon.txt"
-		set fp [open $fichier(salon) "r"]
-		set fc -1
-		while {![eof $fp]} {
-			set data [gets $fp]
-			incr fc
-			if {$data !=""} {
-				putdcc $Clara(idx) ":$Clara(pseudo) JOIN $data"
+			set fichier(salon) "scripts/Clara/db/salon.txt"
+			set fp [open $fichier(salon) "r"]
+			set fc -1
+			while {![eof $fp]} {
+				set data [gets $fp]
+				incr fc
+				if {$data !=""} {
+					putdcc $Clara(idx) ":$Clara(pseudo) JOIN $data"
+				}
+				unset data
 			}
-			unset data
+			close $fp
+			control $Clara(idx) event;
+			utimer 30 verification
 		}
-		close $fp
-
-		control $Clara(idx) event; utimer 30 verification
-	}
 }
+
 
 ######################
 #--> Verification <--#
