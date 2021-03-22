@@ -35,7 +35,6 @@ proc Clara:config { } {
 	set CONF_LIST	[list "ip" "info" "link" "port" "pass" "pseudo" "real" "ident" "host" "salon" "mode" "cmode" "console" "site" "version" "auteur" "equipe"]
 			# ![info exists Admin(pseudo)]	[info exists Admin(password)]
 	foreach CONF $CONF_LIST {
-		putlog "-> $CONF"
 		if { ![info exists Clara($CONF)] } {
 			putlog "\[ Erreur \] Configuration de Clara Service Incorrecte... '$CONF' Paramettre manquant"
 			exit
@@ -61,20 +60,29 @@ if { [file exists [Clara:scriptdir]Clara.conf] } {
 	}
 }
 
+if { ![file exists "[Clara:scriptdir]db/radios.db"] } {
+	set c_radios	[open "[Clara:scriptdir]db/radios.db" a+];
+	close $c_radios
+}
+if { ![file exists "[Clara:scriptdir]db/salon.db"] } {
+	set c_salon	[open "[Clara:scriptdir]db/salon.db" a+];
+	close $c_salon
+}
 ####################
 #--> Procedures <--#
 ####################
 proc connexion {} {
 	global Clara Admin botnick
 	set eva(counter)		0
-		if {![catch "connect $Clara(ip) $Clara(port)" Clara(idx)]} {
+		if { ![catch "connect $Clara(ip) $Clara(port)" Clara(idx)] } {
+			putlog "Successfully connected to uplink $Clara(ip) $Clara(port)"
 			putdcc $Clara(idx) "PASS $Clara(pass)"
 			putdcc $Clara(idx) "SERVER $Clara(link) 1 :$Clara(info)"
 			putdcc $Clara(idx) ":$Clara(link) NICK $Clara(pseudo) 1 [unixtime] $Clara(ident) $Clara(host) $Clara(link) :$Clara(real)"
 			putdcc $Clara(idx) ":$Clara(pseudo) MODE $Clara(pseudo) $Clara(mode)"
 			putdcc $Clara(idx) ":$Clara(pseudo) JOIN $Clara(salon)"
 
-			set fichier(salon) "scripts/Clara/db/salon.txt"
+			set fichier(salon) "[Clara:scriptdir]db/salon.db"
 			set fp [open $fichier(salon) "r"]
 			set fc -1
 			while {![eof $fp]} {
@@ -88,6 +96,9 @@ proc connexion {} {
 			close $fp
 			control $Clara(idx) event;
 			utimer 30 verification
+		} else {
+			putlog "La connection échoué de Clara a $Clara(ip) $Clara(port)"
+			exit
 		}
 }
 
@@ -294,7 +305,7 @@ proc cmd { chan nick pseudo } {
 proc radio { chan nick pseudo } {
 	global Clara Admin
 	set vuser			[string tolower $nick]
-	set fichier(radios)	"scripts/Clara/db/radios.txt"
+	set fichier(radios)	"[Clara:scriptdir]db/radios.db"
 	set fp [open $fichier(radios) "r"]
 	set fc -1
 	putdcc $Clara(idx) ":$Clara(pseudo) NOTICE $nick :\002\0031 *** \0033♫♫\0031 Liste des radios sur Ch\00312a\00313a\0031t.fr \0033♫♫ \0031*** "
