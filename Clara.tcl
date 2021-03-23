@@ -32,7 +32,28 @@ proc Clara:scriptdir {} {
 ################
 proc Clara:config { } {
 	global Clara
-	set CONF_LIST	[list "ip" "info" "link" "port" "pass" "pseudo" "real" "ident" "host" "salon" "mode" "cmode" "console" "site" "version" "auteur" "equipe" "debug" "Admin_pseudo" "Admin_password"]
+	set CONF_LIST	[list 						\
+							"ip"				\
+							"info"				\
+							"link"				\
+							"port"				\
+							"pass"				\
+							"pseudo"			\
+							"real"				\
+							"ident"				\
+							"host"				\
+							"salon"				\
+							"mode"				\
+							"cmode"				\
+							"console"			\
+							"site"				\
+							"version"			\
+							"auteur"			\
+							"equipe"			\
+							"debug"				\
+							"Admin_pseudo"		\
+							"Admin_password"	\
+							"protocolvers"];
 	foreach CONF $CONF_LIST {
 		if { ![info exists Clara($CONF)] } {
 			putlog "\[ Erreur \] Configuration de Clara Service Incorrecte... '$CONF' Paramettre manquant"
@@ -84,11 +105,19 @@ proc connexion {} {
 	global Clara Admin botnick
 	if { ![catch "connect $Clara(ip) $Clara(port)" Clara(idx)] } {
 		if { $Clara(debug) == 1 } { putlog "Successfully connected to uplink $Clara(ip) $Clara(port)" }
-		Clara:sent2socket "PASS $Clara(pass)"
-		Clara:sent2socket "SERVER $Clara(link) 1 :$Clara(info)"
-		Clara:sent2socket ":$Clara(link) NICK $Clara(pseudo) 1 [unixtime] $Clara(ident) $Clara(host) $Clara(link) :$Clara(real)"
-		Clara:sent2socket ":$Clara(pseudo) MODE $Clara(pseudo) $Clara(mode)"
-		Clara:sent2socket ":$Clara(pseudo) JOIN $Clara(salon)"
+		if { $Clara(protocolvers) == 0 } {
+			Clara:sent2socket "PASS $Clara(pass)"
+			Clara:sent2socket "SERVER $Clara(link) 1 :$Clara(info)"
+			Clara:sent2socket ":$Clara(link) NICK $Clara(pseudo) 1 [unixtime] $Clara(ident) $Clara(host) $Clara(link) :$Clara(real)"
+			Clara:sent2socket ":$Clara(pseudo) MODE $Clara(pseudo) $Clara(mode)"
+			Clara:sent2socket ":$Clara(pseudo) JOIN $Clara(salon)"
+		} {
+			Clara:sent2socket "PASS :$Clara(pass)"
+			Clara:sent2socket "PROTOCTL NICKv2 VHP UMODE2 NICKIP SJOIN SJOIN2 SJ3 NOQUIT TKLEXT MLOCK SID"
+			Clara:sent2socket "PROTOCTL EAUTH=$Clara(link),,,Clara-$Clara(version)"
+			Clara:sent2socket "PROTOCTL SID=$Clara(SID)"
+			Clara:sent2socket "$Clara(SID) SERVER $Clara(link) 1 :Services for IRC Networks"
+		}
 
 		set fichier(salon) "[Clara:scriptdir]db/salon.db"
 		set fp [open $fichier(salon) "r"]
@@ -109,7 +138,48 @@ proc connexion {} {
 		exit
 	}
 }
+#################
+# Eva Connexion #
+#################
 
+proc Clara:connexion:server { } {
+	global Clara
+	Clara:sent2socket"EOS"
+	Clara:sent2socket":$Clara(SID) SQLINE $Clara(pseudo) :Reserved for services"
+	Clara:sent2socket":$Clara(SID) UID $Clara(pseudo) 1 [unixtime] $Clara(ident) $Clara(host) $Clara(server_id) * +qioS * * * :$Clara(real)"
+	Clara:sent2socket":$Clara(SID) SJOIN [unixtime] $Clara(salon) + :$Clara(server_id)"
+	Clara:sent2socket":$Clara(SID) MODE $Clara(salon) +$Clara(smode)"
+	for { set i		0 } { $i < [string length $Clara(cmode)] } { incr i } {
+		set tmode		[string index $Clara(cmode) $i]
+		if { $tmode=="q" || $tmode=="a" || $tmode=="o" || $tmode=="h" || $tmode=="v" } {
+			eva:FCT:SENT:MODE $Clara(salon) "+$tmode" $Clara(server_id)
+		}
+	}
+	catch { open "[eva:scriptdir]db/chan.db" r } autojoin
+	while { ![eof $autojoin] } {
+		gets $autojoin salon;
+		if { $salon!="" } {
+			Clara:sent2socket":$Clara(server_id) JOIN $salon";
+			if { $Clara(cmode)=="q" || $Clara(cmode)=="a" || $Clara(cmode)=="o" || $Clara(cmode)=="h" || $Clara(cmode)=="v" } {
+				eva:FCT:SENT:MODE $salon "+$Clara(cmode)" $Clara(server_id)
+			}
+		}
+	}
+	catch { close $autojoin }
+	catch { open "[eva:scriptdir]db/close.db" r } ferme
+	while { ![eof $ferme] } {
+		gets $ferme salle;
+		if { $salle!="" } {
+			Clara:sent2socket":$Clara(server_id) JOIN $salle";
+			eva:FCT:SENT:MODE $salle "+sntio" $Clara(pseudo);
+			eva:FCT:SET:TOPIC $salle "<c1>Salon Fermé le [eva:duree [unixtime]]";
+			Clara:sent2socket":$Clara(link) NAMES $salle"
+		}
+	}
+	catch { close $ferme }
+	incr Clara(counter) 1
+	utimer $Clara(timerco) eva:verif
+}
 
 ######################
 #--> Verification <--#
@@ -123,6 +193,7 @@ proc verification {} {
 
 proc event {idx arg} {
 	global Clara Admin
+	
 	if { $Clara(debug) == 1 } { putlog "Received: $arg" }
 	set chan	[join [lrange [split $arg] 0 0]]
 	set arg		[split $arg]
@@ -159,6 +230,29 @@ proc event {idx arg} {
 		set host	[string trim [lindex $arg 5] :]
 		set real	[string trim [lrange $arg 8 end] :]
 		return 0
+	}
+	switch -exact [lindex $arg 0] {
+		"PING" {
+			Clara:sent2socket $Clara(idx) "PONG [lindex $arg 1]"
+		}
+		"NETINFO" {
+			set Clara(netinfo)		[lindex $arg 4]
+			set Clara(network)		[lindex $arg 8]
+			Clara:sent2socket $Clara(idx) "NETINFO 0 [unixtime] 0 $Clara(netinfo) 0 0 0 $Clara(network)"
+		}
+		"SQUIT" {
+			set serv		[lindex $arg 1]
+			eva:FCT:SENT:PRIVMSG $Clara(salon) "<c>$Clara(console_com)Unlink <c>$Clara(console_deco):<c>$Clara(console_txt) $serv"
+		}
+		"SERVER" {
+			# Received: SERVER irc.xxx.net 1 :U5002-Fhn6OoEmM-001 Serveur networkname
+			set Clara(ircdservname)	[lindex $arg 1]
+			set desc		[join [string trim [lrange $arg 3 end] :]]
+			if { $Clara(init)==1 } {
+				Clara:connexion:server
+			}
+		}
+
 	}
 	switch -exact [lindex $arg 1] {
 		"PRIVMSG" {
