@@ -1,4 +1,4 @@
-# TCL-Clara-Service
+# TCL-ClaraServ-Service
 Services IRC en TCL - Animation de salon, Aide de réseau, Profil d'utilisateur
 
 
@@ -13,23 +13,23 @@ Services IRC en TCL - Animation de salon, Aide de réseau, Profil d'utilisateur
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/MalaGaM/TCL-Clara-Service">
+  <a href="https://github.com/MalaGaM/TCL-ClaraServ-Service">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/IRC_Logo_Small-01_%281%29.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Clara - IRC Services</h3>
+  <h3 align="center">ClaraServ - IRC Services</h3>
 
   <p align="center">
-    Services IRC "Clara" en TCL/Eggdrop
+    Services IRC "ClaraServ" en TCL/Eggdrop
     <br />
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service"><strong>Explore the docs / Explorez les documents »</strong></a>
+    <a href="https://github.com/MalaGaM/TCL-ClaraServ-Service"><strong>Explore the docs / Explorez les documents »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service/issues">Report Bug</a>
+    <a href="https://github.com/MalaGaM/TCL-ClaraServ-Service/issues">Report Bug</a>
     ·
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service/issues">Request Feature</a>
+    <a href="https://github.com/MalaGaM/TCL-ClaraServ-Service/issues">Request Feature</a>
     ·
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service/wiki">Wiki / Documenation</a>
+    <a href="https://github.com/MalaGaM/TCL-ClaraServ-Service/wiki">Wiki / Documenation</a>
   </p>
 </p>
 
@@ -83,29 +83,29 @@ Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exem
 
 
 ### Installation
-1.1.  Récuperer le code Clara
+1.1.  Récuperer le code ClaraServ
 Première étape, télécharger le code, le mettre dans votre répertoire scripts/
-Exemple pour ```/home/votre-dossier/eggdrop/scripts/Clara```
+Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
-git clone https://github.com/MalaGaM/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/Clara
+git clone https://github.com/MalaGaM/TCL-ClaraServ-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 ou 
 ```
-wget https://github.com/MalaGaM/TCL-Clara-Service/archive/refs/heads/main.zip -O Clara.zip
-unzip Clara.zip -d /home/votre-dossier/eggdrop/scripts/Clara
+wget https://github.com/MalaGaM/TCL-ClaraServ-Service/archive/refs/heads/main.zip -O ClaraServ.zip
+unzip ClaraServ.zip -d /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 
 1.2. Configuration de l'eggdrop
 Deuxieme étape, ouvrez le fichier de configuration de votre eggdrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
 ```
-source /home/votre-dossier/eggdrop/scripts/Clara/Clara.tcl
+source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
 ```
 
-1.3.  Configuration de Clara Service
-Troisième étape, renommez le fichier ```Clara.example.conf``` en ```Clara.conf``` et configurez celui-ci en fonction de votre serveur IRC
+1.3.  Configuration de ClaraServ Service
+Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraServ.conf``` et configurez celui-ci en fonction de votre serveur IRC
 
 1.4.  Configuration de votre IRCD (UnrealIRCd 5 et +)
-Quatrième étape, il vous suffit de configurer le link dans votre fichier "unrealircd.conf" en fonction de la configuration que vous aurez réalisée dans "Clara.conf". 
+Quatrième étape, il vous suffit de configurer le link dans votre fichier "unrealircd.conf" en fonction de la configuration que vous aurez réalisée dans "ClaraServ.conf". 
 
 [Comment créer un link Service sur UnrealIRCd](http://www.exolia.fr/guide-lire-11.html)
 
@@ -113,17 +113,17 @@ Quatrième étape, il vous suffit de configurer le link dans votre fichier "unre
 Cinquième étape, connectez vous en party-line avec votre eggdrop puis tapez les deux commandes suivantes :
 ```
 .rehash
-.Claraconnect
+.ClaraServconnect
 ```
 
 2. Un peu plus loin
 2.1. Debug general
-Si Clara Service ne se connecte pas, activez le mode debug depuis la party-line  pour voir les erreurs directement dans le fichier "logs/Clara.debug".
+Si ClaraServ Service ne se connecte pas, activez le mode debug depuis la party-line  pour voir les erreurs directement dans le fichier "logs/ClaraServ.debug".
 ```
-.Claradebug on 
+.ClaraServdebug on 
 ```
 2.2. Debug Socket/Link
-Pour activer le mode *socket debug* changer la valeur ```Clara(sdebug)``` dans ```Clara.conf``` en mettant 1 a la place de 0.
+Pour activer le mode *socket debug* changer la valeur ```ClaraServ(sdebug)``` dans ```ClaraServ.conf``` en mettant 1 a la place de 0.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -137,10 +137,10 @@ Bientot
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/MalaGaM/TCL-Clara-Service/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/MalaGaM/TCL-ClaraServ-Service/issues) for a list of proposed features (and known issues).
 
 ---
-Voir les [problèmes en suspens](https://github.com/MalaGaM/TCL-Clara-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
+Voir les [problèmes en suspens](https://github.com/MalaGaM/TCL-ClaraServ-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -151,7 +151,7 @@ Contributions are what make the open source community such an amazing place to b
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a [Pull Request](https://github.com/MalaGaM/TCL-Clara-Service/pulls)
+5. Open a [Pull Request](https://github.com/MalaGaM/TCL-ClaraServ-Service/pulls)
 
 ---
 Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer. Toute contribution que vous apportez est ** grandement appréciée **.
@@ -159,7 +159,7 @@ Les contributions sont ce qui fait de la communauté open source un endroit incr
 2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
 3. Validez vos modifications (`git commit -m 'Add some AmazingFeature'`)
 4. Pousser vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une [Pull Request](https://github.com/MalaGaM/TCL-Clara-Service/pulls)
+5. Ouvrez une [Pull Request](https://github.com/MalaGaM/TCL-ClaraServ-Service/pulls)
 
 <!-- LICENSE -->
 ## License
@@ -173,11 +173,11 @@ Distributed under the SoonDecision License. See `LICENSE` for more information.
 
 MalaGaM - [@MalaGaM](https://github.com/MalaGaM) - MalaGaM.ARTiSPRETiS@GMail.com
 
-Project Link: [https://github.com/MalaGaM/TCL-Clara-Service](https://github.com/MalaGaM/TCL-Clara-Service)
+Project Link: [https://github.com/MalaGaM/TCL-ClaraServ-Service](https://github.com/MalaGaM/TCL-ClaraServ-Service)
 
 1. Tickets
 Signalez tout bugs, toutes idées :
-* [Creez un ticket]([#4-configuration-de-unrealircd](https://github.com/MalaGaM/TCL-Clara-Service/issues))
+* [Creez un ticket]([#4-configuration-de-unrealircd](https://github.com/MalaGaM/TCL-ClaraServ-Service/issues))
 
 2. IRC
 Vous pouvez me contacter sur IRC :
@@ -196,15 +196,15 @@ Vous pouvez me contacter sur IRC :
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[contributors-url]: https://github.com/MalaGaM/TCL-Clara-Service/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[forks-url]: https://github.com/MalaGaM/TCL-Clara-Service/network/members
-[stars-shield]: https://img.shields.io/github/stars/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[stars-url]: https://github.com/MalaGaM/TCL-Clara-Service/stargazers
-[issues-shield]: https://img.shields.io/github/issues/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[issues-url]: https://github.com/MalaGaM/TCL-Clara-Service/issues
-[license-shield]: https://img.shields.io/github/license/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[license-url]: https://github.com/MalaGaM/TCL-Clara-Service/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/MalaGaM/TCL-ClaraServ-Service.svg?style=for-the-badge
+[contributors-url]: https://github.com/MalaGaM/TCL-ClaraServ-Service/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/MalaGaM/TCL-ClaraServ-Service.svg?style=for-the-badge
+[forks-url]: https://github.com/MalaGaM/TCL-ClaraServ-Service/network/members
+[stars-shield]: https://img.shields.io/github/stars/MalaGaM/TCL-ClaraServ-Service.svg?style=for-the-badge
+[stars-url]: https://github.com/MalaGaM/TCL-ClaraServ-Service/stargazers
+[issues-shield]: https://img.shields.io/github/issues/MalaGaM/TCL-ClaraServ-Service.svg?style=for-the-badge
+[issues-url]: https://github.com/MalaGaM/TCL-ClaraServ-Service/issues
+[license-shield]: https://img.shields.io/github/license/MalaGaM/TCL-ClaraServ-Service.svg?style=for-the-badge
+[license-url]: https://github.com/MalaGaM/TCL-ClaraServ-Service/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
 
