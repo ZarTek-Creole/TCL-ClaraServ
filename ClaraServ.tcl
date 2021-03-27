@@ -69,26 +69,26 @@ namespace eval ClaraServ {
 		namespace delete ::ClaraServ
 	}
 }
-proc ClaraServ::INIT { } {
+proc ::ClaraServ::INIT { } {
 	variable config
 	variable database
 	#################
 	# ClaraServ Fichier #
 	#################
-	if { [file isdirectory "[ClaraServ::FCT::Get:ScriptDir "db"]"] } { file mkdir "[ClaraServ::FCT::Get:ScriptDir "db"]" }
+	if { ![file isdirectory "[::ClaraServ::FCT::Get:ScriptDir "db"]"] } { file mkdir "[::ClaraServ::FCT::Get:ScriptDir "db"]" }
 
 	################
 	# ClaraServ Source #
 	################
-	if { [file exists [ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf] } {
-		source [ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf
+	if { [file exists [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf] } {
+		source [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf
 		ClaraServ::FCT::Check:Config
 	} else {
-		if { [file exists [ClaraServ::FCT::Get:ScriptDir]ClaraServ.Example.conf] } {
-			putlog "Editez, configurer et renomer 'ClaraServ.Example.conf' en 'ClaraServ.conf' dans '[ClaraServ::FCT::Get:ScriptDir]'"
+		if { [file exists [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.Example.conf] } {
+			putlog "Editez, configurer et renomer 'ClaraServ.Example.conf' en 'ClaraServ.conf' dans '[::ClaraServ::FCT::Get:ScriptDir]'"
 			exit
 		} else {
-			putlog "Fichier de configuration '[ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf' manquant."
+			putlog "Fichier de configuration '[::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf' manquant."
 			exit
 		}
 	}
@@ -97,10 +97,10 @@ proc ClaraServ::INIT { } {
 	# generer les db si elle n'existe pas
 	ClaraServ::FCT::DB:INIT [list $config(db_list) $config(FILE_DB)]
 
-	if { [file exists [ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}] } {
-		source [ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}
+	if { [file exists [::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}] } {
+		source [::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}
 	} else {
-		putlog "Fichier de base de données '[ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}' manquant."
+		putlog "Fichier de base de données '[::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}' manquant."
 		exit
 	}
 	
@@ -111,12 +111,12 @@ proc ClaraServ::INIT { } {
 ###################
 # ClaraServ fonctions #
 ###################
-proc ClaraServ::FCT::Get:ScriptDir { {DIR ""} } {
+proc ::ClaraServ::FCT::Get:ScriptDir { {DIR ""} } {
 	global ClaraServ::config
 	return "[file normalize $config(path_script)/$DIR]/"
 }
 
-proc ClaraServ::FCT::Check:Config { } {
+proc ::ClaraServ::FCT::Check:Config { } {
 	global ClaraServ::config
 	foreach CONF $config(vars_list) {
 		if { ![info exists config($CONF)] } {
@@ -130,7 +130,7 @@ proc ClaraServ::FCT::Check:Config { } {
 	}
 }
 
-proc ClaraServ::FCT::substitute_special_vars_2nd_pass {chan text} {
+proc ::ClaraServ::FCT::substitute_special_vars_2nd_pass {chan text} {
 	global ClaraServ::config
 	# regsub -all %idle_time% $text [::reanimator::idle_time $chan] text
 	# regsub -all %lastnick% $text [regsub -all {\W} [lindex $::reanimator::memory([md5 $chan]) 1] {\\&}] text
@@ -149,7 +149,7 @@ proc ClaraServ::FCT::substitute_special_vars_2nd_pass {chan text} {
 	regsub -all %year%			$text [strftime %Y [unixtime]] text
 	return $text
 }
-proc ClaraServ::FCT::DB:GET { CMD NIVEAU } {
+proc ::ClaraServ::FCT::DB:GET { CMD NIVEAU } {
 	global ClaraServ::database
 	foreach index [lsearch -all -nocase $database "*$CMD*"] {
 		set index_data	[lindex $database $index]
@@ -161,7 +161,7 @@ proc ClaraServ::FCT::DB:GET { CMD NIVEAU } {
 	}
 	return -1
 }
-proc ClaraServ::FCT::DB:CMD:LIST { } {
+proc ::ClaraServ::FCT::DB:CMD:LIST { } {
 	global ClaraServ::database
 	set ltext		[llength $database];
 	set text		[lindex $database 0];
@@ -174,16 +174,16 @@ proc ClaraServ::FCT::DB:CMD:LIST { } {
 	return [lsort -unique $CMD_LIST]
 }
 
-proc ClaraServ::FCT::SENT:NOTICE { DEST MSG } {
+proc ::ClaraServ::FCT::SENT:NOTICE { DEST MSG } {
 	global ClaraServ::config
-	ClaraServ::FCT::Socket:Sent ":$config(service_nick) NOTICE $DEST :[ClaraServ::FCT::apply_visuals $MSG]"
+	ClaraServ::FCT::Socket:Sent ":$config(service_nick) NOTICE $DEST :[::ClaraServ::FCT::apply_visuals $MSG]"
 }
 
-proc ClaraServ::FCT::SENT:PRIVMSG { DEST MSG } {
+proc ::ClaraServ::FCT::SENT:PRIVMSG { DEST MSG } {
 	global ClaraServ::config
-	ClaraServ::FCT::Socket:Sent ":$config(service_nick) PRIVMSG $DEST :[ClaraServ::FCT::apply_visuals $MSG]"
+	ClaraServ::FCT::Socket:Sent ":$config(service_nick) PRIVMSG $DEST :[::ClaraServ::FCT::apply_visuals $MSG]"
 }
-proc ClaraServ::FCT::SENT:MSG:TO:USER { DEST MSG } {
+proc ::ClaraServ::FCT::SENT:MSG:TO:USER { DEST MSG } {
 	global ClaraServ::config
 	if { $config(uplink_useprivmsg) == 1 } {
 		ClaraServ::FCT::SENT:PRIVMSG $DEST $MSG;
@@ -191,15 +191,15 @@ proc ClaraServ::FCT::SENT:MSG:TO:USER { DEST MSG } {
 		ClaraServ::FCT::SENT:NOTICE $DEST $MSG;
 	}
 }
-proc ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG { MSG } {
+proc ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG { MSG } {
 	global ClaraServ::config
 	ClaraServ::FCT::SENT:PRIVMSG $config(service_channel) $MSG;
 }
 
-proc ClaraServ::FCT::DB:INIT { LISTDB } {
+proc ::ClaraServ::FCT::DB:INIT { LISTDB } {
 	foreach DB_FILE_NAME $LISTDB {
-		if { ![file exists "[ClaraServ::FCT::Get:ScriptDir "db"]${DB_FILE_NAME}"] } {
-			set FILE_PIPE	[open "[ClaraServ::FCT::Get:ScriptDir "db"]${DB_FILE_NAME}" a+];
+		if { ![file exists "[::ClaraServ::FCT::Get:ScriptDir "db"]${DB_FILE_NAME}"] } {
+			set FILE_PIPE	[open "[::ClaraServ::FCT::Get:ScriptDir "db"]${DB_FILE_NAME}" a+];
 			close $FILE_PIPE
 		}
 	}
@@ -216,14 +216,14 @@ proc ClaraServ::FCT::DB:INIT { LISTDB } {
 # </u>  : Enlever le style Underline/souligner
 # <i>   : Ajouter le style Italic/Italique
 # <s>   : Enlever les styles precedent
-proc ClaraServ::FCT::apply_visuals { data } {
+proc ::ClaraServ::FCT::apply_visuals { data } {
 	regsub -all -nocase {<c([0-9]{0,2}(,[0-9]{0,2})?)?>|</c([0-9]{0,2}(,[0-9]{0,2})?)?>} $data "\003\\1" data
 	regsub -all -nocase {<b>|</b>} $data "\002" data
 	regsub -all -nocase {<u>|</u>} $data "\037" data
 	regsub -all -nocase {<i>|</i>} $data "\026" data
 	return [regsub -all -nocase {<s>} $data "\017"]
 }
-proc ClaraServ::FCT::Remove_visuals { data } {
+proc ::ClaraServ::FCT::Remove_visuals { data } {
 	regsub -all -nocase {<c([0-9]{0,2}(,[0-9]{0,2})?)?>|</c([0-9]{0,2}(,[0-9]{0,2})?)?>} $data "" data
 	regsub -all -nocase {<b>|</b>} $data "" data
 	regsub -all -nocase {<u>|</u>} $data "" data
@@ -231,7 +231,7 @@ proc ClaraServ::FCT::Remove_visuals { data } {
 	return [regsub -all -nocase {<s>} $data ""]
 }
 
-proc ClaraServ::FCT::TXT:ESPACE:DISPLAY { text length } {
+proc ::ClaraServ::FCT::TXT:ESPACE:DISPLAY { text length } {
 	set text			[string trim $text]
 	set text_length		[string length $text];
 	set espace_length	[expr ($length - $text_length)/2.0]
@@ -250,7 +250,7 @@ proc ClaraServ::FCT::TXT:ESPACE:DISPLAY { text length } {
 
 }
 
-proc ClaraServ::FCT::Socket:Sent { arg } {
+proc ::ClaraServ::FCT::Socket:Sent { arg } {
 	global ClaraServ::config
 	if { $config(uplink_debug) == 1 } {
 		putlog "Sent: $arg"
@@ -258,22 +258,22 @@ proc ClaraServ::FCT::Socket:Sent { arg } {
 	putdcc $config(idx) $arg
 }
 
-proc ClaraServ::FCT::CMD:LOG { cmd sender } {
+proc ::ClaraServ::FCT::CMD:LOG { cmd sender } {
 	global ClaraServ::config
 	if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Commandes :<c04>  $cmd <c12>par<c04> $sender"  }
 }
 
-proc ClaraServ::FCT::CMD:LOG { cmd sender } {
+proc ::ClaraServ::FCT::CMD:LOG { cmd sender } {
 	global ClaraServ::config
 	if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Commandes :<c04>  $cmd <c12>par<c04> $sender"  }
 }
 
-proc ClaraServ::FCT::CMD:SHOW:LIST { DEST } {
+proc ::ClaraServ::FCT::CMD:SHOW:LIST { DEST } {
 	set max				8;
 	set l_espace		13;
 	set CMD_LIST		""
-	foreach CMD [ClaraServ::FCT::DB:CMD:LIST] {
-		lappend CMD_LIST	"<c04>[ClaraServ::FCT::TXT:ESPACE:DISPLAY $CMD $l_espace]<c12>"
+	foreach CMD [::ClaraServ::FCT::DB:CMD:LIST] {
+		lappend CMD_LIST	"<c04>[::ClaraServ::FCT::TXT:ESPACE:DISPLAY $CMD $l_espace]<c12>"
 		if { [incr i] > $max-1 } {
 			unset i
 			ClaraServ::FCT::SENT:MSG:TO:USER $DEST [join $CMD_LIST " | "];
@@ -284,16 +284,16 @@ proc ClaraServ::FCT::CMD:SHOW:LIST { DEST } {
 	ClaraServ::FCT::SENT:MSG:TO:USER $DEST "<c>";
 }
 
-proc ClaraServ::FCT::DATA:TO:NICK { DATA } {
+proc ::ClaraServ::FCT::DATA:TO:NICK { DATA } {
 	if { [string range $DATA 0 0] == 0 } {
-		set user		[ClaraServ::FCT::UID:CONVERT $DATA]
+		set user		[::ClaraServ::FCT::UID:CONVERT $DATA]
 	} else {
 		set user		$DATA
 	}
 	return $user;
 }
 
-proc ClaraServ::FCT::UID:CONVERT { ID } {
+proc ::ClaraServ::FCT::UID:CONVERT { ID } {
 	global ClaraServ::UID_DB
 	if { [info exists UID_DB([string toupper $ID])] } {
 		return "$UID_DB([string toupper $ID])"
@@ -302,8 +302,8 @@ proc ClaraServ::FCT::UID:CONVERT { ID } {
 	}
 }
 
-proc ClaraServ::FCT::DB:DATA:EXIST { DB DATA } {
-	set DB_FILE		"[ClaraServ::FCT::Get:ScriptDir "db"]/${DB}.db"
+proc ::ClaraServ::FCT::DB:DATA:EXIST { DB DATA } {
+	set DB_FILE		"[::ClaraServ::FCT::Get:ScriptDir "db"]/${DB}.db"
 	if { ![file exist $DB_FILE] } { return "-1"; }
 	set FILE_PIPE	[open $DB_FILE r];
 	while { ![eof $FILE_PIPE] } {
@@ -317,10 +317,10 @@ proc ClaraServ::FCT::DB:DATA:EXIST { DB DATA } {
 	return 0;
 }
 
-proc ClaraServ::FCT::DB:SALON:ADD { SALON } {
+proc ::ClaraServ::FCT::DB:SALON:ADD { SALON } {
 	if { [string index $SALON 0] != "#" } { return 0; }
-	if { [ClaraServ::FCT::DB:DATA:EXIST "salon" $SALON] == 0 } {
-		set DB_FILE		"[ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
+	if { [::ClaraServ::FCT::DB:DATA:EXIST "salon" $SALON] == 0 } {
+		set DB_FILE		"[::ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
 		set FILE_PIPE	[open $DB_FILE a];
 		puts $FILE_PIPE $SALON;
 		close $FILE_PIPE;
@@ -330,8 +330,8 @@ proc ClaraServ::FCT::DB:SALON:ADD { SALON } {
 	}
 }
 
-proc ClaraServ::FCT::DB:DATA:REMOVE { DB DATA } {
-	set DB_FILE			"[ClaraServ::FCT::Get:ScriptDir "db"]/${DB}.db"
+proc ::ClaraServ::FCT::DB:DATA:REMOVE { DB DATA } {
+	set DB_FILE			"[::ClaraServ::FCT::Get:ScriptDir "db"]/${DB}.db"
 	if { ![file exist $DB_FILE] } { return "-1"; }
 	set FILE_PIPE		[open $DB_FILE r];
 	set STATE			0;
@@ -353,7 +353,7 @@ proc ClaraServ::FCT::DB:DATA:REMOVE { DB DATA } {
 ####################
 #--> Procedures <--#
 ####################
-proc ClaraServ::FCT::Socket:Connexion {} {
+proc ::ClaraServ::FCT::Socket:Connexion {} {
 	global ClaraServ::config
 	if { ![catch "connect $config(uplink_host) $config(uplink_port)" config(idx)] } {
 		set config(init)			1;
@@ -366,7 +366,7 @@ proc ClaraServ::FCT::Socket:Connexion {} {
 
 			ClaraServ::FCT::Socket:Sent ":$config(serverinfo_name) MODE $config(service_nick) $config(service_modes)"
 			ClaraServ::FCT::Socket:Sent ":$config(service_nick) JOIN $config(service_channel)"
-			set fichier(salon) "[ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
+			set fichier(salon) "[::ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
 			set fp [open $fichier(salon) "r"]
 			set fc -1
 			while {![eof $fp]} {
@@ -397,7 +397,7 @@ proc ClaraServ::FCT::Socket:Connexion {} {
 # ClaraServ Connexion #
 ###################
 
-proc ClaraServ::Server:Connexion { } {
+proc ::ClaraServ::Server:Connexion { } {
 	variable config
 	ClaraServ::FCT::Socket:Sent "EOS"
 	ClaraServ::FCT::Socket:Sent ":$config(serverinfo_id) SQLINE $config(service_nick) :Reserved for services"
@@ -407,7 +407,7 @@ proc ClaraServ::Server:Connexion { } {
 	if { $config(service_usermodes) != "" } { 
 		ClaraServ::FCT::Socket:Sent ":$config(serverinfo_id) MODE $config(service_channel) $config(service_usermodes) $config(service_nick)"
 	}
-	set fichier(salon) "[ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
+	set fichier(salon) "[::ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
 	set fp	[open $fichier(salon) "r"]
 	set fc	-1
 	while {![eof $fp]} {
@@ -427,12 +427,12 @@ proc ClaraServ::Server:Connexion { } {
 ######################
 #--> Verification <--#
 ######################
-proc ClaraServ::FCT::Socket:Verification {} {
+proc ::ClaraServ::FCT::Socket:Verification {} {
 	global ClaraServ::config
 	if {[valididx $config(idx)]} { utimer 30 ClaraServ::FCT::Socket:Verification } else { ClaraServ::FCT::Socket:Connexion }
 }
 
-proc ClaraServ::Socket:Event { idx arg } {
+proc ::ClaraServ::Socket:Event { idx arg } {
 	global ClaraServ::config
 	global ClaraServ::UID_DB
 
@@ -503,7 +503,7 @@ proc ClaraServ::Socket:Event { idx arg } {
 					 ClaraServ::IRC:CMD:PUB:RANDOM $sender $destination $cmd $data
 				}
 				# Nous verifions si la commande corresponds a une commandes de la database:
-				if { [lsearch -nocase [ClaraServ::FCT::DB:CMD:LIST] $cmd] != "-1" } {
+				if { [lsearch -nocase [::ClaraServ::FCT::DB:CMD:LIST] $cmd] != "-1" } {
 					if { [catch {ClaraServ::IRC:CMD:PUB:DYNAMIC $sender $destination $cmd $data } error] } {
 						ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "\[ERROR\] CMD: $cmd - Error: $error"
 					}
@@ -522,10 +522,10 @@ proc ClaraServ::Socket:Event { idx arg } {
 #######################
 #  --> Commandes <--  #
 #######################
-proc ClaraServ::IRC:CMD:PRIV:HELP { sender destination cmd data } {
+proc ::ClaraServ::IRC:CMD:PRIV:HELP { sender destination cmd data } {
 	ClaraServ::IRC:CMD:PUB:HELP $sender $destination $cmd $data
 }
-proc ClaraServ::IRC:CMD:PUB:HELP { sender destination cmd data } {
+proc ::ClaraServ::IRC:CMD:PUB:HELP { sender destination cmd data } {
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c04> .: <c12>Aide publique<c04> :."
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c04> "
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c07> !help   - <c06>  Affiche cette aide"
@@ -538,30 +538,30 @@ proc ClaraServ::IRC:CMD:PUB:HELP { sender destination cmd data } {
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c07> join    - <c06>  faire joindre un salon"
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c07> part    - <c06>  faire quitter un salon"
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c04> "
-	ClaraServ::FCT::CMD:LOG $cmd [ClaraServ::FCT::DATA:TO:NICK $sender]
+	ClaraServ::FCT::CMD:LOG $cmd [::ClaraServ::FCT::DATA:TO:NICK $sender]
 }
-proc ClaraServ::IRC:CMD:PUB:RANDOM { sender destination cmd data } {
+proc ::ClaraServ::IRC:CMD:PUB:RANDOM { sender destination cmd data } {
 	variable config
-	set CMD_RANDOM	[lindex [ClaraServ::FCT::DB:CMD:LIST] [rand [llength [ClaraServ::FCT::DB:CMD:LIST]]]]
+	set CMD_RANDOM	[lindex [::ClaraServ::FCT::DB:CMD:LIST] [rand [llength [::ClaraServ::FCT::DB:CMD:LIST]]]]
 	if { [catch {ClaraServ::IRC:CMD:PUB:DYNAMIC $sender $destination $CMD_RANDOM $data } error] } {
 			ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "\[ERROR\] CMD: $cmd - Error: $error"
 	}
 }
-proc ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
+proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
 	if { $pseudo == "" } {
-		set data [ClaraServ::FCT::DB:GET $cmd 0];
+		set data [::ClaraServ::FCT::DB:GET $cmd 0];
 	} else {
-		set data [ClaraServ::FCT::DB:GET $cmd 1];
+		set data [::ClaraServ::FCT::DB:GET $cmd 1];
 	}
 	if { $data != "-1" } {
-		set data	[ClaraServ::FCT::substitute_special_vars_2nd_pass $destination $data];
+		set data	[::ClaraServ::FCT::substitute_special_vars_2nd_pass $destination $data];
 		set data	[string map -nocase [list "%pseudo%" "$pseudo" "%sender%" "$sender" "%destination%" "$destination"] $data]
 		ClaraServ::FCT::SENT:PRIVMSG $destination $data
 	}
 	ClaraServ::FCT::CMD:LOG "!random" $sender
 }
 
-proc ClaraServ::IRC:CMD:PUB:CMDS { sender destination cmd data } {
+proc ::ClaraServ::IRC:CMD:PUB:CMDS { sender destination cmd data } {
 	variable config
 	ClaraServ::FCT::SENT:MSG:TO:USER $sender  "<c04> .: <c12>Liste des commandes d'animation<c04> :."
 	ClaraServ::FCT::CMD:SHOW:LIST $sender
@@ -577,7 +577,7 @@ proc ClaraServ::IRC:CMD:PUB:CMDS { sender destination cmd data } {
 ##########################################
 
 
-proc ClaraServ::IRC:CMD:PRIV:JOIN { sender destination cmd data } {
+proc ::ClaraServ::IRC:CMD:PRIV:JOIN { sender destination cmd data } {
 	variable config
 	# $sender $destination $cmd $data <------------------------
 	# 001119S0G 00CAAAAAB join {#salon} lepassquetamisenconf <---------------
@@ -587,24 +587,24 @@ proc ClaraServ::IRC:CMD:PRIV:JOIN { sender destination cmd data } {
 	if { $password == "" } {
 		ClaraServ::FCT::SENT:MSG:TO:USER $sender  "Mauvaise syntaxe: /msg $config(service_nick) join #salon admin_password"
 	} elseif { $password eq "$config(admin_password)" } {
-		if { [ClaraServ::FCT::DB:SALON:ADD $chan] == 1} {
+		if { [::ClaraServ::FCT::DB:SALON:ADD $chan] == 1} {
 			ClaraServ::FCT::Socket:Sent ":$config(service_nick) JOIN $chan"
 			ClaraServ::FCT::Socket:Sent ":$config(service_nick) MODE $chan +$config(service_usermodes) $config(service_nick)"
 
 			ClaraServ::FCT::SENT:MSG:TO:USER $sender  "AddChan : $chan"
-			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender] "  }
+			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender] "  }
 		} else {
 			ClaraServ::FCT::SENT:MSG:TO:USER $sender  "AddChan : $chan | Erreur Non ajouter "
-			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender] | Erreur Non ajouter " }
+			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender] | Erreur Non ajouter " }
 		}
 
 	} else {
 		ClaraServ::FCT::SENT:MSG:TO:USER $sender  "Accés Refusè."
-			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender] </c>-><c04> Accés Refusè."  }
+			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender] </c>-><c04> Accés Refusè."  }
 	}
 }
 
-proc ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
+proc ::ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
 	variable config
 	# /msg clara part #salon lepassquetamisenconf
 	set chan		[lindex $data 0]
@@ -614,20 +614,20 @@ proc ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
 	} elseif { $password eq "$config(admin_password)" } {
 		if { [string match -nocase $config(service_channel) $chan] } {
 			ClaraServ::FCT::SENT:MSG:TO:USER $sender  "DelChan : $chan | Erreur: impossible $config(service_channel) est le salon de logs."
-			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender]  | Erreur: impossible $config(service_channel) est le salon de logs." }
-		} elseif { [ClaraServ::FCT::DB:DATA:REMOVE "salon" $chan] == 1 } {
+			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender]  | Erreur: impossible $config(service_channel) est le salon de logs." }
+		} elseif { [::ClaraServ::FCT::DB:DATA:REMOVE "salon" $chan] == 1 } {
 			ClaraServ::FCT::Socket:Sent ":$config(service_nick) PART $chan"
 			ClaraServ::FCT::SENT:MSG:TO:USER $sender  "DelChan : $chan"
-			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender] "  }
+			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender] "  }
 		} else {
 			ClaraServ::FCT::SENT:MSG:TO:USER $sender  "DelChan : $chan | Erreur Non ajouter "
-			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender] | Erreur Non suprimer " }
+			if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender] | Erreur Non suprimer " }
 		}
 
 
 	} else {
 		ClaraServ::FCT::SENT:MSG:TO:USER $sender  "Accés Refusè."
-		if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[ClaraServ::FCT::UID:CONVERT $sender] </c>-><c04> Accés Refusè."  }
+		if {$config(admin_console) eq "1"} { ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> $chan </c>par <c04>[::ClaraServ::FCT::UID:CONVERT $sender] </c>-><c04> Accés Refusè."  }
 	}
 }
 
