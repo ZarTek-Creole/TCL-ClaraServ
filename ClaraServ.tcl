@@ -95,7 +95,7 @@ proc ClaraServ::INIT { } {
 
 	set config(FILE_DB)	"database.[string tolower $config(db_lang)].db"
 	# generer les db si elle n'existe pas
-	ClaraServ::FCT::DB:INIT [lappend $config(db_list) $config(FILE_DB)]
+	ClaraServ::FCT::DB:INIT [list $config(db_list) $config(FILE_DB)]
 
 	if { [file exists [ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}] } {
 		source [ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}
@@ -198,8 +198,8 @@ proc ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG { MSG } {
 
 proc ClaraServ::FCT::DB:INIT { LISTDB } {
 	foreach DB_FILE_NAME $LISTDB {
-		if { ![file exists "[ClaraServ::FCT::Get:ScriptDir "db"]/${DB_FILE_NAME}"] } {
-			set FILE_PIPE	[open "[ClaraServ::FCT::Get:ScriptDir "db"]/${DB_FILE_NAME}.db" a+];
+		if { ![file exists "[ClaraServ::FCT::Get:ScriptDir "db"]${DB_FILE_NAME}"] } {
+			set FILE_PIPE	[open "[ClaraServ::FCT::Get:ScriptDir "db"]${DB_FILE_NAME}" a+];
 			close $FILE_PIPE
 		}
 	}
