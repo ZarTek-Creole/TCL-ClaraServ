@@ -78,8 +78,8 @@ Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exem
 ### Prerequisites
 * [eggdrop (v1.9+)](http://www.eggheads.org/)
 * [Unrealircd (v5.0+)](http://www.eggheads.org/)
-  * EN: IRC server new protocol
-  * FR: Serveur IRC nouveau protocol
+* [Package IRCServices (v0.0.1+)](https://github.com/MalaGaM/TCL-PKG-IRCServices)
+
 
 
 ### Installation
