@@ -10,7 +10,7 @@
 ##		-> Amandine de www.eggdrop.fr pour les testes, les idées, ...
 ##		-> MenzAgitat de www.eggdrop.fr pour ses astuces/conseils
 #############################################################################
-package require IRCServices 0.0.1
+if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécgarger sur 'https://github.com/MalaGaM/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
 if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
 namespace eval ClaraServ {
 	variable config
