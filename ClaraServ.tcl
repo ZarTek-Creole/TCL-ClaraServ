@@ -89,7 +89,7 @@ proc ::ClaraServ::INIT { } {
 	################
 	if { [file exists [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf] } {
 		source [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf
-	::ClaraServ::FCT::Check:Config
+		::ClaraServ::FCT::Check:Config
 	} else {
 		if { [file exists [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.Example.conf] } {
 			putlog "Editez, configurer et renomer 'ClaraServ.Example.conf' en 'ClaraServ.conf' dans '[::ClaraServ::FCT::Get:ScriptDir]'"
