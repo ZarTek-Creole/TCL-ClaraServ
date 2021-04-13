@@ -1,7 +1,7 @@
 # TCL-ClaraServ-Service
 Services IRC en TCL - Animation de salon, Aide de réseau, Profil d'utilisateur
 
-
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V746S4S)
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
