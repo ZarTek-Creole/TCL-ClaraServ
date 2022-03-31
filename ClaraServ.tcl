@@ -1,16 +1,35 @@
 #############################################################################
-##-->						TCL ClaraServ Service						<--##
-#---------------------------------------------------------------------------#
-## Auteur	: MalaGaM
-## Website	: https://github.com/MalaGaM/TCL-ClaraServ-Service
-## Support	: https://github.com/MalaGaM/TCL-ClaraServ-Service/issues
-##
-## Greet	:
-##		-> Chris et Yeh pour versions antérieures
-##		-> Amandine de www.eggdrop.fr pour les testes, les idées, ...
-##		-> MenzAgitat de www.eggdrop.fr pour ses astuces/conseils
+#  ██████╗██╗      █████╗ ██████╗  █████╗ ███████╗███████╗██████╗ ██╗   ██╗ #
+# ██╔════╝██║     ██╔══██╗██╔══██╗██╔══██╗██╔════╝██╔════╝██╔══██╗██║   ██║ #
+# ██║     ██║     ███████║██████╔╝███████║███████╗█████╗  ██████╔╝██║   ██║ #
+# ██║     ██║     ██╔══██║██╔══██╗██╔══██║╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝ #
+# ╚██████╗███████╗██║  ██║██║  ██║██║  ██║███████║███████╗██║  ██║ ╚████╔╝  #
+#  ╚═════╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝   #
 #############################################################################
-if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécgarger sur 'https://github.com/MalaGaM/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
+#
+#	Auteur	:
+#		-> MalaGaM (MalaGaM.ARTiSPRETiS@GMail.Com)
+#
+#	Website	:
+#		-> https://github.com/MalaGaM/TCL-ClaraServ
+#
+#	Support	:
+#		-> https://github.com/MalaGaM/TCL-ClaraServ/issues
+#
+#	Docs	:
+#		-> https://github.com/MalaGaM/TCL-ClaraServ/wiki
+#
+#	LICENSE :
+#		-> GNU General Public License v3.0
+#		-> https://github.com/MalaGaM/TCL-ClaraServ/blob/main/LICENSE.txt
+#
+#	Greet	:
+#		-> Chris et Yeh pour versions antérieures
+#		-> Amandine de www.eggdrop.fr pour les testes, les idées, ...
+#		-> MenzAgitat de www.eggdrop.fr pour ses astuces/conseils
+#
+#############################################################################
+if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécharger sur 'https://github.com/MalaGaM/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
 if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
 namespace eval ClaraServ {
 	variable config
@@ -88,7 +107,10 @@ proc ::ClaraServ::INIT { } {
 	# ClaraServ Source #
 	################
 	if { [file exists [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf] } {
-		source [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf
+		if { [ catch { source [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf } err ] } { 
+			putlog "\[ Erreur \] Probleme de chargement de '[::ClaraServ::FCT::Get:ScriptDir]ClaraServ.conf': $err"
+			exit
+		} 
 		::ClaraServ::FCT::Check:Config
 	} else {
 		if { [file exists [::ClaraServ::FCT::Get:ScriptDir]ClaraServ.Example.conf] } {
@@ -105,14 +127,17 @@ proc ::ClaraServ::INIT { } {
 	::ClaraServ::FCT::DB:INIT [list  {*}$config(db_list) {*}$config(FILE_DB)]
 
 	if { [file exists [::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}] } {
-		source [::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}
+		if { [ catch { source [::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)} } err ] } { 
+			putlog "\[ Erreur \] Probleme de chargement de '[::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}': $err"
+			exit
+		} 
 	} else {
 		putlog "Fichier de base de données '[::ClaraServ::FCT::Get:ScriptDir "db"]/${config(FILE_DB)}' manquant."
 		exit
 	}
 	
 	if {![info exists config(idx)]} { ::ClaraServ::FCT::Socket:Connexion }
-	set config(putlog) "[set config(scriptname)] v[set config(version)] par [set config(auteur)]"
+	putlog "\00304\[[set config(scriptname)] - Chargement\]\003 v[set config(version)] par [set config(auteur)] OK."
 }
 
 ###################
@@ -523,4 +548,4 @@ proc ::ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
 	}
 }
 
-ClaraServ::INIT
+::ClaraServ::INIT
