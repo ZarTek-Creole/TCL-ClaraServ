@@ -11,17 +11,17 @@
 #		-> ZarTek (ZarTek.Creole@GMail.Com)
 #
 #	Website	:
-#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ
+#		-> github.com/ZarTek-Creole/TCL-ClaraServ
 #
 #	Support	:
-#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ/issues
+#		-> github.com/ZarTek-Creole/TCL-ClaraServ/issues
 #
 #	Docs	:
-#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ/wiki
+#		-> github.com/ZarTek-Creole/TCL-ClaraServ/wiki
 #
 #	LICENSE :
 #		-> GNU General Public License v3.0
-#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ/blob/main/LICENSE.txt
+#		-> github.com/ZarTek-Creole/TCL-ClaraServ/blob/main/LICENSE.txt
 #
 #	Greet	:
 #		-> Chris et Yeh pour versions antérieures
@@ -29,7 +29,7 @@
 #		-> MenzAgitat de www.eggdrop.fr pour ses astuces/conseils
 #
 #############################################################################
-if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécharger sur 'https://github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
+if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécharger sur 'github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
 if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
 namespace eval ClaraServ {
 	variable config
