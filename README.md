@@ -13,7 +13,7 @@ Services IRC en TCL - Animation de salon, Aide de réseau, Profil d'utilisateur
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/MalaGaM/TCL-Clara-Service">
+  <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/IRC_Logo_Small-01_%281%29.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -22,14 +22,14 @@ Services IRC en TCL - Animation de salon, Aide de réseau, Profil d'utilisateur
   <p align="center">
     Services IRC "ClaraServ" en TCL/Eggdrop
     <br />
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service"><strong>Explore the docs / Explorez les documents »</strong></a>
+    <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service"><strong>Explore the docs / Explorez les documents »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service/issues">Report Bug</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service/issues">Report Bug</a>
     ·
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service/issues">Request Feature</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service/issues">Request Feature</a>
     ·
-    <a href="https://github.com/MalaGaM/TCL-Clara-Service/wiki">Wiki / Documenation</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service/wiki">Wiki / Documenation</a>
   </p>
 </p>
 
@@ -78,7 +78,7 @@ Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exem
 ### Prerequisites
 * [eggdrop (v1.9+)](http://www.eggheads.org/)
 * [Unrealircd (v5.0+)](http://www.eggheads.org/)
-* [Package IRCServices (v0.0.1+)](https://github.com/MalaGaM/TCL-PKG-IRCServices)
+* [Package IRCServices (v0.0.1+)](https://github.com/ZarTek-Creole/TCL-PKG-IRCServices)
 
 
 
@@ -87,11 +87,11 @@ Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exem
 Première étape, télécharger le code, le mettre dans votre répertoire scripts/
 Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
-git clone https://github.com/MalaGaM/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
+git clone https://github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 ou 
 ```
-wget https://github.com/MalaGaM/TCL-Clara-Service/archive/refs/heads/main.zip -O ClaraServ.zip
+wget https://github.com/ZarTek-Creole/TCL-Clara-Service/archive/refs/heads/main.zip -O ClaraServ.zip
 unzip ClaraServ.zip -d /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 
@@ -137,10 +137,10 @@ Bientot
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/MalaGaM/TCL-Clara-Service/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) for a list of proposed features (and known issues).
 
 ---
-Voir les [problèmes en suspens](https://github.com/MalaGaM/TCL-Clara-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
+Voir les [problèmes en suspens](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -151,7 +151,7 @@ Contributions are what make the open source community such an amazing place to b
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a [Pull Request](https://github.com/MalaGaM/TCL-Clara-Service/pulls)
+5. Open a [Pull Request](https://github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
 
 ---
 Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer. Toute contribution que vous apportez est ** grandement appréciée **.
@@ -159,7 +159,7 @@ Les contributions sont ce qui fait de la communauté open source un endroit incr
 2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
 3. Validez vos modifications (`git commit -m 'Add some AmazingFeature'`)
 4. Pousser vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une [Pull Request](https://github.com/MalaGaM/TCL-Clara-Service/pulls)
+5. Ouvrez une [Pull Request](https://github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
 
 <!-- LICENSE -->
 ## License
@@ -171,13 +171,13 @@ Distributed under the SoonDecision License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-MalaGaM - [@MalaGaM](https://github.com/MalaGaM) - MalaGaM.ARTiSPRETiS@GMail.com
+ZarTek - [@ZarTek](https://github.com/ZarTek) - ZarTek.Creole@GMail.com
 
-Project Link: [https://github.com/MalaGaM/TCL-Clara-Service](https://github.com/MalaGaM/TCL-Clara-Service)
+Project Link: [https://github.com/ZarTek-Creole/TCL-Clara-Service](https://github.com/ZarTek-Creole/TCL-Clara-Service)
 
 1. Tickets
 Signalez tout bugs, toutes idées :
-* [Creez un ticket]([#4-configuration-de-unrealircd](https://github.com/MalaGaM/TCL-Clara-Service/issues))
+* [Creez un ticket]([#4-configuration-de-unrealircd](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues))
 
 2. IRC
 Vous pouvez me contacter sur IRC :
@@ -195,15 +195,15 @@ Vous pouvez me contacter sur IRC :
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[contributors-url]: https://github.com/MalaGaM/TCL-Clara-Service/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[forks-url]: https://github.com/MalaGaM/TCL-Clara-Service/network/members
-[stars-shield]: https://img.shields.io/github/stars/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[stars-url]: https://github.com/MalaGaM/TCL-Clara-Service/stargazers
-[issues-shield]: https://img.shields.io/github/issues/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[issues-url]: https://github.com/MalaGaM/TCL-Clara-Service/issues
-[license-shield]: https://img.shields.io/github/license/MalaGaM/TCL-Clara-Service.svg?style=for-the-badge
-[license-url]: https://github.com/MalaGaM/TCL-Clara-Service/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
+[contributors-url]: https://github.com/ZarTek-Creole/TCL-Clara-Service/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
+[forks-url]: https://github.com/ZarTek-Creole/TCL-Clara-Service/network/members
+[stars-shield]: https://img.shields.io/github/stars/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
+[stars-url]: https://github.com/ZarTek-Creole/TCL-Clara-Service/stargazers
+[issues-shield]: https://img.shields.io/github/issues/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
+[issues-url]: https://github.com/ZarTek-Creole/TCL-Clara-Service/issues
+[license-shield]: https://img.shields.io/github/license/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
+[license-url]: https://github.com/ZarTek-Creole/TCL-Clara-Service/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
 

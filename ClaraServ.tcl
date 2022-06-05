@@ -8,20 +8,20 @@
 #############################################################################
 #
 #	Auteur	:
-#		-> MalaGaM (MalaGaM.ARTiSPRETiS@GMail.Com)
+#		-> ZarTek (ZarTek.Creole@GMail.Com)
 #
 #	Website	:
-#		-> https://github.com/MalaGaM/TCL-ClaraServ
+#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ
 #
 #	Support	:
-#		-> https://github.com/MalaGaM/TCL-ClaraServ/issues
+#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ/issues
 #
 #	Docs	:
-#		-> https://github.com/MalaGaM/TCL-ClaraServ/wiki
+#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ/wiki
 #
 #	LICENSE :
 #		-> GNU General Public License v3.0
-#		-> https://github.com/MalaGaM/TCL-ClaraServ/blob/main/LICENSE.txt
+#		-> https://github.com/ZarTek-Creole/TCL-ClaraServ/blob/main/LICENSE.txt
 #
 #	Greet	:
 #		-> Chris et Yeh pour versions antérieures
@@ -29,7 +29,7 @@
 #		-> MenzAgitat de www.eggdrop.fr pour ses astuces/conseils
 #
 #############################################################################
-if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécharger sur 'https://github.com/MalaGaM/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
+if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécharger sur 'https://github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
 if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
 namespace eval ClaraServ {
 	variable config
@@ -41,7 +41,7 @@ namespace eval ClaraServ {
 	set BOT_ID				{}
 	set config(scriptname)	"ClaraServ Service"
 	set config(version)		"1.1.20210404"
-	set config(auteur)		"MalaGaM"
+	set config(auteur)		"ZarTek"
 	
 	set config(path_script)	[file dirname [info script]];
 
@@ -420,15 +420,15 @@ proc ::ClaraServ::FCT::Socket:Connexion {} {
 		# si [target] commence par # c'est un salon
 		if { [string index [target] 0] == "#"} {
 			if { $cmd == "!cmds"	}	{ 
-				# [22:10:39] Received: :MalaGaM PRIVMSG #Eva :!cmds
+				# [22:10:39] Received: :ZarTek PRIVMSG #Eva :!cmds
 			::ClaraServ::IRC:CMD:PUB:CMDS [who] [target] $cmd $data 
 			}
 			if { $cmd == "!help"	}	{ 
-				# Received: :MalaGaM PRIVMSG #Eva :!help
+				# Received: :ZarTek PRIVMSG #Eva :!help
 				::ClaraServ::IRC:CMD:PUB:HELP [who] [target] $cmd $data 
 			}
 			if { $cmd == "!random"	}	{
-				# [22:10:04] Received: :MalaGaM PRIVMSG #Eva :!random
+				# [22:10:04] Received: :ZarTek PRIVMSG #Eva :!random
 				 ::ClaraServ::IRC:CMD:PUB:RANDOM [who] [target] $cmd $data
 			}
 			# Nous verifions si la commande corresponds a une commandes de la database:
