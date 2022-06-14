@@ -19,8 +19,11 @@
 #	Docs	:
 #		-> github.com/ZarTek-Creole/TCL-ClaraServ/wiki
 #
+#   DONATE   :
+#       -> https://github.com/ZarTek-Creole/DONATE
+#
 #	LICENSE :
-#		-> GNU General Public License v3.0
+#		-> Creative Commons Attribution 4.0 International
 #		-> github.com/ZarTek-Creole/TCL-ClaraServ/blob/main/LICENSE.txt
 #
 #	Greet	:
