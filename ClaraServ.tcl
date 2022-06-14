@@ -38,8 +38,10 @@ namespace eval ClaraServ {
 	variable UID_DB
 	variable CONNECT_ID
 	variable BOT_ID
+	variable DIR
 
 	set IRCServices_version	"0.0.4"
+	set DIR(CUR)			[file dirname [file dirname [file normalize [file join [info script] ...]]]]
 	set CONNECT_ID			{}
 	set BOT_ID				{}
 	set config(scriptname)	"ClaraServ Service"
@@ -77,8 +79,9 @@ namespace eval ClaraServ {
 								"version"			\
 								"auteur"
 							];
+
 	# Si le dossier et fichier IRCServices sont existante dans le dossier courant, on le charge.			
-	if { [file exists TCL-PKG-IRCServices/ircservices.tcl] } { catch { source TCL-PKG-IRCServices/ircservices.tcl } }
+	if { [file exists ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl] } { catch { source ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl } }
 	if { [catch { package require IRCServices ${IRCServices_version} }] } { 
 		die "\[${config(scriptname)} - erreur\] Nécessite le package IRCServices ${IRCServices_version} (ou plus) pour fonctionner, Télécharger sur 'github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ;
 	}
