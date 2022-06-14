@@ -83,7 +83,7 @@ Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exem
 Première étape, télécharger le code, le mettre dans votre répertoire scripts/
 Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
-git clone github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
+git clone --recurse-submodules github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 ou 
 ```
