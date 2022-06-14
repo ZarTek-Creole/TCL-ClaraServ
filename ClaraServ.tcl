@@ -29,14 +29,14 @@
 #		-> MenzAgitat de www.eggdrop.fr pour ses astuces/conseils
 #
 #############################################################################
-if { [catch { package require IRCServices 0.0.1 }] } { putloglev o * "\00304\[ClaraServ - erreur\]\003 ClaraServ nécessite le package IRCServices 0.0.1 (ou plus) pour fonctionner, Télécharger sur 'github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ; return }
-if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
+
 namespace eval ClaraServ {
 	variable config
 	variable UID_DB
 	variable CONNECT_ID
 	variable BOT_ID
 
+	set IRCServices_version	"0.0.4"
 	set CONNECT_ID			{}
 	set BOT_ID				{}
 	set config(scriptname)	"ClaraServ Service"
@@ -74,6 +74,12 @@ namespace eval ClaraServ {
 								"version"			\
 								"auteur"
 							];
+	# Si le dossier et fichier IRCServices sont existante dans le dossier courant, on le charge.			
+	if { [file exists TCL-PKG-IRCServices/ircservices.tcl] } { catch { source TCL-PKG-IRCServices/ircservices.tcl } }
+	if { [catch { package require IRCServices ${IRCServices_version} }] } { 
+		die "\[${config(scriptname)} - erreur\] Nécessite le package IRCServices ${IRCServices_version} (ou plus) pour fonctionner, Télécharger sur 'github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ;
+	}
+	if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
 	namespace eval FCT {
 		namespace export CONNECT_ID
 		namespace export BOT_ID
