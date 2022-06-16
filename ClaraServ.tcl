@@ -149,7 +149,7 @@ proc ::ClaraServ::INIT { } {
 	}
 	
 	if {![info exists config(idx)]} { ::ClaraServ::FCT::Socket:Connexion }
-	putlog "\00304\[[set config(scriptname)] - Chargement\]\003 v[set config(version)] par [set config(auteur)] OK."
+	putlog "\[[set config(scriptname)] - Chargement\]\003 v[set config(version)] par [set config(auteur)] charger."
 }
 
 ###################
