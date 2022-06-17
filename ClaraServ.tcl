@@ -39,15 +39,18 @@ namespace eval ClaraServ {
 	variable CONNECT_ID
 	variable BOT_ID
 	variable DIR
+	variable SCRIPT
 
-	set IRCServices_version	"0.0.4"
 	set DIR(CUR)			[file dirname [file dirname [file normalize [file join [info script] ...]]]]
 	set CONNECT_ID			{}
 	set BOT_ID				{}
-	set config(scriptname)	"ClaraServ Service"
-	set config(version)		"1.1.20210404"
-	set config(auteur)		"ZarTek"
-	
+	array set SCRIPT {
+		"name"		"ClaraServ Service"
+		"version"	"1.1.20220622"
+		"auteur"	"ZarTek"
+		"need_zct"	"0.0.1"
+		"need_ircs"	"0.0.4"
+	}
 	set config(path_script)	[file dirname [info script]];
 
 	set config(db_list)		[list \
@@ -74,17 +77,19 @@ namespace eval ClaraServ {
 								"admin_password"	\
 								"db_lang"			\
 								"admin_console"		\
-								"db_lang"			\
-								"scriptname"		\
-								"version"			\
-								"auteur"
+								"db_lang"
 							];
+	if { [file exists ${::ClaraServ::DIR(CUR)}/TCL-ZCT/ZCT.tcl] } { catch { source ${::ClaraServ::DIR(CUR)}/TCL-ZCT/ZCT.tcl } }
+	if { [catch { package require ZCT ${SCRIPT(need_zct)} } ] } {
+		die "\[${SCRIPT(name)} - erreur\] Nécessite le package ZCT ${SCRIPT(need_zct)} (ou plus) pour fonctionner, Télécharger sur 'https://github.com/ZarTek-Creole/TCL-ZCT'. Le chargement du script a été annulé." ;
+	} else { namespace import -force ::ZCT::* }
 
-	# Si le dossier et fichier IRCServices sont existante dans le dossier courant, on le charge.			
-	if { [file exists ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl] } { catch { source ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl } }
-	if { [catch { package require IRCServices ${IRCServices_version} }] } { 
-		die "\[${config(scriptname)} - erreur\] Nécessite le package IRCServices ${IRCServices_version} (ou plus) pour fonctionner, Télécharger sur 'github.com/ZarTek-Creole/TCL-PKG-IRCServices'. Le chargement du script a été annulé." ;
+	# Si le dossier et fichier IRCServices sont existante dans le dossier courant, on le charge.
+	if { [file exists "${::ClaraServ::DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl"] } {
+		source "${::ClaraServ::DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl"
 	}
+	pkg load IRCServices ${SCRIPT(need_ircs)} ${SCRIPT(name)}
+	
 	if {[info commands ::ClaraServ::uninstall] eq "::ClaraServ::uninstall" } { ::ClaraServ::uninstall }
 	namespace eval FCT {
 		namespace export CONNECT_ID
@@ -93,8 +98,9 @@ namespace eval ClaraServ {
 	}
 	proc uninstall {args} {
 		variable config
+		variable SCRIPT
 
-		putlog "Désallocation des ressources de \002[set config(scriptname)]\002..."
+		putlog "Désallocation des ressources de \002[set SCRIPT(name)]\002..."
 
 		foreach binding [lsearch -inline -all -regexp [binds *[set ns [::tcl::string::range [namespace current] 2 end]]*] " \{?(::)?$ns"] {
 			unbind [lindex $binding 0] [lindex $binding 1] [lindex $binding 2] [lindex $binding 4]
@@ -110,6 +116,7 @@ namespace eval ClaraServ {
 proc ::ClaraServ::INIT { } {
 	variable config
 	variable database
+	variable SCRIPT
 	#################
 	# ClaraServ Fichier #
 	#################
@@ -149,7 +156,7 @@ proc ::ClaraServ::INIT { } {
 	}
 	
 	if {![info exists config(idx)]} { ::ClaraServ::FCT::Socket:Connexion }
-	putlog "\[[set config(scriptname)] - Chargement\]\003 v[set config(version)] par [set config(auteur)] charger."
+	putlog "\[[set SCRIPT(name)] - Chargement\]\003 v[set SCRIPT(version)] par [set SCRIPT(auteur)] charger."
 }
 
 ###################
