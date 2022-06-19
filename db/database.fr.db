@@ -309,7 +309,7 @@ variable database {
 	{{!gratte} {1} {<c07>%sender%<c12> dit à <c04>%pseudo%<c12> tu peux aller te gratter je pense ! <b> <c04>m(><)m  }}
 
 
-	{{!popcorn} {0} {<c07>%sender%<c12> adore sort le popcorn, s'installe confortablement et observe ! <b><c04> (˚▽˚) }}
+	{{!popcorn} {0} {<c07>%sender%<c12> sort le popcorn, s'installe confortablement et observe ! <b><c04> (˚▽˚) }}
 	{{!popcorn} {1} {<c07>%sender%<c12> offre du popcorn à <c04>%pseudo%<c12> , installe toi et regarde ! <b><c04> (˚▽˚) }}
 
 
@@ -346,7 +346,7 @@ variable database {
 	{{!fessee} {1} {<c07>%sender%<c12> met une grosse fessée qui CLAQUEeeeee sur les fesses rebondies de <c04>%pseudo%<c12> il/elle doit surement aimer ca pour en redemander, sado maso??<c04> :PPP}}
 
 	{{!fesses} {0} {<c12>Il semblerait que <c07>%sender%<c12> bouge son p'tit cul sur la piste <c04>(_\\_) (_|_) (_/_) (_|_) (_\\_) !}}
-	{{!fesses} {} {<c07>%sender%<c12> monte sur la piste de danse et remue son p'tit cul<c04> (_\\_) (_|_) (_/_) (_|_) (_\\_)<c12> avec<c04> %pseudo% !}}
+	{{!fesses} {1} {<c07>%sender%<c12> monte sur la piste de danse et remue son p'tit cul<c04> (_\\_) (_|_) (_/_) (_|_) (_\\_)<c12> avec<c04> %pseudo% !}}
 
 	{{!cafe} {0} {<c12>Génial ! <c07>%sender%<c12> part en cuisine pour préparer du <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04>,4_<c00> a <c04>_<b> <c04>,0]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03>,3_<c00> é_<b> <c03>,0]}}
 	{{!cafe} {1} {<c07>%sender%<c12> offre une bonne tasse de <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04>,4_<c00> a <c04>_<b> <c04>,0]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03>,3_<c00> é <c03>_<b> <c03>,0]<b></c><c12> toute chaude à <c04>%pseudo%<c12> >> Un peu de lait, du sucre ? }}
