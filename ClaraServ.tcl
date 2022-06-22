@@ -90,7 +90,7 @@ namespace eval ClaraServ {
 	# Verification si le package ZCT a été mis dans le projet courant et si oui  le sourcé(charger)
 	if {
 		[file exists ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl] && \
-			[catch { source ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl } err]
+		[catch { source ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl } err]
 	} {
 		die "\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl' à échoué: ${err}";
 	}
@@ -241,10 +241,11 @@ proc ::ClaraServ::FCT::SENT:PRIVMSG { DEST MSG } {
 }
 proc ::ClaraServ::FCT::SENT:MSG:TO:USER { DEST MSG } {
 	global ::ClaraServ::config
+	variable BOT_ID
 	if { ${config(uplink_useprivmsg)} == 1 } {
 		::ClaraServ::FCT::SENT:PRIVMSG ${DEST} ${MSG} ;
 	} else {
-		::ClaraServ::FCT::SENT:NOTICE ${DEST} ${MSG} ;
+		SNOTICE ${BOT_ID} ${DEST} ${MSG} ;
 	}
 }
 proc ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG { MSG } {
