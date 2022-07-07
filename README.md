@@ -45,7 +45,7 @@
     </li>
     <li><a href="#usage">Usage / Utilisation</a></li>
     <li><a href="#roadmap">Roadmap / Feuille de route</a></li>
-    <li><a href="#contributing">Contributing / Contribuants </a></li>
+    <li><a href="#contributing">Contributing / Contributions </a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements /Remerciements</a></li>
@@ -113,7 +113,7 @@ Cinquième étape, connectez-vous en party-line avec votre eggdrop puis tapez le
 ```
 
 2. Un peu plus loin
-2.1. Debug general
+2.1. Debug général
 Si ClaraServ Service ne se connecte pas, activez le mode debug depuis la party-line  pour voir les erreurs directement dans le fichier "logs/ClaraServ.debug".
 ```
 .ClaraServdebug on 
@@ -202,4 +202,3 @@ Vous pouvez me contacter sur IRC :
 [license-shield]: https://img.shields.io/github/license/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
 [license-url]: github.com/ZarTek-Creole/TCL-Clara-Service/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
-
