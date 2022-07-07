@@ -37,7 +37,7 @@
       <a href="#about-the-project">About The Project / À propos du projet</a>
     </li>
     <li>
-      <a href="#getting-started">Getting Started / Commencer</a>
+      <a href="#getting-started">Getting Started / Commencez</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites / Conditions préalables</a></li>
         <li><a href="#installation">Installation / Configuration</a></li>
@@ -45,7 +45,7 @@
     </li>
     <li><a href="#usage">Usage / Utilisation</a></li>
     <li><a href="#roadmap">Roadmap / Feuille de route</a></li>
-    <li><a href="#contributing">Contributing / Contribuant </a></li>
+    <li><a href="#contributing">Contributing / Contribuants </a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgements">Acknowledgements /Remerciements</a></li>
@@ -79,8 +79,8 @@ Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exem
 
 
 ### Installation
-1.1.  Récuperer le code ClaraServ
-Première étape, télécharger le code, le mettre dans votre répertoire scripts/
+1.1.  Récuperez le code ClaraServ
+Première étape, téléchargez le code, le mettre dans votre répertoire scripts/
 Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
 git clone --recurse-submodules github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
@@ -92,7 +92,7 @@ unzip ClaraServ.zip -d /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 
 1.2. Configuration de l'eggdrop
-Deuxieme étape, ouvrez le fichier de configuration de votre eggdrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
+Deuxième étape, ouvrez le fichier de configuration de votre eggdrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
 ```
 source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
 ```
@@ -101,12 +101,12 @@ source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
 Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraServ.conf``` et configurez celui-ci en fonction de votre serveur IRC
 
 1.4.  Configuration de votre IRCD (UnrealIRCd 5 et +)
-Quatrième étape, il vous suffit de configurer le link dans votre fichier "unrealircd.conf" en fonction de la configuration que vous aurez réalisée dans "ClaraServ.conf". 
+Quatrième étape, il vous suffit de configurer le link dans votre fichier "unrealircd.conf" en fonction de la configuration que vous aurez réalisé dans "ClaraServ.conf". 
 
 [Comment créer un link Service sur UnrealIRCd](http://www.exolia.fr/guide-lire-11.html)
 
 1.5.  Rehashez votre eggdrop
-Cinquième étape, connectez vous en party-line avec votre eggdrop puis tapez les deux commandes suivantes :
+Cinquième étape, connectez-vous en party-line avec votre eggdrop puis tapez les deux commandes suivantes :
 ```
 .rehash
 .ClaraServconnect
@@ -119,7 +119,7 @@ Si ClaraServ Service ne se connecte pas, activez le mode debug depuis la party-l
 .ClaraServdebug on 
 ```
 2.2. Debug Socket/Link
-Pour activer le mode *socket debug* changer la valeur ```ClaraServ(sdebug)``` dans ```ClaraServ.conf``` en mettant 1 a la place de 0.
+Pour activer le mode *socket debug* changez la valeur ```ClaraServ(sdebug)``` dans ```ClaraServ.conf``` en mettant 1 a la place de 0.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
@@ -128,7 +128,7 @@ Soon?
 
 ----
 
-Bientot
+Bientôt
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -154,7 +154,7 @@ Les contributions sont ce qui fait de la communauté open source un endroit incr
 1. Forkez le projet
 2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
 3. Validez vos modifications (`git commit -m 'Add some AmazingFeature'`)
-4. Pousser vers la branche (`git push origin feature/AmazingFeature`)
+4. Poussez vers la branche (`git push origin feature/AmazingFeature`)
 5. Ouvrez une [Pull Request](github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
 
 <!-- LICENSE -->
