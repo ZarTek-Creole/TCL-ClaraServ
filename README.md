@@ -90,7 +90,11 @@ ou
 wget github.com/ZarTek-Creole/TCL-Clara-Service/archive/refs/heads/main.zip -O ClaraServ.zip
 unzip ClaraServ.zip -d /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
+mettre a jour les sous modules (dependence) via git
 
+```
+git submodule update --init --recursive
+```
 1.2. Configuration de l'eggdrop
 Deuxième étape, ouvrez le fichier de configuration de votre eggdrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
 ```
