@@ -190,9 +190,9 @@ proc ::ClaraServ::FCT::Check:Config { } {
 
 proc ::ClaraServ::FCT::substitute_special_vars_2nd_pass {chan text} {
 	global ::ClaraServ::config
-	regsub -all %chan%			${text} [regsub -all {[\[\]\{\}\$\"\\]} ${chan} {\\&}] text ; # "
-	regsub -all %botnick%		${text} [regsub -all {\W} ${config(service_nick)} {\\&}] text
-	regsub -all %hour%			${text} [set hour [strftime %H [unixtime]]] text
+	regsub -all {%chan%}		${text} ${chan} text;
+	regsub -all %botnick%		${text} [regsub -all {\W} ${config(service_nick)} {\\&}] text;
+	regsub -all %hour%			${text} [set hour [strftime %H [unixtime]]] text;
 	regsub -all %hour_short%	${text} [if { ${hour} != 00 } { set dummy [string trimleft ${hour} 0] } { set dummy 0 }] text
 	regsub -all %minutes%		${text} [set minutes [strftime %M [unixtime]]] text
 	regsub -all %minutes_short%	${text} [if { ${minutes} != 00 } { set dummy [string trimleft ${minutes} 0] } { set dummy 0 }] text
