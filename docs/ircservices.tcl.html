@@ -1,0 +1,856 @@
+<html>
+<head><title>ircservices.tcl</title></head>
+<body bgcolor="#ffffff">
+<font size="-2">
+Index by:  <a href="index_main.html#ircservices.tcl">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a>
+</font>
+<hr>
+<strong>ircservices.tcl</strong>
+(<a href="ircservices.tcl-annot.html">annotations</a> | <a href="ircservices.tcl.txt">original source</a>)
+<p>
+<pre>
+<font color="#208020"># irc.tcl --</font>
+<font color="#208020">#</font>
+<font color="#208020">#	irc services implementation for Tcl.</font>
+<font color="#208020"># based from irc package by tcllib</font>
+<font color="#208020">#</font>
+<font color="#208020"># -------------------------------------------------------------------------</font>
+
+
+
+<font color="#208020"># -------------------------------------------------------------------------</font>
+
+namespace eval ::IRCServices {
+	variable PKG
+	variable DIR
+	set DIR(CUR)			[file dirname [file dirname [file normalize [file join [info script] ...]]]]
+	array set PKG {
+		&quot;version&quot;			&quot;0.0.5&quot;
+		&quot;need_tcl&quot;			&quot;8.6&quot;
+		&quot;need_tls&quot;			&quot;1.7.16&quot;
+		&quot;need_logger&quot;		&quot;0.9.4&quot;
+		&quot;need_zct&quot;			&quot;0.0.1&quot;
+		&quot;name&quot;				&quot;package IRCServices&quot;
+	}
+	<font color="#208020"># counter used to differentiate connections</font>
+	variable conn			0
+	variable botn 			0
+	variable config
+	variable irctclfile 	[info script]
+	variable newCharArray	[list]
+	array set config 		{
+		debug  0
+		logger 0
+	}
+	if { [file exists ${DIR(CUR)}/TCL-ZCT/ZCT.tcl] } { catch { source ${DIR(CUR)}/TCL-ZCT/ZCT.tcl } }
+	if { [catch { package require ZCT ${pkg(need_zct)} } err] } {
+		die &quot;\[${pkg(name)} - erreur\] Nécessite ld package ZCT ${pkg(need_zct)} (ou plus) pour fonctionner, Télécharger sur 'https://github.com/ZarTek-Creole/TCL-ZCT'. Le chargement du script a été annulé.&quot; ;
+	} else { namespace import -force ::ZCT::* }
+	pkg load Tcl ${pkg(need_tcl)} ${pkg(name)}
+	pkg load logger ${pkg(need_logger)} ${pkg(name)}
+}	
+
+<strong><a name="::IRCServices::config_42">proc <a href="ircservices.tcl-annot.html#::IRCServices::config">::IRCServices::config</a></a></strong><a name="::IRCServices::config"></a> { args } {
+	variable config
+	if { [llength $args] == 0 } {
+		return [array get config]
+	} elseif { [llength $args] == 1 } {
+		set key [lindex $args 0]
+		return $config($key)
+	} elseif { [llength $args] &gt; 2 } {
+		error &quot;wrong # args: should be \&quot;config key ?val?\&quot;&quot;
+	}
+	<font color="#208020"># llength $args == 2</font>
+	set key		[lindex $args 0]
+	set value	[lindex $args 1]
+	foreach ns [namespace children] {
+		if { [info exists config($key)] &amp;&amp; [info exists ${ns}::config($key)] \
+			&amp;&amp; [set ${ns}::config($key)] == $config($key)} {
+				${ns}::cmd-config $key $value
+		}
+	}
+	set config($key) $value
+}
+
+<font color="#208020"># ::IRCServices::connections --</font>
+<font color="#208020">#</font>
+<font color="#208020"># Return a list of handles to all existing connections</font>
+
+<strong><a name="::IRCServices::connections_68">proc <a href="ircservices.tcl-annot.html#::IRCServices::connections">::IRCServices::connections</a></a></strong><a name="::IRCServices::connections"></a> { } {
+	set r {}
+	foreach ns [namespace children] {
+		lappend r ${ns}::network
+	}
+	return $r
+}
+
+<font color="#208020"># ::IRCServices::reload --</font>
+<font color="#208020">#</font>
+<font color="#208020"># Reload this file, and merge the current connections into</font>
+<font color="#208020"># the new one.</font>
+
+<strong><a name="::IRCServices::reload_81">proc <a href="ircservices.tcl-annot.html#::IRCServices::reload">::IRCServices::reload</a></a></strong><a name="::IRCServices::reload"></a> { } {
+	variable conn
+	set oldconn $conn
+	namespace eval :: {
+		source [set ::IRCServices::IRCServicestclfile]
+	}
+	foreach ns [namespace children] {
+		foreach var {sock logger host port} {
+			set $var [set ${ns}::$var]
+		}
+		array set dispatch	[array get ${ns}::dispatch]
+		array set config	[array get ${ns}::config]
+		<font color="#208020"># make sure our new connection uses the same namespace</font>
+		set conn	[string range $ns 10 end]
+		<a name="::IRCServices::connection(1)"><a href="./ircservices.tcl.html#::IRCServices::connection_109">::IRCServices::connection</a></a>
+		foreach var {sock logger host port} {
+			set ${ns}::$var [set $var]
+		}
+		array set ${ns}::dispatch [array get dispatch]
+		array set ${ns}::config [array get config]
+	}
+	set conn $oldconn
+}
+
+<font color="#208020"># ::IRCServices::connection --</font>
+<font color="#208020">#</font>
+<font color="#208020"># Create an IRC connection namespace and associated commands.</font>
+
+<strong><a name="::IRCServices::connection_109">proc <a href="ircservices.tcl-annot.html#::IRCServices::connection">::IRCServices::connection</a></a></strong><a name="::IRCServices::connection"></a> { args } {
+	variable conn
+	variable config
+	variable sid &quot;&quot;
+
+
+	<font color="#208020"># Create a unique namespace of the form irc$conn::$host</font>
+
+	set name [format &quot;%s::IRCServices%s&quot; [namespace current] $conn]
+
+	namespace eval ${name} {
+		variable sock
+		variable dispatch
+		variable linedata
+		variable config
+		variable UID_DB
+		variable [namespace current]::UID_LAST_INSERT
+		variable botn 0
+		variable sid &quot;&quot;
+
+		set sock			{}
+		array set dispatch	{}
+		array set linedata	{}
+		set UID_LAST_INSERT	{}
+		array set config	[array get ::IRCServices::config]
+		if { ${config(logger)} || $config(debug) } {
+			variable logger
+			set logger [logger::init [namespace tail [namespace current]]]
+			if { !$config(debug) } { ${logger}::disable debug }
+		}
+		<strong><a name="TLSSocketCallBack_139">proc <a href="ircservices.tcl-annot.html#TLSSocketCallBack">TLSSocketCallBack</a></a></strong><a name="TLSSocketCallBack"></a> { level args } {
+			set SOCKET_NAME	[lindex $args 0]
+			set type		[lindex $args 1]
+			set socketid	[lindex $args 2]
+			set what		[lrange $args 3 end]
+			<a name="cmd-log(1)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> debug &quot;Socket '${SOCKET_NAME}' callback ${type}: ${what}&quot;
+			if { [string match -nocase &quot;*certificate*verify*failed*&quot; ${what}] } {
+				<a name="cmd-log(2)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> error &quot;IRCServices Socket erreur: Vous essayez de vous connecter a un serveur TLS auto-signé. (${what}) [tls::status ${socketid}]&quot;
+			}
+			if { [string match -nocase &quot;*wrong*version*number*&quot; ${what}] } {
+				<a name="cmd-log(3)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> error &quot;IRCServices Socket erreur: Vous essayez sans doute de connecter en SSL sur un port Non-SSL. (${what})&quot;
+			}
+		}
+
+		<font color="#208020"># send --</font>
+		<font color="#208020"># send text to the IRC server</font>
+
+		<strong><a name="send_156">proc <a href="ircservices.tcl-annot.html#send">send</a></a></strong><a name="send"></a> { <a name="msg(1)"><a href="./ircservices.tcl.html#msg_589">msg</a></a> } {
+			variable sock
+			variable dispatch
+			if { ${sock}  eq &quot;&quot; } { return }
+			<a name="cmd-log(4)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> debug &quot;send: '$msg'&quot;
+			if { [catch {puts ${sock}  $msg} err] } {
+				catch { close ${sock}  }
+				set sock {}
+				if { [info exists dispatch(EOF)] } {
+					eval $dispatch(EOF)
+				}
+				<a name="cmd-log(5)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> error &quot;Error in send: $err&quot;
+			}
+		}
+
+		<strong><a name="UID_GET_171">proc <a href="ircservices.tcl-annot.html#UID_GET">UID_GET</a></a></strong><a name="UID_GET"></a> { user } {
+			variable config
+			variable [namespace current]::UID_DB
+			variable [namespace current]::UID_LAST_INSERT
+			variable sid
+			if { [<a name="UID_EXIST(1)"><a href="./ircservices.tcl.html#UID_EXIST_197">UID_EXIST</a></a> $user] } {
+				return &quot;$UID_DB([string toupper $user])&quot;
+			} else {
+				if { $UID_LAST_INSERT == &quot;&quot; } {
+					set UID_LAST_INSERT		&quot;${<a name="sid(1)"><a href="./ircservices.tcl.html#sid_616">sid</a></a>}AAAAAA&quot;
+					return $UID_LAST_INSERT
+				}
+				set UID_NOW							[::IRCServices::incrementChar $UID_LAST_INSERT]
+				set UID_LAST_INSERT					$UID_NOW
+				set UID_DB([string toupper $user])	$UID_NOW
+				return $UID_NOW
+			}
+		}
+		<strong><a name="UID_CONVERT_189">proc <a href="ircservices.tcl-annot.html#UID_CONVERT">UID_CONVERT</a></a></strong><a name="UID_CONVERT"></a> { ID } {
+			variable [namespace current]::UID_DB
+			if { [info exists UID_DB([string toupper $ID])] } {
+				return &quot;$UID_DB([string toupper $ID])&quot;
+			} else {
+				return $ID
+			}
+		}
+		<strong><a name="UID_EXIST_197">proc <a href="ircservices.tcl-annot.html#UID_EXIST">UID_EXIST</a></a></strong><a name="UID_EXIST"></a> { CIBLE } {
+			variable config
+			variable [namespace current]::UID_DB
+			if { [info exists UID_DB([string toupper $CIBLE])]} {
+				return 1
+			} else {
+				return 0
+			}
+		}
+
+		<font color="#208020">#########################################################</font>
+		<font color="#208020"># Implemented user-side commands, meaning that these commands</font>
+		<font color="#208020"># cause the calling user to perform the given action.</font>
+		<font color="#208020">#########################################################</font>
+
+
+		<font color="#208020"># cmd-config --</font>
+		<font color="#208020">#</font>
+		<font color="#208020"># Set or return per-connection configuration options.</font>
+		<font color="#208020">#</font>
+		<font color="#208020"># Arguments:</font>
+		<font color="#208020">#</font>
+		<font color="#208020"># key	name of the configuration option to change.</font>
+		<font color="#208020">#</font>
+		<font color="#208020"># value	value (optional) of the configuration option.</font>
+
+		<strong><a name="cmd-config_223">proc <a href="ircservices.tcl-annot.html#cmd-config">cmd-config</a></a></strong><a name="cmd-config"></a> { args } {
+			variable config
+			variable logger
+
+			if { [llength $args] == 0 } {
+				return [array get config]
+			} elseif { [llength $args] == 1 } {
+				set key [lindex $args 0]
+				return $config($key)
+			} elseif { [llength $args] &gt; 2 } {
+				error &quot;wrong # args: should be \&quot;config key ?val?\&quot;&quot;
+			}
+			set key		[lindex $args 0]
+			set value	[lindex $args 1]
+			if { $key eq &quot;debug&quot; } {
+				if {$value} {
+					if { !${config(logger)} } { <a name="cmd-config(1)"><a href="./ircservices.tcl.html#cmd-config_223">cmd-config</a></a> logger 1 }
+					${logger}::enable debug
+				} elseif { [info exists logger] } {
+					${logger}::disable debug
+				}
+			}
+			if { $key eq &quot;logger&quot; } {
+				if { $value &amp;&amp; !${config(logger)}} {
+					set logger [logger::init [namespace tail [namespace current]]]
+				} elseif { [info exists logger] } {
+					${logger}::delete
+					unset logger
+				}
+			}
+			set config($key) $value
+		}
+
+		<strong><a name="cmd-log_256">proc <a href="ircservices.tcl-annot.html#cmd-log">cmd-log</a></a></strong><a name="cmd-log"></a> {level text} {
+			variable logger
+			if { ![info exists logger] } return
+			${logger}::$level $text
+		}
+
+		<strong><a name="cmd-logname_262">proc <a href="ircservices.tcl-annot.html#cmd-logname">cmd-logname</a></a></strong><a name="cmd-logname"></a> { } {
+			variable logger
+			if { ![info exists logger] } return
+			return $logger
+		}
+
+
+		<font color="#208020"># cmd-destroy --</font>
+		<font color="#208020">#</font>
+		<font color="#208020"># destroys the current connection and its namespace</font>
+
+		<strong><a name="cmd-destroy_273">proc <a href="ircservices.tcl-annot.html#cmd-destroy">cmd-destroy</a></a></strong><a name="cmd-destroy"></a> { } {
+			variable logger
+			variable sock
+			if { [info exists logger] } { ${logger}::delete }
+			catch { close ${sock} }
+			namespace delete [namespace current]
+		}
+
+		<strong><a name="cmd-connected_281">proc <a href="ircservices.tcl-annot.html#cmd-connected">cmd-connected</a></a></strong><a name="cmd-connected"></a> { } {
+			variable sock
+			if { ${sock} eq &quot;&quot; } { return 0 }
+			return 1
+		}
+
+		<strong><a name="cmd-user_287">proc <a href="ircservices.tcl-annot.html#cmd-user">cmd-user</a></a></strong><a name="cmd-user"></a> { username hostname servername {userinfo &quot;&quot;} } {
+			if { ${userinfo} eq &quot;&quot; } {
+				<a name="send(1)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;USER ${username} ${hostname} server :${servername}&quot;
+			} else {
+				<a name="send(2)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;USER ${username} ${hostname} ${servername} :${userinfo}&quot;
+			}
+		}
+
+
+		<strong><a name="cmd-ping_296">proc <a href="ircservices.tcl-annot.html#cmd-ping">cmd-ping</a></a></strong><a name="cmd-ping"></a> { <a name="target(1)"><a href="./ircservices.tcl.html#target_628">target</a></a> } {
+			<a name="send(3)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PRIVMSG ${<a name="target(2)"><a href="./ircservices.tcl.html#target_628">target</a></a>} :\001PING [clock seconds]\001&quot;
+		}
+
+		<strong><a name="cmd-serverping_300">proc <a href="ircservices.tcl-annot.html#cmd-serverping">cmd-serverping</a></a></strong><a name="cmd-serverping"></a> { } {
+			<a name="send(4)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PING [clock seconds]&quot;
+		}
+
+		<strong><a name="cmd-ctcp_304">proc <a href="ircservices.tcl-annot.html#cmd-ctcp">cmd-ctcp</a></a></strong><a name="cmd-ctcp"></a> { <a name="target(3)"><a href="./ircservices.tcl.html#target_628">target</a></a> line } {
+			<a name="send(5)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PRIVMSG $target :\001$line\001&quot;
+		}
+
+		<strong><a name="cmd-quit_308">proc <a href="ircservices.tcl-annot.html#cmd-quit">cmd-quit</a></a></strong><a name="cmd-quit"></a> { {<a name="msg(2)"><a href="./ircservices.tcl.html#msg_589">msg</a></a> {tcl irc services module - github.com/ZarTek-Creole/TCL-PKG-IRCServices}} } {
+			<a name="send(6)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;QUIT :$msg&quot;
+		}
+
+		<strong><a name="cmd-notice_312">proc <a href="ircservices.tcl-annot.html#cmd-notice">cmd-notice</a></a></strong> { <a name="target(4)"><a href="./ircservices.tcl.html#target_628">target</a></a> msg } {
+			<a name="send(7)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;NOTICE $target :$msg&quot;
+		}
+
+		<strong><a name="cmd-kick_316">proc <a href="ircservices.tcl-annot.html#cmd-kick">cmd-kick</a></a></strong><a name="cmd-kick"></a> { chan target {<a name="msg(3)"><a href="./ircservices.tcl.html#msg_589">msg</a></a> {}} } {
+			<a name="send(8)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;KICK $chan $target :$msg&quot;
+		}
+
+		<strong><a name="cmd-mode_320">proc <a href="ircservices.tcl-annot.html#cmd-mode">cmd-mode</a></a></strong> { DEST {MODE &quot;&quot;} {CIBLE &quot;&quot;} } {
+			variable sid
+			<a name="send(9)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;:$sid MODE $DEST $MODE $CIBLE&quot;
+		}
+
+		<strong><a name="cmd-topic_325">proc <a href="ircservices.tcl-annot.html#cmd-topic">cmd-topic</a></a></strong><a name="cmd-topic"></a> { chan msg } {
+			<a name="send(10)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;TOPIC $chan :$msg&quot;
+		}
+
+		<strong><a name="cmd-vusercreate_329">proc <a href="ircservices.tcl-annot.html#cmd-vusercreate">cmd-vusercreate</a></a></strong><a name="cmd-vusercreate"></a> { usernick username {userhost {localhost}} {usergecos {Package TCL IRCServices}} {usermodes {+qioS}} } {
+			variable sid
+			if { [<a name="UID_EXIST(2)"><a href="./ircservices.tcl.html#UID_EXIST_197">UID_EXIST</a></a> $usernick] } {
+				set usernick ${usernick}_2
+				set username ${username}2
+			}
+			set VU_UID		[<a name="UID_GET(1)"><a href="./ircservices.tcl.html#UID_GET_171">UID_GET</a></a> $usernick]
+			<a name="send(11)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;:$sid UID $usernick 1 [clock seconds] $username $userhost $VU_UID * $usermodes * * * :$usergecos&quot;
+			return $VU_UID
+		}
+
+		<strong><a name="cmd-invite_340">proc <a href="ircservices.tcl-annot.html#cmd-invite">cmd-invite</a></a></strong><a name="cmd-invite"></a> { chan target } {
+			<a name="send(12)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;INVITE $target $chan&quot;
+		}
+
+		<strong><a name="cmd-send_344">proc <a href="ircservices.tcl-annot.html#cmd-send">cmd-send</a></a></strong> { line } {
+			<a name="send(13)"><a href="./ircservices.tcl.html#send_156">send</a></a> $line
+		}
+
+		<strong><a name="cmd-peername_348">proc <a href="ircservices.tcl-annot.html#cmd-peername">cmd-peername</a></a></strong><a name="cmd-peername"></a> { } {
+			variable sock
+			if { ${sock} eq &quot;&quot; } { return {} }
+			return [fconfigure ${sock} -peername]
+		}
+
+		<strong><a name="cmd-sockname_354">proc <a href="ircservices.tcl-annot.html#cmd-sockname">cmd-sockname</a></a></strong><a name="cmd-sockname"></a> { } {
+			variable sock
+			if { ${sock} eq &quot;&quot; } { return {} }
+			return [fconfigure ${sock} -sockname]
+		}
+
+		<strong><a name="cmd-socket_360">proc <a href="ircservices.tcl-annot.html#cmd-socket">cmd-socket</a></a></strong><a name="cmd-socket"></a> { } {
+			variable sock
+			return ${sock}
+		}
+
+
+		<strong><a name="cmd-disconnect_366">proc <a href="ircservices.tcl-annot.html#cmd-disconnect">cmd-disconnect</a></a></strong><a name="cmd-disconnect"></a> { } {
+			variable sock
+			if { ${sock} eq &quot;&quot; } { return -1 }
+			catch { close ${sock} }
+			set sock {}
+			return 0
+		}
+
+		<font color="#208020"># Connect --</font>
+		<font color="#208020"># Create the actual tcp connection.</font>
+
+		<strong><a name="cmd-connect_377">proc <a href="ircservices.tcl-annot.html#cmd-connect">cmd-connect</a></a></strong><a name="cmd-connect"></a> { hostname port password {ts6 1} {name eva.info} {id 00R}} {
+			variable sock
+			variable host
+			variable s_port
+			variable pass
+			variable sname
+			variable sid
+			variable ::IRCServices::PKG
+
+			set host	$hostname
+			set s_port	$port
+			set pass	$password
+			set sname	$name
+			set sid		$id
+
+			if { [string range $s_port 0 0] == &quot;+&quot; } {
+				set secure	1;
+				set port	[string range $s_port 1 end]
+			} else {
+				set secure	0;
+				set port	$s_port
+			}
+			if { $secure == 1 } {
+				if { [catch { package require tls ${PKG(need_tls)} }] } {
+					die &quot;\[${PKG(name)} - Erreur\] Nécessite le package tls ${PKG(need_tls)} (ou plus) pour fonctionner, Télécharger sur 'https://core.tcl-lang.org/tcltls/index'. Le chargement du package a été annulé.&quot; ;
+				}
+				set socket_binary &quot;::tls::socket -require 0 -request 0 -command \&quot;[namespace current]::TLSSocketCallBack ${sock}\&quot;&quot;
+			} else {
+				set socket_binary ::socket
+			}
+			if { ${sock} eq &quot;&quot; } {
+				if { [catch {
+					set sock [{*}${socket_binary} $host $port]
+					} err] } { die &quot;\[${PKG(name)} - Erreur\] Impossible de ce connecter sur $host:$port: $err&quot; }
+					fconfigure ${sock}  -translation crlf -buffering line
+					fileevent ${sock} readable [namespace current]::GetEvent
+					if { $ts6 } {
+						<a name="send(14)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PASS :$pass&quot;
+						<a name="send(15)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PROTOCTL NICKv2 VHP UMODE2 NICKIP SJOIN SJOIN2 SJ3 NOQUIT TKLEXT MLOCK SID&quot;
+						<a name="send(16)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PROTOCTL EAUTH=$sname,,,IRCService-${PKG(version)}&quot;
+						<a name="send(17)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PROTOCTL SID=$sid&quot;
+						<a name="send(18)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;:$sid SERVER $sname 1 :Services for IRC Networks&quot;
+						<a name="send(19)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;EOS&quot;
+					} else {
+						<a name="send(20)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;PASS $pass&quot;
+						<a name="send(21)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;SERVER $sname 1 :Services for IRC Networks&quot;
+						<a name="send(22)"><a href="./ircservices.tcl.html#send_156">send</a></a> &quot;EOS&quot;
+						<font color="#208020">#	send &quot;:$sname NICK $config(service_nick) 1 [clock seconds] $config(service_user) $config(service_host) $sname :$config(service_gecos)&quot;</font>
+					}
+				}
+				return 1
+			}
+
+			<strong><a name="cmd-bot_430">proc <a href="ircservices.tcl-annot.html#cmd-bot">cmd-bot</a></a></strong><a name="cmd-bot"></a> { args } {
+				variable botn
+				variable config
+				variable [namespace current]::UID_DB
+				variable sid
+				<font color="#208020"># Create a unique namespace of the form irc$botn::$host</font>
+				<font color="#208020"># ::IRCServices::IRCServices0::IRCServices0::bot</font>
+
+				set name [format &quot;%s::b%s&quot; [namespace current] $botn]
+
+				namespace eval $name {
+					variable sock
+					variable dispatch
+					variable linedata
+					variable config
+					variable [namespace parent]::sid
+					set sock			{}
+					array set dispatch	{}
+					array set linedata	{}
+					set UID_LAST_INSERT	{}
+					array set config	[array get ::IRCServices::config]
+
+					<strong><a name="cmd-create_452">proc <a href="ircservices.tcl-annot.html#cmd-create">cmd-create</a></a></strong><a name="cmd-create"></a> { botnick botident bothost {botgecos {Package TCL IRCServices}} {botmodes {+qioS}} } {
+						<font color="#208020"># $bn1 connect ClaraServ identserv MyHost.be; # Creation d'un bot service ClaraServ</font>
+						variable bnick
+						variable ident
+						variable host
+						variable config
+						variable sid
+						variable bid
+
+
+						set bnick	$botnick
+						set ident	$botident
+						set host	$bothost
+						set bid		[[namespace parent]::UID_GET $bnick]
+						set sid		[set [namespace parent]::sid]
+						[namespace parent]::send &quot;:$sid SQLINE $bnick :Reserved for services&quot;
+						[namespace parent]::send &quot;:$sid UID $bnick 1 [clock seconds] $ident $host $bid * $botmodes * * * :$botgecos&quot;
+						return 0
+					}
+					<strong><a name="cmd-privmsg_471">proc <a href="ircservices.tcl-annot.html#cmd-privmsg">cmd-privmsg</a></a></strong><a name="cmd-privmsg"></a> { <a name="target(5)"><a href="./ircservices.tcl.html#target_628">target</a></a> msg } {
+						variable bid
+						[namespace parent]::send &quot;:$bid PRIVMSG $target :$msg&quot;
+					}
+					<strong><a name="cmd-notice_475">proc <a href="ircservices.tcl-annot.html#cmd-notice">cmd-notice</a></a></strong><a name="cmd-notice"></a> { <a name="target(6)"><a href="./ircservices.tcl.html#target_628">target</a></a> msg } {
+						variable bid
+						[namespace parent]::send &quot;:$bid NOTICE $target :$msg&quot;
+					}
+					<strong><a name="cmd-join_479">proc <a href="ircservices.tcl-annot.html#cmd-join">cmd-join</a></a></strong><a name="cmd-join"></a> { chan } {
+						variable sid
+						variable bid
+						[namespace parent]::send &quot;:$sid SJOIN [clock seconds] $chan + :$bid&quot;
+					}
+					<strong><a name="cmd-part_484">proc <a href="ircservices.tcl-annot.html#cmd-part">cmd-part</a></a></strong><a name="cmd-part"></a> { chan {<a name="msg(4)"><a href="./ircservices.tcl.html#msg_589">msg</a></a> &quot;&quot;} } {
+						variable bid
+						if { $msg eq &quot;&quot; } {
+							[namespace parent]::send &quot;:$bid PART $chan&quot;
+						} else {
+							[namespace parent]::send &quot;:$bid PART $chan :$msg&quot;
+						}
+					}
+					<strong><a name="cmd-mode_492">proc <a href="ircservices.tcl-annot.html#cmd-mode">cmd-mode</a></a></strong><a name="cmd-mode"></a> { DEST {MODE &quot;&quot;} {CIBLE &quot;&quot;} } {
+						variable bid
+						[namespace parent]::send &quot;:$bid MODE $DEST $MODE $CIBLE&quot;
+					}
+					<strong><a name="cmd-send_496">proc <a href="ircservices.tcl-annot.html#cmd-send">cmd-send</a></a></strong><a name="cmd-send"></a> { line } {
+						[namespace parent]::send $line
+					}
+					<strong><a name="cmd-mesend_499">proc <a href="ircservices.tcl-annot.html#cmd-mesend">cmd-mesend</a></a></strong><a name="cmd-mesend"></a> { line } {
+						variable bid
+						[namespace parent]::send &quot;:$bid $line&quot;
+					}
+					<font color="#208020"># registerevent --</font>
+
+					<font color="#208020"># Register an event in the dispatch table.</font>
+
+					<font color="#208020"># Arguments:</font>
+					<font color="#208020"># evnt: name of event as sent by IRC server.</font>
+					<font color="#208020"># cmd: proc to register as the event handler</font>
+
+					<strong><a name="cmd-registerevent_511">proc <a href="ircservices.tcl-annot.html#cmd-registerevent">cmd-registerevent</a></a></strong> { evnt cmd } {
+						variable dispatch
+						set dispatch($evnt) $cmd
+						if { $cmd eq &quot;&quot; } {
+							unset dispatch($evnt)
+						}
+					}
+
+					<font color="#208020"># getevent --</font>
+
+					<font color="#208020"># Return the currently registered handler for the event.</font>
+
+					<font color="#208020"># Arguments:</font>
+					<font color="#208020"># evnt: name of event as sent by IRC server.</font>
+
+					<strong><a name="cmd-getevent_526">proc <a href="ircservices.tcl-annot.html#cmd-getevent">cmd-getevent</a></a></strong> { evnt } {
+						variable dispatch
+						if { [info exists dispatch($evnt)] } {
+							return $dispatch($evnt)
+						}
+						return {}
+					}
+
+					<font color="#208020"># eventexists --</font>
+
+					<font color="#208020"># Return a boolean value indicating if there is a handler</font>
+					<font color="#208020"># registered for the event.</font>
+
+					<font color="#208020"># Arguments:</font>
+					<font color="#208020"># evnt: name of event as sent by IRC server.</font>
+
+					<strong><a name="cmd-eventexists_542">proc <a href="ircservices.tcl-annot.html#cmd-eventexists">cmd-eventexists</a></a></strong> { evnt } {
+						variable dispatch
+						return [info exists dispatch($evnt)]
+					}
+					<strong><a name="bot_546">proc <a href="ircservices.tcl-annot.html#bot">bot</a></a></strong><a name="bot"></a> { cmd args } {
+						if { [info proc [namespace current]::cmd-$cmd] == &quot;&quot; } {
+							return &quot;sub-cmd inconnu. List: [join [string map [list &quot;[namespace current]::cmd-&quot; &quot;&quot;] [info proc [namespace current]::cmd-*]] &quot;, &quot;]&quot;
+						} else {
+							eval [linsert $args 0 [namespace current]::cmd-$cmd]
+						}
+					}
+
+					<font color="#208020"># Create default handlers.</font>
+
+					set dispatch(PING)				{<a name="network(1)"><a href="./ircservices.tcl.html#network_805">network</a></a> send &quot;PONG :[<a name="msg(5)"><a href="./ircservices.tcl.html#msg_589">msg</a></a>]&quot;}
+					set dispatch(defaultevent)		#
+					set dispatch(defaultcmd)		#
+					set dispatch(defaultnumeric)	#
+				}
+
+
+				set returncommand [format &quot;%s::b%s::bot&quot; [namespace current] $botn]
+				incr botn
+				return ${returncommand}
+			}
+
+			<font color="#208020"># Callback API:</font>
+
+			<font color="#208020"># These are all available from within callbacks, so as to</font>
+			<font color="#208020"># provide an interface to provide some information on what is</font>
+			<font color="#208020"># coming out of the server.</font>
+
+			<font color="#208020"># action --</font>
+
+			<font color="#208020"># Action returns the action performed, such as KICK, PRIVMSG,</font>
+			<font color="#208020"># MODE etc, including numeric actions such as 001, 252, 353,</font>
+			<font color="#208020"># and so forth.</font>
+
+			<strong><a name="action_580">proc <a href="ircservices.tcl-annot.html#action">action</a></a></strong><a name="action"></a> { } {
+				variable linedata
+				return $linedata(action)
+			}
+
+			<font color="#208020"># msg --</font>
+
+			<font color="#208020"># The last argument of the line, after the last ':'.</font>
+
+			<strong><a name="msg_589">proc <a href="ircservices.tcl-annot.html#msg">msg</a></a></strong><a name="msg"></a> { } {
+				variable linedata
+				return $linedata(msg)
+			}
+
+			<font color="#208020"># who --</font>
+
+			<font color="#208020"># Who performed the action.  If the command is called as [who address],</font>
+			<font color="#208020"># it returns the information in the form</font>
+			<font color="#208020"># nick!ident@host.domain.net</font>
+
+			<strong><a name="who_600">proc <a href="ircservices.tcl-annot.html#who">who</a></a></strong><a name="who"></a> { {address 0} } {
+				variable linedata
+				if { $address == 0 } {
+					return [lindex [split $linedata(who) !] 0]
+				} else {
+					return $linedata(who)
+				}
+			}
+			<strong><a name="who2_608">proc <a href="ircservices.tcl-annot.html#who2">who2</a></a></strong><a name="who2"></a> { {address 0} } {
+				variable linedata
+				if { $address == 0 } {
+					return [lindex [split $linedata(who2) !] 0]
+				} else {
+					return $linedata(who2)
+				}
+			}
+			<strong><a name="sid_616">proc <a href="ircservices.tcl-annot.html#sid">sid</a></a></strong><a name="sid"></a> { } {
+				variable linedata
+				return $linedata(sid)
+			}
+			<strong><a name="bid_620">proc <a href="ircservices.tcl-annot.html#bid">bid</a></a></strong><a name="bid"></a> { } {
+				variable linedata
+				return $linedata(bid)
+			}
+			<font color="#208020"># target --</font>
+
+			<font color="#208020"># To whom was this action done.</font>
+
+			<strong><a name="target_628">proc <a href="ircservices.tcl-annot.html#target">target</a></a></strong><a name="target"></a> { } {
+				variable linedata
+				return $linedata(target)
+			}
+
+			<strong><a name="target2_633">proc <a href="ircservices.tcl-annot.html#target2">target2</a></a></strong><a name="target2"></a> { } {
+				variable linedata
+				return $linedata(target2)
+			}
+
+			<font color="#208020"># additional --</font>
+
+			<font color="#208020"># Returns any additional header elements beyond the target as a list.</font>
+
+			<strong><a name="additional_642">proc <a href="ircservices.tcl-annot.html#additional">additional</a></a></strong><a name="additional"></a> { } {
+				variable linedata
+				return $linedata(additional)
+			}
+
+			<strong><a name="rawline_647">proc <a href="ircservices.tcl-annot.html#rawline">rawline</a></a></strong><a name="rawline"></a> { } {
+				variable linedata
+				return $linedata(rawline)
+			}
+
+			<font color="#208020"># header --</font>
+
+			<font color="#208020"># Returns the entire header in list format.</font>
+
+			<strong><a name="header_656">proc <a href="ircservices.tcl-annot.html#header">header</a></a></strong><a name="header"></a> { } {
+				variable linedata
+				return [concat [list $linedata(who) $linedata(action) \
+					$linedata(target)] $linedata(additional)]
+			}
+
+			<strong><a name="GetError_662">proc <a href="ircservices.tcl-annot.html#GetError">GetError</a></a></strong><a name="GetError"></a> { Message } {
+				set RE_Closing	{ERROR\s:Closing\sLink:\s([^\[]+)\[([^\]]+)\]\s\((.*)\)}
+				set DIE &quot;&quot;
+				<font color="#208020"># connexion du services fermer par le serveur</font>
+				if { [regexp -nocase ${RE_Closing} ${Message} match hostname ip raison] } {
+					if {[string match -nocase &quot;*Authentication*failed*&quot; ${raison}]} {
+						set DIE	&quot;Authentification du service '${hostname}' à échoué (mot de passe?)&quot;
+					} elseif {[string match -nocase &quot;*SID*collision*&quot; ${raison}]} {
+						set DIE	&quot;Le SID (Server ID) est déjà utiliser. Choisissez un autre.&quot;
+					}
+
+				}
+				if { ${DIE} != &quot;&quot;} { die &quot;\[Error - IRCServices\] ${DIE}&quot; }
+
+			}
+
+			<font color="#208020"># GetEvent --</font>
+
+			<font color="#208020"># Get a line from the server and dispatch it.</font>
+			<strong><a name="GetEvent_681">proc <a href="ircservices.tcl-annot.html#GetEvent">GetEvent</a></a></strong><a name="GetEvent"></a> { } {
+				variable linedata
+				variable sock
+				variable dispatch
+				variable [namespace current]::UID_DB
+				array set linedata	{}
+				set line &quot;eof&quot;
+				if { [eof ${sock}] || [catch {gets ${sock} } line] } {
+					close ${sock}
+					set sock		{}
+					<a name="cmd-log(6)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> error &quot;Error receiving from network: $line&quot;
+					if { [info exists dispatch(EOF)] } {
+						eval $dispatch(EOF)
+					}
+					die &quot;Error IRCServices: perte de la connexion au serveur&quot;
+					return
+				}
+				set line [string map { &quot;\{&quot; &quot;\\\{&quot; &quot;\}&quot; &quot;\\\}&quot;} $line]
+				<a name="cmd-log(7)"><a href="./ircservices.tcl.html#cmd-log_256">cmd-log</a></a> debug &quot;Recieved: $line&quot;
+				if { [string match -nocase &quot;error*&quot; [lindex $line 0]] } { <a name="GetError(1)"><a href="./ircservices.tcl.html#GetError_662">GetError</a></a> $line }
+				if { [set pos [string first &quot; :&quot; $line]] &gt; -1 } {
+					set header				[string range $line 0 [expr {$pos - 1}]]
+					set linedata(msg)		[string range $line [expr {$pos + 2}] end]
+
+				} else {
+					set header [string trim $line]
+					set linedata(msg)		{}
+
+				}
+				if { [string match :* $header] } {
+					set header				[split [string trimleft $header :]]
+				} else {
+					set header				[linsert [split $header] 0 {}]
+				}
+				set linedata(rawline)		$line
+				set linedata(who)			[lindex $header 0]
+				set linedata(who2)			[[namespace current]::UID_CONVERT $linedata(who)]
+				set linedata(action)		[lindex $header 1]
+				set linedata(target)		[lindex $header 2]
+				set linedata(target2)		[[namespace current]::UID_CONVERT $linedata(target)]
+				set linedata(additional)	[lrange $header 3 end]
+				set linedata(sid)			[namespace current]::network
+
+				foreach t [namespace children] {
+					set linedata(bid)			${t}::bot
+					if { [info exists ${t}::dispatch($linedata(action))] } {
+						catch {eval [set ${t}::dispatch($linedata(action))]}
+					} elseif { [string match {[0-9]??} ${t}::dispatch(action)] } {
+						eval [set ${t}::dispatch(defaultnumeric)]
+					} elseif { $linedata(who) eq &quot;&quot; } {
+						eval [set ${t}::dispatch(defaultcmd)]
+					} else {
+						eval [set ${t}::dispatch(defaultevent)]
+					}
+				}
+				if { [info exists dispatch($linedata(action))] } {
+					catch {eval $dispatch($linedata(action))}
+				} elseif { [string match {[0-9]??} $linedata(action)] } {
+					eval $dispatch(defaultnumeric)
+				} elseif { $linedata(who) eq &quot;&quot; } {
+					eval $dispatch(defaultcmd)
+				} else {
+					eval $dispatch(defaultevent)
+				}
+				if { [<a name="action(1)"><a href="./ircservices.tcl.html#action_580">action</a></a>] == &quot;UID&quot; } {
+					<font color="#208020"># PROTOCOL TS6 : enregistre des ID&lt;-&gt;nick en DB</font>
+					set uid				[string toupper [lindex [<a name="additional(1)"><a href="./ircservices.tcl.html#additional_642">additional</a></a>] 4]]
+					set UID_DB([string toupper [<a name="target(7)"><a href="./ircservices.tcl.html#target_628">target</a></a>]])	$uid
+					set UID_DB([string toupper $uid])		[<a name="target(8)"><a href="./ircservices.tcl.html#target_628">target</a></a>]
+				}
+			}
+
+			<font color="#208020"># registerevent --</font>
+
+			<font color="#208020"># Register an event in the dispatch table.</font>
+
+			<font color="#208020"># Arguments:</font>
+			<font color="#208020"># evnt: name of event as sent by IRC server.</font>
+			<font color="#208020"># cmd: proc to register as the event handler</font>
+
+			<strong><a name="cmd-registerevent_761">proc <a href="ircservices.tcl-annot.html#cmd-registerevent">cmd-registerevent</a></a></strong><a name="cmd-registerevent"></a> { evnt cmd } {
+				variable dispatch
+				set dispatch($evnt) $cmd
+				if { $cmd eq &quot;&quot; } {
+					unset dispatch($evnt)
+				}
+			}
+
+			<font color="#208020"># getevent --</font>
+
+			<font color="#208020"># Return the currently registered handler for the event.</font>
+
+			<font color="#208020"># Arguments:</font>
+			<font color="#208020"># evnt: name of event as sent by IRC server.</font>
+
+			<strong><a name="cmd-getevent_776">proc <a href="ircservices.tcl-annot.html#cmd-getevent">cmd-getevent</a></a></strong><a name="cmd-getevent"></a> { evnt } {
+				variable dispatch
+				if { [info exists dispatch($evnt)] } {
+					return $dispatch($evnt)
+				}
+				return {}
+			}
+
+			<font color="#208020"># eventexists --</font>
+
+			<font color="#208020"># Return a boolean value indicating if there is a handler</font>
+			<font color="#208020"># registered for the event.</font>
+
+			<font color="#208020"># Arguments:</font>
+			<font color="#208020"># evnt: name of event as sent by IRC server.</font>
+
+			<strong><a name="cmd-eventexists_792">proc <a href="ircservices.tcl-annot.html#cmd-eventexists">cmd-eventexists</a></a></strong><a name="cmd-eventexists"></a> { evnt } {
+				variable dispatch
+				return [info exists dispatch($evnt)]
+			}
+
+			<font color="#208020"># network --</font>
+
+			<font color="#208020"># Accepts user commands and dispatches them.</font>
+
+			<font color="#208020"># Arguments:</font>
+			<font color="#208020"># cmd: command to invoke</font>
+			<font color="#208020"># args: arguments to the command</font>
+
+			<strong><a name="network_805">proc <a href="ircservices.tcl-annot.html#network">network</a></a></strong><a name="network"></a> { cmd args } {
+				if { [info proc [namespace current]::cmd-$cmd] == &quot;&quot; } {
+					return &quot;sub-cmd inconnu. List: [join [string map [list &quot;[namespace current]::cmd-&quot; &quot;&quot;] [info proc [namespace current]::cmd-*]] &quot;, &quot;]&quot;
+				} else {
+					eval [linsert $args 0 [namespace current]::cmd-$cmd]
+				}
+			}
+
+			<font color="#208020"># Create default handlers.</font>
+
+			set dispatch(PING) {<a name="network(2)"><a href="./ircservices.tcl.html#network_805">network</a></a> send &quot;PONG :[<a name="msg(6)"><a href="./ircservices.tcl.html#msg_589">msg</a></a>]&quot;}
+			set dispatch(defaultevent) #
+			set dispatch(defaultcmd) #
+			set dispatch(defaultnumeric) #
+		}
+
+
+		set returncommand [format &quot;%s::IRCServices%s::network&quot; [namespace current] $conn]
+		incr conn
+		return $returncommand
+	}
+
+	<font color="#208020"># -------------------------------------------------------------------------</font>
+
+	package provide IRCServices ${::IRCServices::PKG(version)}
+	<font color="#208020"># -------------------------------------------------------------------------</font>
+	return
+</pre>
+<hr>
+<font size="-2">
+Index by:  <a href="index_main.html#byfilename">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a><br>
+<cite>Index generated 2022-07-24 at 08:59.</cite>
+</font>
+</body>
+</html>

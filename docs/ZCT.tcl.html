@@ -1,0 +1,142 @@
+<html>
+<head><title>ZCT.tcl</title></head>
+<body bgcolor="#ffffff">
+<font size="-2">
+Index by:  <a href="index_main.html#ZCT.tcl">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a>
+</font>
+<hr>
+<strong>ZCT.tcl</strong>
+(<a href="ZCT.tcl-annot.html">annotations</a> | <a href="ZCT.tcl.txt">original source</a>)
+<p>
+<pre>
+<font color="#208020">#############################################################################</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Auteur	:</font>
+<font color="#208020">#		-&gt; ZarTek (ZarTek.Creole@GMail.Com)</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Website	:</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Support	:</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT/issues</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Docs	:</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT/wiki</font>
+<font color="#208020">#</font>
+<font color="#208020">#   DONATE   :</font>
+<font color="#208020">#       -&gt; https://github.com/ZarTek-Creole/DONATE</font>
+<font color="#208020">#</font>
+<font color="#208020">#	LICENSE :</font>
+<font color="#208020">#		-&gt; Creative Commons Attribution 4.0 International</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT/blob/main/LICENSE.txt</font>
+<font color="#208020">#</font>
+<font color="#208020">#</font>
+<font color="#208020">#############################################################################</font>
+namespace eval ::ZCT {
+    namespace export *
+    variable PKG
+    array set PKG {
+        &quot;version&quot;		&quot;0.0.1&quot;
+        &quot;name&quot;			&quot;package ZCT&quot;
+        &quot;auteur&quot;		&quot;ZarTeK-Creole&quot;
+    }
+}
+
+namespace eval ::ZCT::pkg {
+    namespace export *
+}
+<strong><a name="::ZCT::pkg_37">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg">::ZCT::pkg</a></a></strong><a name="::ZCT::pkg"></a> { cmd args } {
+    ::ZCT::pkg::${cmd} {*}${args}
+}
+<strong><a name="::ZCT::pkg::load_40">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::load">::ZCT::pkg::load</a></a></strong><a name="::ZCT::pkg::load"></a> { PKG_NAME {PKG_VERSION &quot;&quot;} {SCRIPT_NAME &quot;&quot;} {MISSING_MODE &quot;die&quot;} } {
+    if { ${SCRIPT_NAME} == &quot;&quot; }  {
+        set ERR_PREFIX &quot;\[Erreur\] Le script nécessite du package '${PKG_NAME}'&quot;
+        set OK_PREFIX &quot;\[OK\] Le script à chargé le package '${PKG_NAME}'&quot;
+    } else {
+        set ERR_PREFIX &quot;\[Erreur\] Le script '${SCRIPT_NAME}' nécessite du package '${PKG_NAME}'&quot;
+        set OK_PREFIX &quot;\[OK\] Le script '${SCRIPT_NAME}' à chargé le package '${PKG_NAME}'&quot;
+    }
+    if { ${PKG_VERSION} == &quot;&quot; } {
+        if { [catch { set PKG_VERSION [package require ${PKG_NAME}]}] } {
+            ${MISSING_MODE} &quot;${ERR_PREFIX} pour fonctionner. [<a name="::ZCT::pkg::How_Download(1)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_59">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
+        }
+    } else {
+        if { [catch { set PKG_VERSION [package require ${PKG_NAME} ${PKG_VERSION}]}] } {
+            ${MISSING_MODE} &quot;${ERR_PREFIX} version ${PKG_VERSION} ou supérieur pour fonctionner. [<a name="::ZCT::pkg::How_Download(2)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_59">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
+        }
+    }
+    putlog &quot;${OK_PREFIX} avec la version ${PKG_VERSION} avec succès&quot;
+}
+<strong><a name="::ZCT::pkg::How_Download_59">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a></a></strong><a name="::ZCT::pkg::How_Download"></a> { PKG_NAME } {
+    switch -nocase ${PKG_NAME} {
+        Logger { return &quot;Il fait partie de la game de tcllib.\n Téléchargement sur https://www.tcl.tk/software/tcllib/&quot;}
+        Tcl { return &quot;Télécharger la derniere version sur https://www.tcl.tk/software/tcltk/&quot;}
+        default     {
+            return
+        }
+    }
+}
+
+<font color="#208020"># centre le text par des espaces par rapport a la longueur</font>
+<strong><a name="::ZCT::TXT:ESPACE:DISPLAY_70">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT:ESPACE:DISPLAY">::ZCT::TXT:ESPACE:DISPLAY</a></a></strong><a name="::ZCT::TXT:ESPACE:DISPLAY"></a> { text length } {
+    set text			[string trim $text]
+    set text_length		[string length $text];
+    set espace_length	[expr ($length - $text_length)/2.0]
+    set ESPACE_TMP		[split $espace_length .]
+    set ESPACE_ENTIER	[lindex $ESPACE_TMP 0]
+    set ESPACE_DECIMAL	[lindex $ESPACE_TMP 1]
+    if { $ESPACE_DECIMAL == 0 } {
+        set espace_one			[string repeat &quot; &quot; $ESPACE_ENTIER];
+        set espace_two			[string repeat &quot; &quot; $ESPACE_ENTIER];
+        return &quot;$espace_one$text$espace_two&quot;
+    } else {
+        set espace_one			[string repeat &quot; &quot; $ESPACE_ENTIER];
+        set espace_two			[string repeat &quot; &quot; [expr ($ESPACE_ENTIER+1)]];
+        return &quot;$espace_one$text$espace_two&quot;
+    }
+
+}
+
+<font color="#208020">###############################################################################</font>
+<font color="#208020">### Substitution des symboles couleur/gras/soulignement/...</font>
+<font color="#208020">###############################################################################</font>
+<font color="#208020"># Modification de la fonction de MenzAgitat</font>
+<font color="#208020"># &lt;cXX&gt; : Ajouter un Couleur avec le code XX : &lt;c01&gt;; &lt;c02,01&gt;</font>
+<font color="#208020"># &lt;/c&gt;  : Enlever la Couleur (refermer la deniere declaration &lt;cXX&gt;) : &lt;/c&gt;</font>
+<font color="#208020"># &lt;b&gt;   : Ajouter le style Bold/gras</font>
+<font color="#208020"># &lt;/b&gt;  : Enlever le style Bold/gras</font>
+<font color="#208020"># &lt;u&gt;   : Ajouter le style Underline/souligner</font>
+<font color="#208020"># &lt;/u&gt;  : Enlever le style Underline/souligner</font>
+<font color="#208020"># &lt;i&gt;   : Ajouter le style Italic/Italique</font>
+<font color="#208020"># &lt;s&gt;   : Enlever les styles precedent</font>
+<strong><a name="::ZCT::apply_visuals_101">proc <a href="ZCT.tcl-annot.html#::ZCT::apply_visuals">::ZCT::apply_visuals</a></a></strong><a name="::ZCT::apply_visuals"></a> { data } {
+    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${data} &quot;\003\\1&quot; data
+    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${data} &quot;\002&quot; data
+    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${data} &quot;\037&quot; data
+    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${data} &quot;\026&quot; data
+    return [regsub -all -nocase {&lt;s&gt;} $data &quot;\017&quot;]
+}
+<strong><a name="::ZCT::Remove_visuals_108">proc <a href="ZCT.tcl-annot.html#::ZCT::Remove_visuals">::ZCT::Remove_visuals</a></a></strong><a name="::ZCT::Remove_visuals"></a> { data } {
+    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${data} &quot;&quot; data
+    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${data} &quot;&quot; data
+    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${data} &quot;&quot; data
+    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${data} &quot;&quot; data
+    return [regsub -all -nocase {&lt;s&gt;} ${data} &quot;&quot;]
+}
+
+
+package provide ZCT ${::ZCT::PKG(version)}
+putlog &quot;Package ZCT version ${::ZCT::PKG(version)} par ${::ZCT::PKG(auteur)} chargé.&quot;</pre>
+<hr>
+<font size="-2">
+Index by:  <a href="index_main.html#byfilename">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a><br>
+<cite>Index generated 2022-07-24 at 08:59.</cite>
+</font>
+</body>
+</html>
