@@ -355,7 +355,7 @@ namespace eval ClaraServ {
 	if { ${config(uplink_ssl)} == 1		} { set config(uplink_port) &quot;+${config(uplink_port)}&quot; }
 	if { ${config(serverinfo_id)} != &quot;&quot;	} { set config(uplink_ts6) 1 } else { set config(uplink_ts6) 0 }
 
-	set CONNECT_ID [<a name="::IRCServices::connection(1)"><a href="./ircservices.tcl.html#::IRCServices::connection_109">::IRCServices::connection</a></a>]; <font color="#208020"># Creer une instance services</font>
+	set CONNECT_ID [<a name="::IRCServices::connection(1)"><a href="./ircservices.tcl.html#::IRCServices::connection_107">::IRCServices::connection</a></a>]; <font color="#208020"># Creer une instance services</font>
 	${CONNECT_ID} connect ${config(uplink_host)} ${config(uplink_port)} ${config(uplink_password)} ${config(uplink_ts6)} ${config(serverinfo_name)} ${config(serverinfo_id)}; <font color="#208020"># Connexion de l'instance service</font>
 	if { ${config(uplink_debug)} == 1} { ${CONNECT_ID} config logger 1; ${CONNECT_ID} config debug 1; }
 
@@ -365,9 +365,9 @@ namespace eval ClaraServ {
 	${BOT_ID} join ${config(service_channel)}
 	${BOT_ID} registerevent EOS {
 		global ::ClaraServ::config
-		[<a name="sid(1)"><a href="./ircservices.tcl.html#sid_616">sid</a></a>] mode ${config(service_channel)} ${config(service_chanmodes)}
+		[<a name="sid(1)"><a href="./ircservices.tcl.html#sid_620">sid</a></a>] mode ${config(service_channel)} ${config(service_chanmodes)}
 		if { ${config(service_usermodes)} != &quot;&quot; } {
-			[<a name="sid(2)"><a href="./ircservices.tcl.html#sid_616">sid</a></a>] mode ${config(service_channel)} ${config(service_usermodes)} ${config(service_nick)}
+			[<a name="sid(2)"><a href="./ircservices.tcl.html#sid_620">sid</a></a>] mode ${config(service_channel)} ${config(service_usermodes)} ${config(service_nick)}
 		}
 		set fichier(salon) &quot;[<a name="::ClaraServ::FCT::Get:ScriptDir(18)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::Get:ScriptDir_172">::ClaraServ::FCT::Get:ScriptDir</a></a> &quot;db&quot;]/salon.db&quot;
 		set fp	[open ${fichier(salon)} &quot;r&quot;]
@@ -376,9 +376,9 @@ namespace eval ClaraServ {
 			set data	[gets ${fp}]
 			incr fc
 			if { ${data} !=&quot;&quot; } {
-				[<a name="bid(1)"><a href="./ircservices.tcl.html#bid_620">bid</a></a>] join ${data}
+				[<a name="bid(1)"><a href="./ircservices.tcl.html#bid_624">bid</a></a>] join ${data}
 				if { ${config(service_usermodes)} != &quot;&quot; } {
-					[<a name="sid(3)"><a href="./ircservices.tcl.html#sid_616">sid</a></a>] mode ${data} ${config(service_usermodes)} ${config(service_nick)}
+					[<a name="sid(3)"><a href="./ircservices.tcl.html#sid_620">sid</a></a>] mode ${data} ${config(service_usermodes)} ${config(service_nick)}
 				}
 			}
 			unset data
@@ -387,24 +387,24 @@ namespace eval ClaraServ {
 
 	}
 	${BOT_ID} registerevent PRIVMSG {
-		set cmd		[lindex [<a name="msg(1)"><a href="./ircservices.tcl.html#msg_589">msg</a></a>] 0]
-		set data	[lrange [<a name="msg(2)"><a href="./ircservices.tcl.html#msg_589">msg</a></a>] 1 end]
+		set cmd		[lindex [<a name="msg(1)"><a href="./ircservices.tcl.html#msg_593">msg</a></a>] 0]
+		set data	[lrange [<a name="msg(2)"><a href="./ircservices.tcl.html#msg_593">msg</a></a>] 1 end]
 		<font color="#208020">##########################</font>
 		<font color="#208020">#--&gt; Commandes Privés &lt;--#</font>
 		<font color="#208020">##########################</font>
 		<font color="#208020"># si [target] ne commence pas par # c'est un pseudo</font>
-		if { [string index [<a name="target(1)"><a href="./ircservices.tcl.html#target_628">target</a></a>] 0] != &quot;#&quot;} {
+		if { [string index [<a name="target(1)"><a href="./ircservices.tcl.html#target_632">target</a></a>] 0] != &quot;#&quot;} {
 			if { ${cmd} == &quot;join&quot;		}	{
 				<font color="#208020"># [22:50:42] Received: :001119S0G PRIVMSG 00CAAAAAB :join</font>
-				<a name="::ClaraServ::IRC:CMD:PRIV:JOIN(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:JOIN_479">::ClaraServ::IRC:CMD:PRIV:JOIN</a></a> [<a name="who2(1)"><a href="./ircservices.tcl.html#who2_608">who2</a></a>] [<a name="target(2)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data}
+				<a name="::ClaraServ::IRC:CMD:PRIV:JOIN(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:JOIN_479">::ClaraServ::IRC:CMD:PRIV:JOIN</a></a> [<a name="who2(1)"><a href="./ircservices.tcl.html#who2_612">who2</a></a>] [<a name="target(2)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data}
 			}
 			if { ${cmd} == &quot;part&quot;		}	{
 				<font color="#208020"># [21:49:04] Received: :001119S0G PRIVMSG 00CAAAAAB :part</font>
-				<a name="::ClaraServ::IRC:CMD:PRIV:PART(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:PART_503">::ClaraServ::IRC:CMD:PRIV:PART</a></a> [<a name="who2(2)"><a href="./ircservices.tcl.html#who2_608">who2</a></a>] [<a name="target(3)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data}
+				<a name="::ClaraServ::IRC:CMD:PRIV:PART(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:PART_503">::ClaraServ::IRC:CMD:PRIV:PART</a></a> [<a name="who2(2)"><a href="./ircservices.tcl.html#who2_612">who2</a></a>] [<a name="target(3)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data}
 			}
 			if { ${cmd} == &quot;help&quot;		}	{
 				<font color="#208020"># [21:49:04] Received: :001119S0G PRIVMSG 00CAAAAAB :part</font>
-				<a name="::ClaraServ::IRC:CMD:PRIV:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:HELP_427">::ClaraServ::IRC:CMD:PRIV:HELP</a></a> [<a name="who2(3)"><a href="./ircservices.tcl.html#who2_608">who2</a></a>] [<a name="target(4)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data}
+				<a name="::ClaraServ::IRC:CMD:PRIV:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:HELP_427">::ClaraServ::IRC:CMD:PRIV:HELP</a></a> [<a name="who2(3)"><a href="./ircservices.tcl.html#who2_612">who2</a></a>] [<a name="target(4)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data}
 			}
 		}
 		<font color="#208020">##########################</font>
@@ -412,22 +412,22 @@ namespace eval ClaraServ {
 		<font color="#208020">##########################</font>
 		<font color="#208020"># si [target] commence par # c'est un salon</font>
 		
-		if { [string index [<a name="target(5)"><a href="./ircservices.tcl.html#target_628">target</a></a>] 0] == &quot;#&quot;} {
+		if { [string index [<a name="target(5)"><a href="./ircservices.tcl.html#target_632">target</a></a>] 0] == &quot;#&quot;} {
 			if { ${cmd} == &quot;!cmds&quot;		}	{
 				<font color="#208020"># [22:10:39] Received: :ZarTek PRIVMSG #Eva :!cmds</font>
-				<a name="::ClaraServ::IRC:CMD:PUB:CMDS(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:CMDS_466">::ClaraServ::IRC:CMD:PUB:CMDS</a></a> [<a name="who(1)"><a href="./ircservices.tcl.html#who_600">who</a></a>] [<a name="target(6)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data}
+				<a name="::ClaraServ::IRC:CMD:PUB:CMDS(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:CMDS_466">::ClaraServ::IRC:CMD:PUB:CMDS</a></a> [<a name="who(1)"><a href="./ircservices.tcl.html#who_604">who</a></a>] [<a name="target(6)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data}
 			}
 			if { ${cmd} == &quot;!help&quot;		}	{
 				<font color="#208020"># Received: :ZarTek PRIVMSG #Eva :!help</font>
-				<a name="::ClaraServ::IRC:CMD:PUB:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:HELP_430">::ClaraServ::IRC:CMD:PUB:HELP</a></a> [<a name="who(2)"><a href="./ircservices.tcl.html#who_600">who</a></a>] [<a name="target(7)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data}
+				<a name="::ClaraServ::IRC:CMD:PUB:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:HELP_430">::ClaraServ::IRC:CMD:PUB:HELP</a></a> [<a name="who(2)"><a href="./ircservices.tcl.html#who_604">who</a></a>] [<a name="target(7)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data}
 			}
 			if { ${cmd} == &quot;!random&quot;	}	{
 				<font color="#208020"># [22:10:04] Received: :ZarTek PRIVMSG #Eva :!random</font>
-				<a name="::ClaraServ::IRC:CMD:PUB:RANDOM(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:RANDOM_445">::ClaraServ::IRC:CMD:PUB:RANDOM</a></a> [<a name="who(3)"><a href="./ircservices.tcl.html#who_600">who</a></a>] [<a name="target(8)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data}
+				<a name="::ClaraServ::IRC:CMD:PUB:RANDOM(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:RANDOM_445">::ClaraServ::IRC:CMD:PUB:RANDOM</a></a> [<a name="who(3)"><a href="./ircservices.tcl.html#who_604">who</a></a>] [<a name="target(8)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data}
 			}
 			<font color="#208020"># Nous verifions si la commande corresponds a une commandes de la database:</font>
 			if { [lsearch -nocase [<a name="::ClaraServ::FCT::DB:CMD:LIST(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>] ${cmd}] != &quot;-1&quot; } {
-				if { [catch {<a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:DYNAMIC_452">::ClaraServ::IRC:CMD:PUB:DYNAMIC</a></a> [<a name="who(4)"><a href="./ircservices.tcl.html#who_600">who</a></a>] [<a name="target(9)"><a href="./ircservices.tcl.html#target_628">target</a></a>] ${cmd} ${data} } error] } {
+				if { [catch {<a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:DYNAMIC_452">::ClaraServ::IRC:CMD:PUB:DYNAMIC</a></a> [<a name="who(4)"><a href="./ircservices.tcl.html#who_604">who</a></a>] [<a name="target(9)"><a href="./ircservices.tcl.html#target_632">target</a></a>] ${cmd} ${data} } error] } {
 					<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;\[ERROR1\] CMD: ${cmd} - Error: ${error}&quot;
 				}
 			}
@@ -550,7 +550,7 @@ Index by:  <a href="index_main.html#byfilename">file name</a> |
 <a href="index_main.html#byprocname">procedure name</a> |
 <a href="index_main.html#bycall">procedure call</a> |
 <a href="index_annot_full.html">annotation</a><br>
-<cite>Index generated 2022-07-24 at 09:39.</cite>
+<cite>Index generated 2022-07-24 at 10:09.</cite>
 </font>
 </body>
 </html>
