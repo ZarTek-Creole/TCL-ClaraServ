@@ -10,7 +10,13 @@ git config --global alias.spull '!git pull && git submodule sync --recursive && 
 git pull 
 git submodule sync --recursive
 git submodule update --init --recursive
-
+cd TCL-ZCT/
+git checkout master
+git pull
+cd ..
+cd TCL-PKG-IRCServices/
+git checkout main
+cd ..
 echo "<html>
   <table>
     <tr>
