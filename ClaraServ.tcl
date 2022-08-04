@@ -46,7 +46,7 @@ namespace eval ClaraServ {
 	set BOT_ID				{}
 	array set SCRIPT {
 		"name"		"ClaraServ Service"
-		"version"	"1.1.20220622"
+		"version"	"1.1.3"
 		"auteur"	"ZarTek"
 		"need_zct"	"0.0.1"
 		"need_ircs"	"0.0.4"
