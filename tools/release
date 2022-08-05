@@ -54,10 +54,10 @@ UpdateVersion() {
 GitConfig() {
 	git config advice.addIgnoredFile false
     git config pull.ff false
-    git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
-    git config alias.spush 'push --recurse-submodules=on-demand'
-    git config alias.supdate 'submodule update --remote --merge'
-    git config alias.spull '!git pull && git submodule sync --recursive && git submodule update --init --recursive'
+    # git config alias.sdiff '!'"git diff && git submodule foreach 'git diff'"
+    # git config alias.spush 'push --recurse-submodules=on-demand'
+    # git config alias.supdate 'submodule update --remote --merge'
+    # git config alias.spull '!git pull && git submodule sync --recursive && git submodule update --init --recursive'
 }
 
 UpdateDocs() {
@@ -199,9 +199,10 @@ GitConfig
 #Remove existing staged files
 # git reset HEAD -- . > /dev/null
 # git spush > /dev/null
-git supdate > /dev/null
-git spull > /dev/null
+# git supdate > /dev/null
+# git spull > /dev/null
 git add . > /dev/null
+git subtree pull --prefix tools/tcldoc https://github.com/ZarTek-Creole/tcldoc.git master --squash
 git subtree pull --prefix modules/TCL-PKG-IRCServices https://github.com/ZarTek-Creole/TCL-PKG-IRCServices master --squash
 git subtree pull --prefix modules/TCL-ZCT https://github.com/ZarTek-Creole/TCL-ZCT master --squash
 
