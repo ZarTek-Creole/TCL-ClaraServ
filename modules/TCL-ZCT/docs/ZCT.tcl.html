@@ -1,0 +1,272 @@
+<html>
+<head><title>ZCT.tcl</title></head>
+<body bgcolor="#ffffff">
+<font size="-2">
+Index by:  <a href="index_main.html#ZCT.tcl">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a>
+</font>
+<hr>
+<strong>ZCT.tcl</strong>
+(<a href="ZCT.tcl-annot.html">annotations</a> | <a href="ZCT.tcl.txt">original source</a>)
+<p>
+<pre>
+<font color="#208020">#############################################################################</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Auteur	:</font>
+<font color="#208020">#		-&gt; ZarTek (ZarTek.Creole@GMail.Com)</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Website	:</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Support	:</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT/issues</font>
+<font color="#208020">#</font>
+<font color="#208020">#	Docs	:</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT/wiki</font>
+<font color="#208020">#</font>
+<font color="#208020">#   DONATE   :</font>
+<font color="#208020">#       -&gt; https://github.com/ZarTek-Creole/DONATE</font>
+<font color="#208020">#</font>
+<font color="#208020">#	LICENSE :</font>
+<font color="#208020">#		-&gt; Creative Commons Attribution 4.0 International</font>
+<font color="#208020">#		-&gt; github.com/ZarTek-Creole/TCL-ZCT/blob/main/LICENSE.txt</font>
+<font color="#208020">#</font>
+<font color="#208020">#</font>
+<font color="#208020">#############################################################################</font>
+namespace eval ::ZCT {
+    namespace export *
+    variable PKG
+    array set PKG {
+        &quot;version&quot;	        &quot;0.0.5&quot;
+        &quot;name&quot;			    &quot;package ZCT&quot;
+        &quot;auteur&quot;		    &quot;ZarTeK-Creole&quot;
+    }
+    if { [info commands ::putlog] == &quot;&quot; } {
+        set PKG(eggdrop) 0
+        set PPL &quot;puts&quot;
+    } else {
+        set PKG(eggdrop) 1
+        set PPL &quot;putlog&quot;
+    }
+}
+
+namespace eval ::ZCT::pkg {
+}
+<font color="#208020"># Charger une package</font>
+<strong><a name="::ZCT::pkg::load_44">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::load">::ZCT::pkg::load</a></a></strong><a name="::ZCT::pkg::load"></a> { PKG_NAME {PKG_VERSION &quot;&quot;} {SCRIPT_NAME &quot;&quot;} {MISSING_MODE &quot;die&quot;} } {
+    if { ${SCRIPT_NAME} == &quot;&quot; }  {
+        set ERR_PREFIX &quot;\[Erreur\] Le script nécessite du package '${PKG_NAME}'&quot;
+        set OK_PREFIX &quot;\[OK\] Le script à chargé le package '${PKG_NAME}'&quot;
+    } else {
+        set ERR_PREFIX &quot;\[Erreur\] Le script '${SCRIPT_NAME}' nécessite du package '${PKG_NAME}'&quot;
+        set OK_PREFIX &quot;\[OK\] Le script '${SCRIPT_NAME}' à chargé le package '${PKG_NAME}'&quot;
+    }
+    if { ${PKG_VERSION} == &quot;&quot; } {
+        if { [catch { set PKG_VERSION [package require ${PKG_NAME}]}] } {
+            ${MISSING_MODE} &quot;${ERR_PREFIX} pour fonctionner. [<a name="::ZCT::pkg::How_Download(1)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_64">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
+        }
+    } else {
+        if { [catch { set PKG_VERSION [package require ${PKG_NAME} ${PKG_VERSION}]}] } {
+            ${MISSING_MODE} &quot;${ERR_PREFIX} version ${PKG_VERSION} ou supérieur pour fonctionner. [<a name="::ZCT::pkg::How_Download(2)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_64">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
+        }
+    }
+    ${::ZCT::PPL} &quot;${OK_PREFIX} avec la version ${PKG_VERSION} avec succès&quot;
+}
+<font color="#208020"># Si un package est absent lors du &quot;pkg load&quot; nous retournons une aide pour l'installer le package manquant</font>
+<strong><a name="::ZCT::pkg::How_Download_64">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a></a></strong><a name="::ZCT::pkg::How_Download"></a> { PKG_NAME } {
+    switch -nocase ${PKG_NAME} {
+        Logger      { return &quot;Il fait partie de la game de tcllib.\n Téléchargement sur https://www.tcl.tk/software/tcllib/&quot;}
+        Tcl         { return &quot;Télécharger la derniere version sur https://www.tcl.tk/software/tcltk/&quot;}
+        default     { return &quot;Aucune information sur ${PKG_NAME}, vous devez chercher sur internet&quot;  }
+    }
+}
+<font color="#208020"># Verifications de presence de variables.</font>
+<font color="#208020"># Utile pour verifié que tout les variables ont bien été donné dans une fichier de configuration</font>
+<font color="#208020"># dans</font>
+<font color="#208020"># set VARS_LIST				[list &quot;list1&quot; &quot;list2&quot;];  #definitié les nom des arrayx</font>
+<font color="#208020">#  Le code verifie a partir de la les listes defini graces a</font>
+<font color="#208020"># set VARS_list1			[list &quot;var1&quot; &quot;var2&quot;]</font>
+<font color="#208020"># set VARS_list2			[list &quot;var3&quot; &quot;var4&quot;]</font>
+<font color="#208020"># Il verifiera la presence de ${list1(var1)}, ${list1(var2)}, ${list2(var3)} et ${list2(var4)}</font>
+<strong><a name="::ZCT::Is:ArrayList:Exists_79">proc <a href="ZCT.tcl-annot.html#::ZCT::Is:ArrayList:Exists">::ZCT::Is:ArrayList:Exists</a></a></strong><a name="::ZCT::Is:ArrayList:Exists"></a> { NAMESPACE } {
+    set ::TMP_NS_ArrayList ${NAMESPACE}
+    namespace inscope ${NAMESPACE} {
+        variable VARS_LIST
+        if { ![info exists VARS_LIST] } {
+            return -code error \
+                [format &quot;%s &gt; La liste des ArrayLists a verifier '%s' est inexistant.&quot; ${::TMP_NS_ArrayList} &quot;VARS_LIST&quot;]
+        }
+        foreach LIST_NAME ${VARS_LIST} {
+            puts [format &quot;%s &gt; Verification de la présence des variables : \$%s\(..)&quot; ${::TMP_NS_ArrayList} ${LIST_NAME}]
+            variable VARS_${LIST_NAME}
+            if { ![info exists VARS_${LIST_NAME}] } {
+                return -code error \
+                    [format &quot;%s &gt; Liste de variables '%s' est inexistant.&quot; ${::TMP_NS_ArrayList} &quot;VARS_${LIST_NAME}&quot;]
+            }
+            variable ${LIST_NAME}
+            if { ![array exists ${LIST_NAME}] } {
+                return -code error \
+                    [format &quot;%s &gt; '%s' n'est pas une liste Array.&quot; ${::TMP_NS_ArrayList} &quot;${LIST_NAME}&quot;]
+            }
+            foreach VAR_NAME [subst \$VARS_${LIST_NAME}] {
+                if { ![info exists ${LIST_NAME}(${VAR_NAME})] } {
+                    return -code error \
+                        [format &quot;%s &gt; L'Array '%s' est inexistant.&quot; ${::TMP_NS_ArrayList} &quot;${LIST_NAME}(${VAR_NAME})&quot;]
+                }
+            }
+        }
+        unset  ::TMP_NS_ArrayList
+    }
+
+}
+<font color="#208020"># Creer des couleurs pour le partyline</font>
+<font color="#208020"># par exemple pour du texte en rouge en partyline :</font>
+<font color="#208020"># putlog &quot;[pcolor_red]mon text rouge[pcolors_end] et ici aucune couleur&quot;</font>
+foreach {color_name value} { red 1 yellow 3 cyan 5 magenta 6 blue 4 green 2 } {
+    <strong><a name="::ZCT::pcolor_${color_name}_114">proc <a href="ZCT.tcl-annot.html#::ZCT::pcolor_${color_name}">::ZCT::pcolor_${color_name}</a></a></strong> {} &quot;return \033\\\[01\\;3${value}m&quot;
+}
+<strong><a name="::ZCT::pcolors_end_116">proc <a href="ZCT.tcl-annot.html#::ZCT::pcolors_end">::ZCT::pcolors_end</a></a></strong><a name="::ZCT::pcolors_end"></a> { } {
+    return \033\[\;0m
+}
+<font color="#208020"># procedure qui retourne où il est appellé</font>
+<strong><a name="::ZCT::calledby_120">proc <a href="ZCT.tcl-annot.html#::ZCT::calledby">::ZCT::calledby</a></a></strong><a name="::ZCT::calledby"></a> {} {
+    set level [expr [info leve] - 2]
+    if { ${level} &gt; 0 } {
+        return [lindex [info level ${level} ] 0]
+    } else {
+        if { [string length [info script] ] &gt; 0 } {
+            return [info script]
+        } else {
+            return [info nameofexecutable]
+        }
+    }
+}
+<font color="#208020"># Putlog amelioreé, avec des niveau (couleurs differentes) et type de text</font>
+if { ${::ZCT::PKG(eggdrop)} } {
+    <strong><a name="::ZCT::putlog_134">proc <a href="ZCT.tcl-annot.html#::ZCT::putlog">::ZCT::putlog</a></a></strong><a name="::ZCT::putlog"></a> { text {level_name &quot;&quot;} {text_name &quot;&quot;} } {
+        variable ::ZCT::SCRIPT
+        set UP_LEVEL_NAME [<a name="::ZCT::calledby(1)"><a href="./ZCT.tcl.html#::ZCT::calledby_120">::ZCT::calledby</a></a>]
+        if { ${text_name} == &quot;&quot; } {
+            if { ${level_name} != &quot;&quot; } {
+                set text_name &quot; - ${level_name}&quot;
+            } else {
+                set text_name &quot;&quot;
+            }
+        } else {
+            set text_name &quot; - ${text_name}&quot;
+        }
+        switch -nocase ${level_name} {
+            &quot;error&quot;		{ puts &quot;[pcolor_red]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]&quot; }
+            &quot;warning&quot;	{ puts &quot;[pcolor_yellow]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]&quot; }
+            &quot;notice&quot;	{ puts &quot;[pcolor_cyan]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]&quot; }
+            &quot;debug&quot;		{ puts &quot;[pcolor_magenta]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]&quot; }
+            &quot;info&quot;		{ puts &quot;[pcolor_blue]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]&quot; }
+            &quot;success&quot;	{ puts &quot;[pcolor_green]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]&quot; }
+            default		{ puts &quot;\[${UP_LEVEL_NAME}${text_name}\] [pcolor_blue]${text}[pcolors_end]&quot; }
+        }
+    }
+    if { [info commands ::putlog.old] == &quot;&quot; } {
+        rename ::putlog ::putlog.old;
+        interp alias {} putlog {} ::ZCT::putlog
+    }
+}
+namespace eval ::ZCT::TXT {
+    namespace export *
+}
+namespace eval ::ZCT::TXT::visuals {
+    namespace export *
+}
+<font color="#208020"># permet de centrer du text sur une longueur donné</font>
+<strong><a name="::ZCT::TXT::visuals::espace_168">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a></a></strong><a name="::ZCT::TXT::visuals::espace"></a> { text length } {
+    set text			[string trim ${text}]
+    set text_length		[string length ${text}];
+    set espace_length	[expr (${length} - ${text_length})/2.0]
+    set ESPACE_TMP		[split ${espace_length} .]
+    set ESPACE_ENTIER	[lindex ${ESPACE_TMP} 0]
+    set ESPACE_DECIMAL	[lindex ${ESPACE_TMP} 1]
+    if { ${ESPACE_DECIMAL} == 0 } {
+        set espace_one			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
+        set espace_two			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
+        return &quot;${espace_one}${text}${espace_two}&quot;
+    } else {
+        set espace_one			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
+        set espace_two			[string repeat &quot; &quot; [expr (${ESPACE_ENTIER}+1)]];
+        return &quot;${espace_one}${text}${espace_two}&quot;
+    }
+
+}
+<font color="#208020">##############################################################################</font>
+<font color="#208020">### Substitution des symboles couleur/gras/soulignement/...</font>
+<font color="#208020">###############################################################################</font>
+<font color="#208020"># Modification de la fonction de MenzAgitat</font>
+<font color="#208020"># &lt;cXX&gt; : Ajouter un Couleur avec le code XX : &lt;c01&gt;; &lt;c02,01&gt;</font>
+<font color="#208020"># &lt;/c&gt;  : Enlever la Couleur (refermer la deniere declaration &lt;cXX&gt;) : &lt;/c&gt;</font>
+<font color="#208020"># &lt;b&gt;   : Ajouter le style Bold/gras</font>
+<font color="#208020"># &lt;/b&gt;  : Enlever le style Bold/gras</font>
+<font color="#208020"># &lt;u&gt;   : Ajouter le style Underline/souligner</font>
+<font color="#208020"># &lt;/u&gt;  : Enlever le style Underline/souligner</font>
+<font color="#208020"># &lt;i&gt;   : Ajouter le style Italic/Italique</font>
+<font color="#208020"># &lt;s&gt;   : Enlever les styles precedent</font>
+<strong><a name="::ZCT::TXT::visuals::apply_198">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a></a></strong><a name="::ZCT::TXT::visuals::apply"></a> { data } {
+    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${data} &quot;\003\\1&quot; data
+    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${data} &quot;\002&quot; data
+    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${data} &quot;\037&quot; data
+    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${data} &quot;\026&quot; data
+    return [regsub -all -nocase {&lt;s&gt;} ${data} &quot;\017&quot;]
+}
+<font color="#208020"># Enleve les style visuals</font>
+<strong><a name="::ZCT::TXT::visuals::remove_206">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a></a></strong><a name="::ZCT::TXT::visuals::remove"></a> { data } {
+    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${data} &quot;&quot; data
+    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${data} &quot;&quot; data
+    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${data} &quot;&quot; data
+    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${data} &quot;&quot; data
+    return [regsub -all -nocase {&lt;s&gt;} ${data} &quot;&quot;]
+}
+<font color="#208020"># Procedure interne qui permet de creer les procs et les subprocs automatiquement</font>
+<font color="#208020"># https://forum.eggdrop.fr/Une-proc-qui-gere-lexploration-des-sous-commandes-par-les-namespaces-t-1951.html</font>
+<strong><a name="::ZCT::create_sub_procs_215">proc <a href="ZCT.tcl-annot.html#::ZCT::create_sub_procs">::ZCT::create_sub_procs</a></a></strong><a name="::ZCT::create_sub_procs"></a> { namespace } {
+    <font color="#208020"># Boucle sur les namespaces enfants de $namespace (::example) retourne -&gt; ::example::text; ::example::text2</font>
+    foreach child_name [namespace children ${namespace}] {
+        <font color="#208020"># Création de procédure portant le nom des namespaces enfants ::example::text, ::example::text2</font>
+        <strong><a name="${child_name}_219">proc <a href="ZCT.tcl-annot.html#${child_name}">${child_name}</a></a></strong> { {subcommand &quot;&quot;} args } {
+            <font color="#208020"># tout ce qui fais partie ici, sera exécuté lors de l'exécution de la proc créer</font>
+            <font color="#208020"># les variables, commandes</font>
+            <font color="#208020"># le  proc_path contient chemin de la proc (lors de sont exécution et non maintenant donc)</font>
+            set proc_path [lindex [info level 0] 0]
+            <font color="#208020"># Si la proc est appeler sans subcommand, nous signalons qu'elle nécessite une</font>
+            if { ${subcommand} == &quot;&quot; } {
+                return  -code error \
+                    &quot;wrong # args: should be \&quot;${proc_path} subcommand ?arg ...?\&quot;&quot;
+            }
+            <font color="#208020"># Si la subcommand n'existe pas dans les procs enfants, ont prévois de retourner la liste des procs existante dans le namespace courant (celle de la proc appelé )</font>
+            if { [info commands ${proc_path}::${subcommand}] == &quot;&quot; } {
+                set subcommands_list  [join [string map &quot;${proc_path}:: \&quot;\&quot;&quot; [info procs ${proc_path}::*]] &quot;, &quot;]
+                return  -code error \
+                    &quot;wrong ${proc_path} unknown or ambiguous subcommand \&quot;${subcommand}\&quot;: must be ${subcommands_list}&quot;
+            }
+            <font color="#208020"># si la subcommand existe, on l'execute avec les valeurs fournis</font>
+            ${proc_path}::${subcommand} {*}${args}
+        }
+        <font color="#208020"># ici nous sommes sorties de la création de la proc, et de retour dans la boucle enfant, nous allons exporté les proc</font>
+        namespace export *
+        <font color="#208020"># Nous allons répéter ces opérations dans le niveau inferieur/enfants (dans ::example::text et ::example::text2)</font>
+        create_sub_procs ${child_name}
+    }
+    <font color="#208020"># fin de la boucle</font>
+}
+<a name="::ZCT::create_sub_procs(1)"><a href="./ZCT.tcl.html#::ZCT::create_sub_procs_215">::ZCT::create_sub_procs</a></a> ::ZCT
+
+package provide ZCT ${::ZCT::PKG(version)}
+${::ZCT::PPL} &quot;Package ZCT version ${::ZCT::PKG(version)} par ${::ZCT::PKG(auteur)} chargé.&quot;</pre>
+<hr>
+<font size="-2">
+Index by:  <a href="index_main.html#byfilename">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a><br>
+<cite>Index generated 2022-07-31 at 03:52.</cite>
+</font>
+</body>
+</html>
