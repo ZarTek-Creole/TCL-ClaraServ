@@ -26,8 +26,8 @@ FILE_PATH="$(realpath -- "${DIR_ROOT}/${FILENAME_SCRIPT}")"
     # }
 
 GetVERS_CURR () {
-    string=$(grep -i '"Version"' "${FILE_PATH}")
-    partern='\s+"Version"\s+"([0-9]+)\.([0-9]+)\.([0-9]+)"'
+    string=$(grep -i '"version"' "${FILE_PATH}")
+    partern='\s+"version"\s+"([0-9]+)\.([0-9]+)\.([0-9]+)"'
     [[ ${string} =~ ${partern} ]]
     VERS_CURR="${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.${BASH_REMATCH[3]}"
     echo "Current version: ${VERS_CURR}"
