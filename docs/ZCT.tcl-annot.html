@@ -1,0 +1,176 @@
+<html>
+<head><title>ZCT.tcl annotations</title></head>
+<body bgcolor="#ffffff">
+<font size="-2">
+Index by:  <a href="index_main.html#ZCT.tcl">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a>
+</font>
+<hr>
+<h2><a href="ZCT.tcl.html">ZCT.tcl</a> Annotations</h2>
+Created from <strong><code>./ZCT.tcl</strong></code>
+<hr>
+
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+<tr bgcolor="#ccccff">
+<!-- -------------------- PROCEDURE SUMMARY -------------------- -->
+<td><font size="+2"><strong><a name="proc_summary">Procedure Summary</a></strong></font></td>
+</tr>
+<tr><td><code><a href="#${child_name}">${child_name}</a> { {subcommand {}} args }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Création de procédure portant le nom des namespaces enfants ::example::text,</td></tr>
+<tr><td><code><a href="#::ZCT::calledby">::ZCT::calledby</a> {  }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;procedure qui retourne où il est</td></tr>
+<tr><td><code><a href="#::ZCT::create_sub_procs">::ZCT::create_sub_procs</a> { namespace }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Procedure interne qui permet de creer les procs et les subprocs automatiquement</td></tr>
+<tr><td><code><a href="#::ZCT::Is:ArrayList:Exists">::ZCT::Is:ArrayList:Exists</a> { NAMESPACE }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verifications de presence de variables.</td></tr>
+<tr><td><code><a href="#::ZCT::pcolor_${color_name}">::ZCT::pcolor_${color_name}</a> {  }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr><td><code><a href="#::ZCT::pcolors_end">::ZCT::pcolors_end</a> {  }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr><td><code><a href="#::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a> { PKG_NAME }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Si un package est absent lors du "pkg load" nous retournons une aide pour l'installer le package</td></tr>
+<tr><td><code><a href="#::ZCT::pkg::load">::ZCT::pkg::load</a> { PKG_NAME {PKG_VERSION {}} {SCRIPT_NAME {}} {MISSING_MODE die} }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Charger une</td></tr>
+<tr><td><code><a href="#::ZCT::putlog">::ZCT::putlog</a> { text {level_name {}} {text_name {}} }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a> { data }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#############################################################################
+## Substitution des symboles</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a> { text length }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;permet de centrer du text sur une longueur</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a> { data }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enleve les style</td></tr>
+</table>
+<p>
+<!-- -------------------- PROCEDURE DETAIL -------------------- -->
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+<tr bgcolor="#ccccff">
+<td colspan=1><font size="+2"><strong><a name="proc_detail">Procedure Detail</a></strong></font></td>
+</tr>
+</table>
+<h3><a name="${child_name}">${child_name}</a></h3>
+<pre>proc ${child_name} { {subcommand {}} args }</pre>
+<dl>
+<dd>Création de procédure portant le nom des namespaces enfants ::example::text, ::example::text2<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#${child_name}_219">ZCT.tcl, line 219</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::calledby">::ZCT::calledby</a></h3>
+<pre>proc ::ZCT::calledby {  }</pre>
+<dl>
+<dd>procedure qui retourne où il est appellé<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::calledby_120">ZCT.tcl, line 120</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::create_sub_procs">::ZCT::create_sub_procs</a></h3>
+<pre>proc ::ZCT::create_sub_procs { namespace }</pre>
+<dl>
+<dd>Procedure interne qui permet de creer les procs et les subprocs automatiquement
+ https://forum.eggdrop.fr/Une-proc-qui-gere-lexploration-des-sous-commandes-par-les-namespaces-t-1951.html<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::create_sub_procs_215">ZCT.tcl, line 215</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::Is:ArrayList:Exists">::ZCT::Is:ArrayList:Exists</a></h3>
+<pre>proc ::ZCT::Is:ArrayList:Exists { NAMESPACE }</pre>
+<dl>
+<dd>Verifications de presence de variables.
+ Utile pour verifié que tout les variables ont bien été donné dans une fichier de configuration
+ dans
+ set VARS_LIST				[list "list1" "list2"];  #definitié les nom des arrayx
+  Le code verifie a partir de la les listes defini graces a
+ set VARS_list1			[list "var1" "var2"]
+ set VARS_list2			[list "var3" "var4"]
+ Il verifiera la presence de ${list1(var1)}, ${list1(var2)}, ${list2(var3)} et ${list2(var4)}<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::Is:ArrayList:Exists_79">ZCT.tcl, line 79</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::pcolor_${color_name}">::ZCT::pcolor_${color_name}</a></h3>
+<pre>proc ::ZCT::pcolor_${color_name} {  }</pre>
+<dl>
+<dd><dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pcolor_${color_name}_114">ZCT.tcl, line 114</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::pcolors_end">::ZCT::pcolors_end</a></h3>
+<pre>proc ::ZCT::pcolors_end {  }</pre>
+<dl>
+<dd><dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pcolors_end_116">ZCT.tcl, line 116</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a></h3>
+<pre>proc ::ZCT::pkg::How_Download { PKG_NAME }</pre>
+<dl>
+<dd>Si un package est absent lors du "pkg load" nous retournons une aide pour l'installer le package manquant<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pkg::How_Download_64">ZCT.tcl, line 64</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::pkg::load">::ZCT::pkg::load</a></h3>
+<pre>proc ::ZCT::pkg::load { PKG_NAME {PKG_VERSION {}} {SCRIPT_NAME {}} {MISSING_MODE die} }</pre>
+<dl>
+<dd>Charger une package<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pkg::load_44">ZCT.tcl, line 44</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::putlog">::ZCT::putlog</a></h3>
+<pre>proc ::ZCT::putlog { text {level_name {}} {text_name {}} }</pre>
+<dl>
+<dd><dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::putlog_134">ZCT.tcl, line 134</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a></h3>
+<pre>proc ::ZCT::TXT::visuals::apply { data }</pre>
+<dl>
+<dd>#############################################################################
+## Substitution des symboles couleur/gras/soulignement/...
+##############################################################################
+ Modification de la fonction de MenzAgitat
+ <cXX> : Ajouter un Couleur avec le code XX : <c01>; <c02,01>
+ </c>  : Enlever la Couleur (refermer la deniere declaration <cXX>) : </c>
+ <b>   : Ajouter le style Bold/gras
+ </b>  : Enlever le style Bold/gras
+ <u>   : Ajouter le style Underline/souligner
+ </u>  : Enlever le style Underline/souligner
+ <i>   : Ajouter le style Italic/Italique
+ <s>   : Enlever les styles precedent<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::apply_198">ZCT.tcl, line 198</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a></h3>
+<pre>proc ::ZCT::TXT::visuals::espace { text length }</pre>
+<dl>
+<dd>permet de centrer du text sur une longueur donné<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::espace_168">ZCT.tcl, line 168</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a></h3>
+<pre>proc ::ZCT::TXT::visuals::remove { data }</pre>
+<dl>
+<dd>Enleve les style visuals<dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::remove_206">ZCT.tcl, line 206</a>
+</dl></dl>
+
+<hr>
+<font size="-2">
+Index by:  <a href="index_main.html#byfilename">file name</a> |
+<a href="index_main.html#byprocname">procedure name</a> |
+<a href="index_main.html#bycall">procedure call</a> |
+<a href="index_annot_full.html">annotation</a><br>
+<cite>Index generated 2022-07-31 at 03:52.</cite>
+</font>
+</body>
+</html>
