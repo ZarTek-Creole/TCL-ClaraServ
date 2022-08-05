@@ -37,3 +37,4 @@ ClaraServ.conf
 db/salon.db
 # Dev vscode contenaire
 .devcontainer/*
+eggdrop.conf
