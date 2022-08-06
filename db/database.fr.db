@@ -125,8 +125,8 @@ variable database {
 
 	{{!tendresse} {0} {<c07>%sender%<c12> se donne un peu de tendresse à (elle-lui)-même, puisque personne ne lui en donne <c13>(♥‿♥)}}
 	{{!tendresse} {1} {<c07>%sender%<c12> prend<c04> %pseudo%<c12> dans ses bras, et lui fait un super calin <3 C'est ça l'amour <c13>♥(Ɔ ˘⌣˘)˘⌣˘ C)♥}}
-	{{!biere} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre une bonne biere fraiche à <c04>(elle-lui)-même !}}
-	{{!biere} {1} {<c07>%sender%<c12> offre une bonne biere fraiche à<c04> %pseudo%}}
+	{{!biere} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre une bonne biere fraîche à <c04>(elle-lui)-même !}}
+	{{!biere} {1} {<c07>%sender%<c12> offre une bonne biere fraîche à<c04> %pseudo%}}
 
 
 	{{!pelle} {0} {<c12>Il semblerait que <c07>%sender%<c12> se roule une pelle à <c04>(elle-lui)-même !}}
