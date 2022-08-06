@@ -23,7 +23,6 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 *.code-workspace
-.devcontainer/*
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
@@ -35,6 +34,5 @@
 
 ClaraServ.conf
 db/salon.db
-# Dev vscode contenaire
-.devcontainer/*
 eggdrop.conf
+app-data
