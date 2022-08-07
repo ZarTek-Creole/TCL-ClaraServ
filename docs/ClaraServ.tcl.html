@@ -62,8 +62,8 @@ namespace eval ClaraServ {
 		&quot;name&quot;		&quot;ClaraServ Service&quot;
 		&quot;version&quot;	&quot;1.1.3&quot;
 		&quot;auteur&quot;	&quot;ZarTek&quot;
-		&quot;need_zct&quot;	&quot;0.0.1&quot;
-		&quot;need_ircs&quot;	&quot;0.0.4&quot;
+		&quot;need_zct&quot;	&quot;0.0.6&quot;
+		&quot;need_ircs&quot;	&quot;0.0.5&quot;
 	}
 	set config(path_script)	[file dirname [info script]];
 
@@ -94,7 +94,7 @@ namespace eval ClaraServ {
 		&quot;db_lang&quot;
 	];
 	<font color="#208020"># Verification si le package ZCT a été mis dans le projet courant et si oui  le sourcé(charger)</font>
-	if { [file exists ${DIR(CUR)}/TCL-ZCT/ZCT.tcl] &amp;&amp; [catch { source ${DIR(CUR)}/TCL-ZCT/ZCT.tcl  } err] } { die &quot;\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/TCL-ZCT/ZCT.tcl' à échoué: ${err}&quot;; }
+	if { [file exists ${DIR(CUR)}/modules/TCL-ZCT/ZCT.tcl] &amp;&amp; [catch { source ${DIR(CUR)}/modules/TCL-ZCT/ZCT.tcl  } err] } { die &quot;\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/modules/TCL-ZCT/ZCT.tcl' à échoué: ${err}&quot;; }
 	<font color="#208020"># Necesite le package ZCT, tentative de chargment de celui-ci</font>
 	if { [catch { package require ZCT ${SCRIPT(need_zct)} } err] } { die &quot;\[${SCRIPT(name)} - Erreur\] Nécessite le package ZCT ${SCRIPT(need_zct)} (ou supérieur) pour fonctionner.\nLe chargement du script a été annulé.\nTélécharger-le sur 'https://github.com/ZarTek-Creole/TCL-ZCT'.\n${err}&quot; ; }
 	<font color="#208020"># Importation des fonctions de ZTC</font>
@@ -103,10 +103,10 @@ namespace eval ClaraServ {
 
 	<font color="#208020"># Verification si le package ZCT a été mis dans le projet courant et si oui  le sourcé(charger)</font>
 	if {
-		[file exists ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl] &amp;&amp; \
-		[catch { source ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl } err]
+		[file exists ${DIR(CUR)}/modules/TCL-PKG-IRCServices/ircservices.tcl] &amp;&amp; \
+			[catch { source ${DIR(CUR)}/modules/TCL-PKG-IRCServices/ircservices.tcl } err]
 	} {
-		die &quot;\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl' à échoué: ${err}&quot;;
+		die &quot;\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/modules/TCL-PKG-IRCServices/ircservices.tcl' à échoué: ${err}&quot;;
 	}
 	<font color="#208020"># Necesite le package ZCT, tentative de chargment de celui-ci via la fct de ZCT</font>
 	pkg load IRCServices ${SCRIPT(need_ircs)} ${SCRIPT(name)}
@@ -246,12 +246,12 @@ namespace eval ClaraServ {
 
 <strong><a name="::ClaraServ::FCT::SENT:NOTICE_233">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::FCT::SENT:NOTICE">::ClaraServ::FCT::SENT:NOTICE</a></a></strong><a name="::ClaraServ::FCT::SENT:NOTICE"></a> { DEST MSG } {
 	variable BOT_ID
-	${BOT_ID}	notice ${DEST} [apply_visuals ${MSG} ]
+	${BOT_ID}	notice ${DEST} [::ZCT::TXT::visuals::apply ${MSG} ]
 }
 
 <strong><a name="::ClaraServ::FCT::SENT:PRIVMSG_238">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::FCT::SENT:PRIVMSG">::ClaraServ::FCT::SENT:PRIVMSG</a></a></strong><a name="::ClaraServ::FCT::SENT:PRIVMSG"></a> { DEST MSG } {
 	variable BOT_ID
-	${BOT_ID}	privmsg ${DEST} [apply_visuals ${MSG} ]
+	${BOT_ID}	privmsg ${DEST} [::ZCT::TXT::visuals::apply ${MSG} ]
 }
 <strong><a name="::ClaraServ::FCT::SENT:MSG:TO:USER_242">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::FCT::SENT:MSG:TO:USER">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a></strong><a name="::ClaraServ::FCT::SENT:MSG:TO:USER"></a> { DEST MSG } {
 	global ::ClaraServ::config
@@ -285,7 +285,7 @@ namespace eval ClaraServ {
 	set l_espace		13;
 	set CMD_LIST		&quot;&quot;
 	foreach CMD [<a name="::ClaraServ::FCT::DB:CMD:LIST(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>] {
-		lappend CMD_LIST	&quot;&lt;c04&gt;[TXT:ESPACE:DISPLAY ${CMD} ${l_espace}]&lt;c12&gt;&quot;
+		lappend CMD_LIST	&quot;&lt;c04&gt;[::ZCT::TXT::visuals::espace ${CMD} ${l_espace}]&lt;c12&gt;&quot;
 		if { [incr i] &gt; ${max}-1 } {
 			unset i
 			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${DEST} [join ${CMD_LIST} &quot; | &quot;];
@@ -387,162 +387,175 @@ namespace eval ClaraServ {
 
 	}
 	${BOT_ID} registerevent PRIVMSG {
-		set cmd		[lindex [msg] 0]
-		set data	[lrange [msg] 1 end]
+		set IRC_CMD		[lindex [msg] 0]
+		set IRC_VALUE	[lrange [msg] 1 end]
+
+		putlog &quot;PRIVMSG -&gt; $IRC_CMD * $IRC_VALUE&quot;
 		<font color="#208020">##########################</font>
 		<font color="#208020">#--&gt; Commandes Privés &lt;--#</font>
 		<font color="#208020">##########################</font>
 		<font color="#208020"># si [target] ne commence pas par # c'est un pseudo</font>
 		if { [string index [target] 0] != &quot;#&quot;} {
-			if { ${cmd} == &quot;join&quot;		}	{
-				<font color="#208020"># [22:50:42] Received: :001119S0G PRIVMSG 00CAAAAAB :join</font>
-				<a name="::ClaraServ::IRC:CMD:PRIV:JOIN(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:JOIN_479">::ClaraServ::IRC:CMD:PRIV:JOIN</a></a> [who2] [target] ${cmd} ${data}
+			<font color="#208020"># Si la commande existe pas, on dit a l'utilisateur qu'elle est inconnue</font>
+			if { [info procs ::ClaraServ::IRC:CMD:PRIV:[string toupper ${IRC_CMD}]] == &quot;&quot; } {
+				<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(4)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> [who] [format &quot;Commande %s inconnue&quot; ${IRC_CMD}]
+				<a name="::ClaraServ::IRC:CMD:PUB:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:HELP_443">::ClaraServ::IRC:CMD:PUB:HELP</a></a> [who] ${IRC_VALUE}
+				return 0;
 			}
-			if { ${cmd} == &quot;part&quot;		}	{
-				<font color="#208020"># [21:49:04] Received: :001119S0G PRIVMSG 00CAAAAAB :part</font>
-				<a name="::ClaraServ::IRC:CMD:PRIV:PART(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:PART_503">::ClaraServ::IRC:CMD:PRIV:PART</a></a> [who2] [target] ${cmd} ${data}
-			}
-			if { ${cmd} == &quot;help&quot;		}	{
-				<font color="#208020"># [21:49:04] Received: :001119S0G PRIVMSG 00CAAAAAB :part</font>
-				<a name="::ClaraServ::IRC:CMD:PRIV:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PRIV:HELP_427">::ClaraServ::IRC:CMD:PRIV:HELP</a></a> [who2] [target] ${cmd} ${data}
+			<font color="#208020"># au sinon, on l'execute</font>
+			if { [catch { set OK [::ClaraServ::IRC:CMD:PRIV:[string toupper ${IRC_CMD}] [who2] [target] ${IRC_CMD} ${IRC_VALUE}] } EXEC_ERROR] } {
+				<font color="#208020">#Si il y a une erreur on l'affiche sur le chan log</font>
+				foreach line [split ${::errorInfo} &quot;\n&quot;] {
+					<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> ${line}
+					putlog ${line} error IRC:CMD:MSG:PRIV
+				}
+				return 0;
+			} else {
+				<font color="#208020"># si elle reusi on retourne le status</font>
+				return ${OK};
 			}
 		}
 		<font color="#208020">##########################</font>
 		<font color="#208020">#--&gt; Commandes Salons &lt;--#</font>
 		<font color="#208020">##########################</font>
 		<font color="#208020"># si [target] commence par # c'est un salon</font>
-		
 		if { [string index [target] 0] == &quot;#&quot;} {
-			if { ${cmd} == &quot;!cmds&quot;		}	{
-				<font color="#208020"># [22:10:39] Received: :ZarTek PRIVMSG #Eva :!cmds</font>
-				<a name="::ClaraServ::IRC:CMD:PUB:CMDS(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:CMDS_466">::ClaraServ::IRC:CMD:PUB:CMDS</a></a> [who] [target] ${cmd} ${data}
+			putlog &quot;test1 =&gt; ::ClaraServ::IRC:CMD:PUB:[string toupper [string range ${IRC_CMD} 1 end]]] &quot;
+			<font color="#208020"># Ont verifie si la commande existe</font>
+			if { [info procs ::ClaraServ::IRC:CMD:PUB:[string toupper [string range ${IRC_CMD} 1 end]]] != &quot;&quot; } {
+				<font color="#208020"># si elle existe ont l'execute</font>
+				if { [catch { set OK [::ClaraServ::IRC:CMD:PUB:[string toupper [string range ${IRC_CMD} 1 end]] [who2] [target] ${IRC_CMD} ${IRC_VALUE}] } EXEC_ERROR] } {
+					<font color="#208020">#Si il y a une erreur on l'affiche sur le chan log</font>
+					foreach line [split ${::errorInfo} &quot;\n&quot;] {
+						<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> ${line}
+						putlog ${line} error IRC:CMD:MSG:PRIV
+					}
+					return 0;
+				}
 			}
-			if { ${cmd} == &quot;!help&quot;		}	{
-				<font color="#208020"># Received: :ZarTek PRIVMSG #Eva :!help</font>
-				<a name="::ClaraServ::IRC:CMD:PUB:HELP(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:HELP_430">::ClaraServ::IRC:CMD:PUB:HELP</a></a> [who] [target] ${cmd} ${data}
-			}
-			if { ${cmd} == &quot;!random&quot;	}	{
-				<font color="#208020"># [22:10:04] Received: :ZarTek PRIVMSG #Eva :!random</font>
-				<a name="::ClaraServ::IRC:CMD:PUB:RANDOM(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:RANDOM_445">::ClaraServ::IRC:CMD:PUB:RANDOM</a></a> [who] [target] ${cmd} ${data}
-			}
-			<font color="#208020"># Nous verifions si la commande corresponds a une commandes de la database:</font>
-			if { [lsearch -nocase [<a name="::ClaraServ::FCT::DB:CMD:LIST(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>] ${cmd}] != &quot;-1&quot; } {
-				if { [catch {<a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:DYNAMIC_452">::ClaraServ::IRC:CMD:PUB:DYNAMIC</a></a> [who] [target] ${cmd} ${data} } error] } {
-					<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;\[ERROR1\] CMD: ${cmd} - Error: ${error}&quot;
+			<font color="#208020"># Si la commande existe pas en tant que PROC, alors nous verifions si la commande corresponds a une commandes de la database:</font>
+			if { [lsearch -nocase [<a name="::ClaraServ::FCT::DB:CMD:LIST(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>] ${IRC_CMD}] != &quot;-1&quot; } {
+				<font color="#208020">#Si la database trouve une corespondance ont execute :</font>
+				if { [catch {<a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:DYNAMIC_465">::ClaraServ::IRC:CMD:PUB:DYNAMIC</a></a> [who] [target] ${IRC_CMD} ${IRC_VALUE} } error] } {
+					foreach line [split ${::errorInfo} &quot;\n&quot;] {
+						<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(4)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> ${line}
+						putlog ${line} error IRC:CMD:MSG:PRIV
+					}
 				}
 			}
 		}
-		}; <font color="#208020"># Creer un event sur PRIVMSG</font>
+	}
+	<font color="#208020"># Creer un event sur PRIVMSG fin</font>
 
+}
+<font color="#208020">#######################</font>
+<font color="#208020">#  --&gt; Commandes &lt;--  #</font>
+<font color="#208020">#######################</font>
+<strong><a name="::ClaraServ::IRC:CMD:PRIV:HELP_440">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PRIV:HELP">::ClaraServ::IRC:CMD:PRIV:HELP</a></a></strong><a name="::ClaraServ::IRC:CMD:PRIV:HELP"></a> { sender destination cmd data } {
+	<a name="::ClaraServ::IRC:CMD:PUB:HELP(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:HELP_443">::ClaraServ::IRC:CMD:PUB:HELP</a></a> ${sender} ${cmd}
+}
+<strong><a name="::ClaraServ::IRC:CMD:PUB:HELP_443">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:HELP">::ClaraServ::IRC:CMD:PUB:HELP</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:HELP"></a> { sender cmd } {
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(5)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Aide publique&lt;c04&gt; :.&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(6)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(7)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; !help   - &lt;c06&gt;  Affiche cette aide&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(8)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; !cmds   - &lt;c06&gt;  Affiche la list des commandes&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(9)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; !random - &lt;c06&gt;  Affiche un text aleatoire&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(10)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(11)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Aide privé&lt;c04&gt; :.&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(12)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(13)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; help    - &lt;c06&gt;  Affiche cette aide&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(14)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; join    - &lt;c06&gt;  faire joindre un salon&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(15)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; part    - &lt;c06&gt;  faire quitter un salon&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(16)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
+	<a name="::ClaraServ::FCT::CMD:LOG(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:LOG_264">::ClaraServ::FCT::CMD:LOG</a></a> ${cmd} ${sender}
+}
+<strong><a name="::ClaraServ::IRC:CMD:PUB:RANDOM_458">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:RANDOM">::ClaraServ::IRC:CMD:PUB:RANDOM</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:RANDOM"></a> { sender destination cmd data } {
+	variable config
+	set CMD_RANDOM	[lindex [<a name="::ClaraServ::FCT::DB:CMD:LIST(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>] [rand [llength [<a name="::ClaraServ::FCT::DB:CMD:LIST(4)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>]]]]
+	if { [catch {ClaraServ::IRC:CMD:PUB:DYNAMIC ${sender} ${destination} ${CMD_RANDOM} ${data} } error] } {
+		<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(5)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;\[ERROR2\] CMD: ${CMD_RANDOM} - Error: ${error}&quot;
 	}
-	<font color="#208020">#######################</font>
-	<font color="#208020">#  --&gt; Commandes &lt;--  #</font>
-	<font color="#208020">#######################</font>
-	<strong><a name="::ClaraServ::IRC:CMD:PRIV:HELP_427">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PRIV:HELP">::ClaraServ::IRC:CMD:PRIV:HELP</a></a></strong><a name="::ClaraServ::IRC:CMD:PRIV:HELP"></a> { sender destination cmd data } {
-		<a name="::ClaraServ::IRC:CMD:PUB:HELP(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::IRC:CMD:PUB:HELP_430">::ClaraServ::IRC:CMD:PUB:HELP</a></a> ${sender} ${destination} ${cmd} ${data}
+}
+<strong><a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC_465">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:DYNAMIC">::ClaraServ::IRC:CMD:PUB:DYNAMIC</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC"></a> { sender destination cmd pseudo } {
+	if { ${pseudo} == &quot;&quot; } {
+		set data [<a name="::ClaraServ::FCT::DB:GET(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:GET_208">::ClaraServ::FCT::DB:GET</a></a> ${cmd} 0];
+	} else {
+		set data [<a name="::ClaraServ::FCT::DB:GET(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:GET_208">::ClaraServ::FCT::DB:GET</a></a> ${cmd} 1];
 	}
-	<strong><a name="::ClaraServ::IRC:CMD:PUB:HELP_430">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:HELP">::ClaraServ::IRC:CMD:PUB:HELP</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:HELP"></a> { sender destination cmd data } {
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(4)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Aide publique&lt;c04&gt; :.&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(5)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(6)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; !help   - &lt;c06&gt;  Affiche cette aide&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(7)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; !cmds   - &lt;c06&gt;  Affiche la list des commandes&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(8)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; !random - &lt;c06&gt;  Affiche un text aleatoire&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(9)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(10)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Aide privé&lt;c04&gt; :.&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(11)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(12)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; help    - &lt;c06&gt;  Affiche cette aide&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(13)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; join    - &lt;c06&gt;  faire joindre un salon&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(14)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c07&gt; part    - &lt;c06&gt;  faire quitter un salon&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(15)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
-		<a name="::ClaraServ::FCT::CMD:LOG(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:LOG_264">::ClaraServ::FCT::CMD:LOG</a></a> ${cmd} ${sender}
+	if { ${data} != &quot;-1&quot; } {
+		set data	[<a name="::ClaraServ::FCT::substitute_special_vars_2nd_pass(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::substitute_special_vars_2nd_pass_191">::ClaraServ::FCT::substitute_special_vars_2nd_pass</a></a> ${destination} ${data}];
+		set data	[string map -nocase [list &quot;%pseudo%&quot; &quot;${pseudo}&quot; &quot;%sender%&quot; &quot;${sender}&quot; &quot;%destination%&quot; &quot;${destination}&quot;] ${data}]
+		<a name="::ClaraServ::FCT::SENT:PRIVMSG(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:PRIVMSG_238">::ClaraServ::FCT::SENT:PRIVMSG</a></a> ${destination} ${data}
 	}
-	<strong><a name="::ClaraServ::IRC:CMD:PUB:RANDOM_445">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:RANDOM">::ClaraServ::IRC:CMD:PUB:RANDOM</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:RANDOM"></a> { sender destination cmd data } {
-		variable config
-		set CMD_RANDOM	[lindex [<a name="::ClaraServ::FCT::DB:CMD:LIST(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>] [rand [llength [<a name="::ClaraServ::FCT::DB:CMD:LIST(4)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:CMD:LIST_220">::ClaraServ::FCT::DB:CMD:LIST</a></a>]]]]
-		if { [catch {ClaraServ::IRC:CMD:PUB:DYNAMIC ${sender} ${destination} ${CMD_RANDOM} ${data} } error] } {
-			<a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;\[ERROR2\] CMD: ${CMD_RANDOM} - Error: ${error}&quot;
-		}
-	}
-	<strong><a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC_452">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:DYNAMIC">::ClaraServ::IRC:CMD:PUB:DYNAMIC</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:DYNAMIC"></a> { sender destination cmd pseudo } {
-		if { ${pseudo} == &quot;&quot; } {
-			set data [<a name="::ClaraServ::FCT::DB:GET(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:GET_208">::ClaraServ::FCT::DB:GET</a></a> ${cmd} 0];
+	<a name="::ClaraServ::FCT::CMD:LOG(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:LOG_264">::ClaraServ::FCT::CMD:LOG</a></a> ${cmd} ${sender}
+}
+
+<strong><a name="::ClaraServ::IRC:CMD:PUB:CMDS_479">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:CMDS">::ClaraServ::IRC:CMD:PUB:CMDS</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:CMDS"></a> { sender destination cmd data } {
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(17)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Liste des commandes d'animation&lt;c04&gt; :.&quot;
+	<a name="::ClaraServ::FCT::CMD:SHOW:LIST(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:SHOW:LIST_269">::ClaraServ::FCT::CMD:SHOW:LIST</a></a> ${sender}
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(18)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Autre&lt;c04&gt; :.&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(19)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c12&gt;!help    &lt;/c&gt;-&lt;c04&gt; Affiche l'aide&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(20)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c12&gt;!random  &lt;/c&gt;-&lt;c04&gt; Affiche un text aleatoire&quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(21)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
+	<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(22)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt;  * &lt;b&gt;Note:&lt;/b&gt; Il y a certaine commandes qui ne sont pas activées sur tous les salons.&quot;
+	<a name="::ClaraServ::FCT::CMD:LOG(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:LOG_264">::ClaraServ::FCT::CMD:LOG</a></a> ${cmd} ${sender}
+}
+<font color="#208020">##########################################</font>
+<font color="#208020"># --&gt; Procedures des Commandes Privés &lt;--#</font>
+<font color="#208020">##########################################</font>
+<strong><a name="::ClaraServ::IRC:CMD:PRIV:JOIN_492">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PRIV:JOIN">::ClaraServ::IRC:CMD:PRIV:JOIN</a></a></strong><a name="::ClaraServ::IRC:CMD:PRIV:JOIN"></a> { sender destination cmd data } {
+	variable config
+	variable ::ClaraServ::FCT::BOT_ID
+	set chan		[lindex ${data} 0]
+	set password	[lindex ${data} 1]
+	if { ${password} == &quot;&quot; } {
+		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(23)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Mauvaise syntaxe: /msg ${config(service_nick)} join #salon admin_password&quot;
+	} elseif { ${password} eq &quot;${config(admin_password)}&quot; } {
+		if { [<a name="::ClaraServ::FCT::DB:SALON:ADD(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:SALON:ADD_300">::ClaraServ::FCT::DB:SALON:ADD</a></a> ${chan}] == 1} {
+			${BOT_ID} join ${chan}
+			${BOT_ID} mode ${chan} +${config(service_usermodes)} ${config(service_nick)}
+			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(24)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;AddChan : ${chan}&quot;
+			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(6)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Join :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &quot;  }
 		} else {
-			set data [<a name="::ClaraServ::FCT::DB:GET(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:GET_208">::ClaraServ::FCT::DB:GET</a></a> ${cmd} 1];
+			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(25)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;AddChan : ${chan} | Erreur Non ajouter &quot;
+			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(7)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Join :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} | Erreur Non ajouter &quot; }
 		}
-		if { ${data} != &quot;-1&quot; } {
-			set data	[<a name="::ClaraServ::FCT::substitute_special_vars_2nd_pass(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::substitute_special_vars_2nd_pass_191">::ClaraServ::FCT::substitute_special_vars_2nd_pass</a></a> ${destination} ${data}];
-			set data	[string map -nocase [list &quot;%pseudo%&quot; &quot;${pseudo}&quot; &quot;%sender%&quot; &quot;${sender}&quot; &quot;%destination%&quot; &quot;${destination}&quot;] ${data}]
-			<a name="::ClaraServ::FCT::SENT:PRIVMSG(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:PRIVMSG_238">::ClaraServ::FCT::SENT:PRIVMSG</a></a> ${destination} ${data}
-		}
-		<a name="::ClaraServ::FCT::CMD:LOG(2)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:LOG_264">::ClaraServ::FCT::CMD:LOG</a></a> ${cmd} ${sender}
-	}
 
-	<strong><a name="::ClaraServ::IRC:CMD:PUB:CMDS_466">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PUB:CMDS">::ClaraServ::IRC:CMD:PUB:CMDS</a></a></strong><a name="::ClaraServ::IRC:CMD:PUB:CMDS"></a> { sender destination cmd data } {
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(16)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Liste des commandes d'animation&lt;c04&gt; :.&quot;
-		<a name="::ClaraServ::FCT::CMD:SHOW:LIST(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:SHOW:LIST_269">::ClaraServ::FCT::CMD:SHOW:LIST</a></a> ${sender}
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(17)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; .: &lt;c12&gt;Autre&lt;c04&gt; :.&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(18)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c12&gt;!help    &lt;/c&gt;-&lt;c04&gt; Affiche l'aide&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(19)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c12&gt;!random  &lt;/c&gt;-&lt;c04&gt; Affiche un text aleatoire&quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(20)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt; &quot;
-		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(21)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;&lt;c04&gt;  * &lt;b&gt;Note:&lt;/b&gt; Il y a certaine commandes qui ne sont pas activées sur tous les salons.&quot;
-		<a name="::ClaraServ::FCT::CMD:LOG(3)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::CMD:LOG_264">::ClaraServ::FCT::CMD:LOG</a></a> ${cmd} ${sender}
+	} else {
+		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(26)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Accés Refusè.&quot;
+		if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(8)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Join :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &lt;/c&gt;-&gt;&lt;c04&gt; Accés Refusè.&quot;  }
 	}
-	<font color="#208020">##########################################</font>
-	<font color="#208020"># --&gt; Procedures des Commandes Privés &lt;--#</font>
-	<font color="#208020">##########################################</font>
-	<strong><a name="::ClaraServ::IRC:CMD:PRIV:JOIN_479">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PRIV:JOIN">::ClaraServ::IRC:CMD:PRIV:JOIN</a></a></strong><a name="::ClaraServ::IRC:CMD:PRIV:JOIN"></a> { sender destination cmd data } {
-		variable config
-		variable ::ClaraServ::FCT::BOT_ID
-		set chan		[lindex ${data} 0]
-		set password	[lindex ${data} 1]
-		if { ${password} == &quot;&quot; } {
-			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(22)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Mauvaise syntaxe: /msg ${config(service_nick)} join #salon admin_password&quot;
-		} elseif { ${password} eq &quot;${config(admin_password)}&quot; } {
-			if { [<a name="::ClaraServ::FCT::DB:SALON:ADD(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:SALON:ADD_300">::ClaraServ::FCT::DB:SALON:ADD</a></a> ${chan}] == 1} {
-				${BOT_ID} join ${chan}
-				${BOT_ID} mode ${chan} +${config(service_usermodes)} ${config(service_nick)}
-				<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(23)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;AddChan : ${chan}&quot;
-				if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(4)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Join :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &quot;  }
-			} else {
-				<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(24)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;AddChan : ${chan} | Erreur Non ajouter &quot;
-				if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(5)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Join :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} | Erreur Non ajouter &quot; }
-			}
+}
 
+<strong><a name="::ClaraServ::IRC:CMD:PRIV:PART_516">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PRIV:PART">::ClaraServ::IRC:CMD:PRIV:PART</a></a></strong><a name="::ClaraServ::IRC:CMD:PRIV:PART"></a> { sender destination cmd data } {
+	variable config
+	variable ::ClaraServ::FCT::BOT_ID
+	<font color="#208020"># /msg clara part #salon lepassquetamisenconf</font>
+	set chan		[lindex ${data} 0]
+	set password	[lindex ${data} 1]
+	if { ${password} == &quot;&quot; } {
+		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(27)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Mauvaise syntaxe: /msg ${config(service_nick)} part #salon admin_password&quot;
+	} elseif { ${password} eq &quot;${config(admin_password)}&quot; } {
+		if { [string match -nocase ${config(service_channel)} ${chan}] } {
+			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(28)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;DelChan : ${chan} | Erreur: impossible ${config(service_channel)} est le salon de logs.&quot;
+			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(9)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} | Erreur: impossible ${config(service_channel)} est le salon de logs.&quot; }
+		} elseif { [<a name="::ClaraServ::FCT::DB:DATA:REMOVE(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:DATA:REMOVE_313">::ClaraServ::FCT::DB:DATA:REMOVE</a></a> &quot;salon&quot; ${chan}] == 1 } {
+			${BOT_ID} part ${chan}
+			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(29)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;DelChan : ${chan}&quot;
+			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(10)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &quot;  }
 		} else {
-			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(25)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Accés Refusè.&quot;
-			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(6)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Join :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &lt;/c&gt;-&gt;&lt;c04&gt; Accés Refusè.&quot;  }
+			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(30)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;DelChan : ${chan} | Erreur Non ajouter &quot;
+			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(11)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} | Erreur Non suprimer &quot; }
 		}
+
+
+	} else {
+		<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(31)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Accés Refusè.&quot;
+		if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(12)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &lt;/c&gt;-&gt;&lt;c04&gt; Accés Refusè.&quot;  }
 	}
+}
 
-	<strong><a name="::ClaraServ::IRC:CMD:PRIV:PART_503">proc <a href="ClaraServ.tcl-annot.html#::ClaraServ::IRC:CMD:PRIV:PART">::ClaraServ::IRC:CMD:PRIV:PART</a></a></strong><a name="::ClaraServ::IRC:CMD:PRIV:PART"></a> { sender destination cmd data } {
-		variable config
-		variable ::ClaraServ::FCT::BOT_ID
-		<font color="#208020"># /msg clara part #salon lepassquetamisenconf</font>
-		set chan		[lindex ${data} 0]
-		set password	[lindex ${data} 1]
-		if { ${password} == &quot;&quot; } {
-			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(26)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Mauvaise syntaxe: /msg ${config(service_nick)} part #salon admin_password&quot;
-		} elseif { ${password} eq &quot;${config(admin_password)}&quot; } {
-			if { [string match -nocase ${config(service_channel)} ${chan}] } {
-				<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(27)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;DelChan : ${chan} | Erreur: impossible ${config(service_channel)} est le salon de logs.&quot;
-				if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(7)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} | Erreur: impossible ${config(service_channel)} est le salon de logs.&quot; }
-			} elseif { [<a name="::ClaraServ::FCT::DB:DATA:REMOVE(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::DB:DATA:REMOVE_313">::ClaraServ::FCT::DB:DATA:REMOVE</a></a> &quot;salon&quot; ${chan}] == 1 } {
-				${BOT_ID} part ${chan}
-				<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(28)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;DelChan : ${chan}&quot;
-				if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(8)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &quot;  }
-			} else {
-				<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(29)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;DelChan : ${chan} | Erreur Non ajouter &quot;
-				if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(9)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} | Erreur Non suprimer &quot; }
-			}
-
-
-		} else {
-			<a name="::ClaraServ::FCT::SENT:MSG:TO:USER(30)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:USER_242">::ClaraServ::FCT::SENT:MSG:TO:USER</a></a> ${sender} &quot;Accés Refusè.&quot;
-			if {${config(admin_console)} eq &quot;1&quot;} { <a name="::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG(10)"><a href="./ClaraServ.tcl.html#::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG_251">::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG</a></a> &quot;&lt;c12&gt;Part :&lt;c04&gt; ${chan} &lt;/c&gt;par &lt;c04&gt;${sender} &lt;/c&gt;-&gt;&lt;c04&gt; Accés Refusè.&quot;  }
-		}
-	}
-
-	<a name="::ClaraServ::INIT(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::INIT_123">::ClaraServ::INIT</a></a>
+<a name="::ClaraServ::INIT(1)"><a href="./ClaraServ.tcl.html#::ClaraServ::INIT_123">::ClaraServ::INIT</a></a>
 </pre>
 <hr>
 <font size="-2">
@@ -550,7 +563,7 @@ Index by:  <a href="index_main.html#byfilename">file name</a> |
 <a href="index_main.html#byprocname">procedure name</a> |
 <a href="index_main.html#bycall">procedure call</a> |
 <a href="index_annot_full.html">annotation</a><br>
-<cite>Index generated 2022-08-05 at 18:36.</cite>
+<cite>Index generated 2022-08-07 at 01:48.</cite>
 </font>
 </body>
 </html>
