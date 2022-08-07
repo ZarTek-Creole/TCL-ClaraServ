@@ -202,9 +202,9 @@ GitConfig
 # git supdate > /dev/null
 # git spull > /dev/null
 git add . > /dev/null
-git subtree pull --prefix tools/tcldoc https://github.com/ZarTek-Creole/tcldoc.git master --squash
-git subtree pull --prefix modules/TCL-PKG-IRCServices https://github.com/ZarTek-Creole/TCL-PKG-IRCServices master --squash
-git subtree pull --prefix modules/TCL-ZCT https://github.com/ZarTek-Creole/TCL-ZCT master --squash
+git subtree pull --prefix tools/tcldoc https://github.com/ZarTek-Creole/tcldoc.git develop --squash
+git subtree pull --prefix modules/TCL-PKG-IRCServices https://github.com/ZarTek-Creole/TCL-PKG-IRCServices mastdeveloper --squash
+git subtree pull --prefix modules/TCL-ZCT https://github.com/ZarTek-Creole/TCL-ZCT develop --squash
 
 git commit -m "v${VERS_NEW}: $*"
 UpdateDocs

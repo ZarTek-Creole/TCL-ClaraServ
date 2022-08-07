@@ -47,11 +47,12 @@ namespace eval ClaraServ {
 		"name"		"ClaraServ Service"
 		"version"	"1.1.3"
 		"auteur"	"ZarTek"
-		"url"	"https://github.com/ZarTek-Creole/TCL-ClaraServ"
-		"need_zct"	"0.0.6"
-		"need_ircs"	"0.0.5"
+		"url"		"https://github.com/ZarTek-Creole/TCL-ClaraServ"
+		"need_zct"	"0.0.9"
+		"need_ircs"	"0.0.7"
+		"dirname"	[file dirname [info script]]
 	}
-	set config(path_script)	[file dirname [info script]];
+
 
 	set config(db_list)		[list \
 		"salon.db"
@@ -161,7 +162,7 @@ proc ::ClaraServ::INIT { } {
 # ClaraServ fonctions #
 #######################
 proc ::ClaraServ::FCT::Get:ScriptDir { {DIR ""} } {
-	return "[file normalize ${::ClaraServ::config(path_script)}/${DIR}]/"
+	return "[file normalize ${::ClaraServ::Script(dirname)}/${DIR}]/"
 }
 
 proc ::ClaraServ::FCT::Check:Config { } {
@@ -176,23 +177,7 @@ proc ::ClaraServ::FCT::Check:Config { } {
 		}
 	}
 }
-# TODO: fonction ZCT ?
-proc ::ClaraServ::FCT::substitute_special_vars_2nd_pass {chan text} {
-	regsub -all %chan%			${text} ${chan} text;
-	regsub -all %botnick%		${text} [regsub -all {\W} ${::ClaraServ::config(service_nick)} {\\&}] text;
-	regsub -all %hour%			${text} [set hour [strftime %H [unixtime]]] text;
-	regsub -all %hour_short%	${text} [if { ${hour} != 00 } { set dummy [string trimleft ${hour} 0] } { set dummy 0 }] text
-	regsub -all %minutes%		${text} [set minutes [strftime %M [unixtime]]] text
-	regsub -all %minutes_short%	${text} [if { ${minutes} != 00 } { set dummy [string trimleft ${minutes} 0] } { set dummy 0 }] text
-	regsub -all %seconds%		${text} [set seconds [strftime %S [unixtime]]] text
-	regsub -all %seconds_short%	${text} [if { ${seconds} != 00 } { set dummy [string trimleft ${seconds} 0] } { set dummy 0 }] text
-	regsub -all %day_num%		${text} [strftime %d [unixtime]] text
-	regsub -all %day%			${text} [string map -nocase {Mon lundi Tue mardi Wed mercredi Thu jeudi Fri vendredi Sat samedi Sun dimanche} [strftime "%a" [unixtime]]] text
-	regsub -all %month_num%		${text} [strftime %m [unixtime]] text
-	regsub -all %month%			${text} [string map {Jan janvier Feb février Mar mars Apr avril May mai Jun juin Jul juillet Aou août Sep septembre Oct octobre Nov novembre Dec décembre} [strftime %b [unixtime]]] text
-	regsub -all %year%			${text} [strftime %Y [unixtime]] text
-	return ${text}
-}
+
 proc ::ClaraServ::FCT::DB:GET { CMD NIVEAU } {
 	foreach index [lsearch -all -nocase ${::ClaraServ::database} "*${CMD}*"] {
 		set index_data	[lindex ${::ClaraServ::database} ${index}]
@@ -211,17 +196,18 @@ proc ::ClaraServ::FCT::DB:CMD:LIST { } {
 	set x			0;
 	while { ${x} < ${ltext} } {
 		lappend CMD_LIST [lindex [lindex ${::ClaraServ::database} ${x}] 0]
+		lappend CMD_LIST [lindex [lindex ${::ClaraServ::database} ${x}] 1]
 		incr x
 	}
 	return [lsort -unique ${CMD_LIST}]
 }
 
 proc ::ClaraServ::FCT::SENT:NOTICE { DEST MSG } {
-	${::ClaraServ::BOT_ID}	notice ${DEST} [::ZCT::TXT::visuals::apply ${MSG} ]
+	${::ClaraServ::BOT_ID}	notice ${DEST} [::ZCT::TXT::visuals::apply ${MSG}]
 }
 
 proc ::ClaraServ::FCT::SENT:PRIVMSG { DEST MSG } {
-	${::ClaraServ::BOT_ID}	privmsg ${DEST} [::ZCT::TXT::visuals::apply ${MSG} ]
+	${::ClaraServ::BOT_ID}	privmsg ${DEST} [::ZCT::TXT::visuals::apply ${MSG}]
 }
 proc ::ClaraServ::FCT::SENT:MSG:TO:USER { DEST MSG } {
 	if { ${::ClaraServ::config(uplink_useprivmsg)} == 1 } {
@@ -354,7 +340,7 @@ proc ::ClaraServ::FCT::Create:Services {} {
 	}
 	${::ClaraServ::BOT_ID} registerevent PRIVMSG {
 		set IRC_CMD		[lindex [msg] 0]
-		set IRC_VALUE	[lrange [msg] 1 end]
+		set IRC_VALUE	[::ZCT::TXT::remove_accents [lrange [msg] 1 end]]
 
 		##########################
 		#--> Commandes Privés <--#
@@ -431,7 +417,7 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
 		set data [::ClaraServ::FCT::DB:GET ${cmd} 1];
 	}
 	if { ${data} != "-1" } {
-		set data	[::ClaraServ::FCT::substitute_special_vars_2nd_pass ${destination} ${data}];
+		set data	[::ZCT::TXT::REPLACE_SUBSTITUTE ${data} ${destination};
 		set data	[string map -nocase [list "%pseudo%" "${pseudo}" "%sender%" "${sender}" "%destination%" "${destination}"] ${data}]
 		::ClaraServ::FCT::SENT:PRIVMSG ${destination} ${data}
 	}
