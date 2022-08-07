@@ -25,22 +25,29 @@ namespace eval ::ZCT {
     namespace export *
     variable PKG
     array set PKG {
-        "version"	        "0.0.5"
-        "name"			    "package ZCT"
-        "auteur"		    "ZarTeK-Creole"
+        "version"		"0.0.9"
+        "name"			"package ZCT"
+        "auteur"		"ZarTeK-Creole @ https://github.com/ZarTek-Creole"
     }
     if { [info commands ::putlog] == "" } {
-        set PKG(eggdrop) 0
-        set PPL "puts"
+        set ::ZCT::eggdrop 0
+        set ::ZCT::PPL "puts"
     } else {
-        set PKG(eggdrop) 1
-        set PPL "putlog"
+        set ::ZCT::eggdrop 1
+        set ::ZCT::PPL "putlog"
     }
 }
 
 namespace eval ::ZCT::pkg {
 }
-# Charger une package
+# Chargeur de package en cas d'absence de celui-ci 
+# il indique comment le télécharger
+#
+# @param PKG_NAME Le nom exact du packages (obligatoire)
+# @param PKG_VERSION La version minimal que le packages doit charger
+# @param SCRIPT_NAME Le nom de votre script dans le quel vous voulez charger le package
+# @param MISSING_MODE Comment afficher les erreur ? putlog, puts, die(par default) ?
+# @return Le status charger ou erreur
 proc ::ZCT::pkg::load { PKG_NAME {PKG_VERSION ""} {SCRIPT_NAME ""} {MISSING_MODE "die"} } {
     if { ${SCRIPT_NAME} == "" }  {
         set ERR_PREFIX "\[Erreur\] Le script nécessite du package '${PKG_NAME}'"
@@ -63,9 +70,10 @@ proc ::ZCT::pkg::load { PKG_NAME {PKG_VERSION ""} {SCRIPT_NAME ""} {MISSING_MODE
 # Si un package est absent lors du "pkg load" nous retournons une aide pour l'installer le package manquant
 proc ::ZCT::pkg::How_Download { PKG_NAME } {
     switch -nocase ${PKG_NAME} {
-        Logger      { return "Il fait partie de la game de tcllib.\n Téléchargement sur https://www.tcl.tk/software/tcllib/"}
-        Tcl         { return "Télécharger la derniere version sur https://www.tcl.tk/software/tcltk/"}
-        default     { return "Aucune information sur ${PKG_NAME}, vous devez chercher sur internet"  }
+        Logger      	{ return "Il fait partie de la game de tcllib.\n Téléchargement sur https://www.tcl.tk/software/tcllib/" }
+        IRCServices  	{ return "Télécharger la derniere version sur https://github.com/ZarTek-Creole/TCL-PKG-IRCServices" }
+        Tcl         	{ return "Télécharger la derniere version sur https://www.tcl.tk/software/tcltk/" }
+        default     	{ return "Aucune information sur ${PKG_NAME}, vous devez chercher sur internet"   }
     }
 }
 # Verifications de presence de variables.
@@ -76,6 +84,9 @@ proc ::ZCT::pkg::How_Download { PKG_NAME } {
 # set VARS_list1			[list "var1" "var2"]
 # set VARS_list2			[list "var3" "var4"]
 # Il verifiera la presence de ${list1(var1)}, ${list1(var2)}, ${list2(var3)} et ${list2(var4)}
+#
+# @param NAMESPACE Le nom de l'espace nom dans le quel rechercher
+# @return NULL
 proc ::ZCT::Is:ArrayList:Exists { NAMESPACE } {
     set ::TMP_NS_ArrayList ${NAMESPACE}
     namespace inscope ${NAMESPACE} {
@@ -108,7 +119,7 @@ proc ::ZCT::Is:ArrayList:Exists { NAMESPACE } {
 
 }
 # Creer des couleurs pour le partyline
-# par exemple pour du texte en rouge en partyline :
+# par exemple pour du TEXT en rouge en partyline :
 # putlog "[pcolor_red]mon text rouge[pcolors_end] et ici aucune couleur"
 foreach {color_name value} { red 1 yellow 3 cyan 5 magenta 6 blue 4 green 2 } {
     proc ::ZCT::pcolor_${color_name} {} "return \033\\\[01\\;3${value}m"
@@ -130,7 +141,7 @@ proc ::ZCT::calledby {} {
     }
 }
 # Putlog amelioreé, avec des niveau (couleurs differentes) et type de text
-if { ${::ZCT::PKG(eggdrop)} } {
+if { ${::ZCT::eggdrop} } {
     proc ::ZCT::putlog { text {level_name ""} {text_name ""} } {
         variable ::ZCT::SCRIPT
         set UP_LEVEL_NAME [::ZCT::calledby]
@@ -158,60 +169,11 @@ if { ${::ZCT::PKG(eggdrop)} } {
         interp alias {} putlog {} ::ZCT::putlog
     }
 }
-namespace eval ::ZCT::TXT {
-    namespace export *
-}
-namespace eval ::ZCT::TXT::visuals {
-    namespace export *
-}
-# permet de centrer du text sur une longueur donné
-proc ::ZCT::TXT::visuals::espace { text length } {
-    set text			[string trim ${text}]
-    set text_length		[string length ${text}];
-    set espace_length	[expr (${length} - ${text_length})/2.0]
-    set ESPACE_TMP		[split ${espace_length} .]
-    set ESPACE_ENTIER	[lindex ${ESPACE_TMP} 0]
-    set ESPACE_DECIMAL	[lindex ${ESPACE_TMP} 1]
-    if { ${ESPACE_DECIMAL} == 0 } {
-        set espace_one			[string repeat " " ${ESPACE_ENTIER}];
-        set espace_two			[string repeat " " ${ESPACE_ENTIER}];
-        return "${espace_one}${text}${espace_two}"
-    } else {
-        set espace_one			[string repeat " " ${ESPACE_ENTIER}];
-        set espace_two			[string repeat " " [expr (${ESPACE_ENTIER}+1)]];
-        return "${espace_one}${text}${espace_two}"
-    }
-
-}
-##############################################################################
-### Substitution des symboles couleur/gras/soulignement/...
-###############################################################################
-# Modification de la fonction de MenzAgitat
-# <cXX> : Ajouter un Couleur avec le code XX : <c01>; <c02,01>
-# </c>  : Enlever la Couleur (refermer la deniere declaration <cXX>) : </c>
-# <b>   : Ajouter le style Bold/gras
-# </b>  : Enlever le style Bold/gras
-# <u>   : Ajouter le style Underline/souligner
-# </u>  : Enlever le style Underline/souligner
-# <i>   : Ajouter le style Italic/Italique
-# <s>   : Enlever les styles precedent
-proc ::ZCT::TXT::visuals::apply { data } {
-    regsub -all -nocase {<c([0-9]{0,2}(,[0-9]{0,2})?)?>|</c([0-9]{0,2}(,[0-9]{0,2})?)?>} ${data} "\003\\1" data
-    regsub -all -nocase {<b>|</b>} ${data} "\002" data
-    regsub -all -nocase {<u>|</u>} ${data} "\037" data
-    regsub -all -nocase {<i>|</i>} ${data} "\026" data
-    return [regsub -all -nocase {<s>} ${data} "\017"]
-}
-# Enleve les style visuals
-proc ::ZCT::TXT::visuals::remove { data } {
-    regsub -all -nocase {<c([0-9]{0,2}(,[0-9]{0,2})?)?>|</c([0-9]{0,2}(,[0-9]{0,2})?)?>} ${data} "" data
-    regsub -all -nocase {<b>|</b>} ${data} "" data
-    regsub -all -nocase {<u>|</u>} ${data} "" data
-    regsub -all -nocase {<i>|</i>} ${data} "" data
-    return [regsub -all -nocase {<s>} ${data} ""]
-}
 # Procedure interne qui permet de creer les procs et les subprocs automatiquement
 # https://forum.eggdrop.fr/Une-proc-qui-gere-lexploration-des-sous-commandes-par-les-namespaces-t-1951.html
+#
+# @param namespace Le nom d'espacement a suivre
+# @return NULL - Cree des (SUB-)PROCS
 proc ::ZCT::create_sub_procs { namespace } {
     # Boucle sur les namespaces enfants de $namespace (::example) retourne -> ::example::text; ::example::text2
     foreach child_name [namespace children ${namespace}] {
@@ -242,6 +204,129 @@ proc ::ZCT::create_sub_procs { namespace } {
     }
     # fin de la boucle
 }
+namespace eval ::ZCT::TXT {
+    namespace export *
+}
+namespace eval ::ZCT::TXT::visuals {
+    namespace export *
+}
+# Supprimer les accents dans une chaîne de caractères
+# Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.
+# source : https://boulets.eggdrop.fr/tcl/routines/tcl-toolbox-0011.html
+#
+# @param TEXT Le TEXT dont les accents doivent être enlever
+# @return Le TEXT sans accents, ni cédiles
+proc ::ZCT::TXT::remove_accents { TEXT } {
+	return [::tcl::string::map -nocase {
+		"à" "a" "â" "a" "ä" "a" "ã" "a" "å" "a" "á" "a" "à" "a" "å" "a"
+		"é" "e" "è" "e" "ê" "e" "ë" "e"
+		"î" "i" "ï" "i" "î" "i" "í" "i" "ì" "i"
+		"ô" "o" "ö" "o" "õ" "o" "ø" "o" "ò" "o" "ó" "o"
+		"ù" "u" "û" "u" "ü" "u" "ú" "u"
+		"ý" "y" "ÿ" "y"
+		"ç" "c" "ð" "d" "ñ" "n" "š" "s" "ž" "z"
+	} ${TEXT}]
+}
+
+# Supprimer les accents dans une chaîne de caractères
+# Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.
+# source : https://boulets.eggdrop.fr/tcl/routines/tcl-toolbox-0011.html
+#
+# @param TEXT Le TEXT contenant des variables de subtitutions
+# @param Channel Le salon pour remplacer %chan% (facultatif)
+# @return Le TEXT avec les doonées de subtitutions replacer
+proc ::ZCT::TXT::REPLACE_SUBSTITUTE { TEXT {Channel ""} } {
+	regsub -all %chan%			${TEXT} ${Channel} TEXT;
+	regsub -all %botnick%		${TEXT} [regsub -all {\W} ${::ClaraServ::config(service_nick)} {\\&}] TEXT;
+	regsub -all %hour%			${TEXT} [set hour [strftime %H [unixtime]]] TEXT;
+	regsub -all %hour_short%	${TEXT} [if { ${hour} != 00 } { set dummy [string trimleft ${hour} 0] } { set dummy 0 }] TEXT;
+	regsub -all %minutes%		${TEXT} [set minutes [strftime %M [unixtime]]] TEXT;
+	regsub -all %minutes_short%	${TEXT} [if { ${minutes} != 00 } { set dummy [string trimleft ${minutes} 0] } { set dummy 0 }] TEXT;
+	regsub -all %seconds%		${TEXT} [set seconds [strftime %S [unixtime]]] TEXT;
+	regsub -all %seconds_short%	${TEXT} [if { ${seconds} != 00 } { set dummy [string trimleft ${seconds} 0] } { set dummy 0 }] TEXT;
+	regsub -all %day_num%		${TEXT} [strftime %d [unixtime]] TEXT;
+	regsub -all %day%			${TEXT} [string map -nocase {Mon lundi Tue mardi Wed mercredi Thu jeudi Fri vendredi Sat samedi Sun dimanche} [strftime "%a" [unixtime]]] TEXT;
+	regsub -all %month_num%		${TEXT} [strftime %m [unixtime]] TEXT;
+	regsub -all %month%			${TEXT} [string map {Jan janvier Feb février Mar mars Apr avril May mai Jun juin Jul juillet Aou août Sep septembre Oct octobre Nov novembre Dec décembre} [strftime %b [unixtime]]] TEXT;
+	regsub -all %year%			${TEXT} [strftime %Y [unixtime]] TEXT;
+	return ${TEXT}
+}
+
+# Centrer un TEXT avec des espaces sur une longueur donnée
+#
+# @param TEXT Le TEXT qui doit être centré
+# @param LENGTH La longueur voulu avec les espacements
+# @return Le TEXT centré avec le nombre d'espaces pour avoir une longueur égal à LENGTH
+proc ::ZCT::TXT::visuals::espace { TEXT LENGTH } {
+    set text			[string trim ${TEXT}]
+    set text_length		[string length ${TEXT}];
+    set espace_length	[expr (${LENGTH} - ${text_length})/2.0]
+    set ESPACE_TMP		[split ${espace_length} .]
+    set ESPACE_ENTIER	[lindex ${ESPACE_TMP} 0]
+    set ESPACE_DECIMAL	[lindex ${ESPACE_TMP} 1]
+    if { ${ESPACE_DECIMAL} == 0 } {
+        set espace_one			[string repeat " " ${ESPACE_ENTIER}];
+        set espace_two			[string repeat " " ${ESPACE_ENTIER}];
+        return "${espace_one}${TEXT}${espace_two}"
+    } else {
+        set espace_one			[string repeat " " ${ESPACE_ENTIER}];
+        set espace_two			[string repeat " " [expr (${ESPACE_ENTIER}+1)]];
+        return "${espace_one}${TEXT}${espace_two}"
+    }
+}
+
+# Enleve les style visuals
+#
+# @param TEXT Le TEXT avec des codes style
+# @return Le TEXT sans les codes styles
+proc ::ZCT::TXT::visuals::remove { TEXT } {
+    regsub -all -nocase {<c([0-9]{0,2}(,[0-9]{0,2})?)?>|</c([0-9]{0,2}(,[0-9]{0,2})?)?>} ${TEXT} {} TEXT;
+    regsub -all -nocase {<b>|</b>} ${TEXT} {} TEXT;
+    regsub -all -nocase {<u>|</u>} ${TEXT} {} TEXT;
+    regsub -all -nocase {<i>|</i>} ${TEXT} {} TEXT;
+    return [regsub -all -nocase {<s>} ${TEXT} {}];
+}
+
+##############################################################################
+### Substitution des symboles couleur/gras/soulignement/...
+###############################################################################
+# Modification de la fonction de MenzAgitat
+# <cXX> : Ajouter un Couleur avec le code XX : <c01>; <c02,01>
+# </c>  : Enlever la Couleur (refermer la deniere declaration <cXX>) : </c>
+# <b>   : Ajouter le style Bold/gras
+# </b>  : Enlever le style Bold/gras
+# <u>   : Ajouter le style Underline/souligner
+# </u>  : Enlever le style Underline/souligner
+# <i>   : Ajouter le style Italic/Italique
+# <s>   : Enlever les styles precedent
+##
+# Black       = 00
+# White       = 01
+# Dark Blue   = 02
+# Green       = 03
+# Red         = 04
+# Brown       = 05
+# Purple      = 06
+# Orange      = 07
+# Yellow      = 08
+# Light Green = 09
+# DarkCyan    = 10
+# LightCyan   = 11
+# LightBlue   = 12
+# Pink        = 13
+# Dark Grey   = 14
+# Light Grey  = 15
+##
+# @param TEXT Le TEXT avec des codes style a remplacer avec de vrai codes styles (couleurs, gras..)
+# @return Le TEXT avec les codes styles en TCl
+proc ::ZCT::TXT::visuals::apply { TEXT } {
+    regsub -all -nocase {<c([0-9]{0,2}(,[0-9]{0,2})?)?>|</c([0-9]{0,2}(,[0-9]{0,2})?)?>} ${TEXT} "\003\\1" TEXT;
+    regsub -all -nocase {<b>|</b>} ${TEXT} "\002" TEXT;
+    regsub -all -nocase {<u>|</u>} ${TEXT} "\037" TEXT;
+    regsub -all -nocase {<i>|</i>} ${TEXT} "\026" TEXT;
+    return [regsub -all -nocase {<s>} ${TEXT} "\017"];
+}
+
 ::ZCT::create_sub_procs ::ZCT
 
 package provide ZCT ${::ZCT::PKG(version)}

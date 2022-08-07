@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>docs</title>
+<title>/workspaces/TCL-ZCT/docs</title>
 </head>
 <body bgcolor="#ffffff">
 <script type="text/javascript">
@@ -71,27 +71,36 @@ Y
 <dd>Si un package est absent lors du "pkg load" nous retournons une aide pour l'installer le package
 <dt><a href="ZCT.tcl-annot.html#::ZCT::pkg::load">::ZCT::pkg::load</a> { PKG_NAME {PKG_VERSION {}} {SCRIPT_NAME {}} {MISSING_MODE die} } - 
 <a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
-<dd>Charger une
+<dd>Chargeur de package en cas d'absence de celui-ci 
+ il indique comment le
 <dt><a href="ZCT.tcl-annot.html#::ZCT::putlog">::ZCT::putlog</a> { text {level_name {}} {text_name {}} } - 
 <a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
 <dd>
-<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a> { data } - 
+<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::remove_accents">::ZCT::TXT::remove_accents</a> { TEXT } - 
+<a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
+<dd>Supprimer les accents dans une chaîne de caractères
+ Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.
+<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::REPLACE_SUBSTITUTE">::ZCT::TXT::REPLACE_SUBSTITUTE</a> { TEXT {Channel {}} } - 
+<a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
+<dd>Supprimer les accents dans une chaîne de caractères
+ Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.
+<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a> { TEXT } - 
 <a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
 <dd>#############################################################################
 ## Substitution des symboles
-<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a> { text length } - 
+<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a> { TEXT LENGTH } - 
 <a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
-<dd>permet de centrer du text sur une longueur
-<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a> { data } - 
+<dd>Centrer un TEXT avec des espaces sur une longueur
+<dt><a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a> { TEXT } - 
 <a href="./ZCT.tcl-annot.html">ZCT.tcl</a>
 <dd>Enleve les style
 <dt><h3><a name="P">P</a></h3>
 <dt><strong><a href="pkgIndex.tcl-annot.html">pkgIndex.tcl</a></strong>  - 
-file found in <code>.</code>
+Tcl source code
 <dd>
 <dt><h3><a name="Z">Z</a></h3>
 <dt><strong><a href="ZCT.tcl-annot.html">ZCT.tcl</a></strong>  - 
-file found in <code>.</code>
+Tcl source code
 <dd>
 </dl>
 <hr>
@@ -100,7 +109,7 @@ Index by:  <a href="index_main.html#byfilename">file name</a> |
 <a href="index_main.html#byprocname">procedure name</a> |
 <a href="index_main.html#bycall">procedure call</a> |
 <a href="index_annot_full.html">annotation</a><br>
-<cite>Index generated 2022-07-31 at 03:52.</cite>
+<cite>Index generated 2022-08-07 at 21:26.</cite>
 </font>
 </body>
 </html>
