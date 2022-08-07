@@ -39,23 +39,30 @@ namespace eval ::ZCT {
     namespace export *
     variable PKG
     array set PKG {
-        &quot;version&quot;	        &quot;0.0.5&quot;
-        &quot;name&quot;			    &quot;package ZCT&quot;
-        &quot;auteur&quot;		    &quot;ZarTeK-Creole&quot;
+        &quot;version&quot;		&quot;0.0.9&quot;
+        &quot;name&quot;			&quot;package ZCT&quot;
+        &quot;auteur&quot;		&quot;ZarTeK-Creole @ https://github.com/ZarTek-Creole&quot;
     }
     if { [info commands ::putlog] == &quot;&quot; } {
-        set PKG(eggdrop) 0
-        set PPL &quot;puts&quot;
+        set ::ZCT::eggdrop 0
+        set ::ZCT::PPL &quot;puts&quot;
     } else {
-        set PKG(eggdrop) 1
-        set PPL &quot;putlog&quot;
+        set ::ZCT::eggdrop 1
+        set ::ZCT::PPL &quot;putlog&quot;
     }
 }
 
 namespace eval ::ZCT::pkg {
 }
-<font color="#208020"># Charger une package</font>
-<strong><a name="::ZCT::pkg::load_44">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::load">::ZCT::pkg::load</a></a></strong><a name="::ZCT::pkg::load"></a> { PKG_NAME {PKG_VERSION &quot;&quot;} {SCRIPT_NAME &quot;&quot;} {MISSING_MODE &quot;die&quot;} } {
+<font color="#208020"># Chargeur de package en cas d'absence de celui-ci </font>
+<font color="#208020"># il indique comment le télécharger</font>
+<font color="#208020">#</font>
+<font color="#208020"># @param PKG_NAME Le nom exact du packages (obligatoire)</font>
+<font color="#208020"># @param PKG_VERSION La version minimal que le packages doit charger</font>
+<font color="#208020"># @param SCRIPT_NAME Le nom de votre script dans le quel vous voulez charger le package</font>
+<font color="#208020"># @param MISSING_MODE Comment afficher les erreur ? putlog, puts, die(par default) ?</font>
+<font color="#208020"># @return Le status charger ou erreur</font>
+<strong><a name="::ZCT::pkg::load_51">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::load">::ZCT::pkg::load</a></a></strong><a name="::ZCT::pkg::load"></a> { PKG_NAME {PKG_VERSION &quot;&quot;} {SCRIPT_NAME &quot;&quot;} {MISSING_MODE &quot;die&quot;} } {
     if { ${SCRIPT_NAME} == &quot;&quot; }  {
         set ERR_PREFIX &quot;\[Erreur\] Le script nécessite du package '${PKG_NAME}'&quot;
         set OK_PREFIX &quot;\[OK\] Le script à chargé le package '${PKG_NAME}'&quot;
@@ -65,21 +72,22 @@ namespace eval ::ZCT::pkg {
     }
     if { ${PKG_VERSION} == &quot;&quot; } {
         if { [catch { set PKG_VERSION [package require ${PKG_NAME}]}] } {
-            ${MISSING_MODE} &quot;${ERR_PREFIX} pour fonctionner. [<a name="::ZCT::pkg::How_Download(1)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_64">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
+            ${MISSING_MODE} &quot;${ERR_PREFIX} pour fonctionner. [<a name="::ZCT::pkg::How_Download(1)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_71">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
         }
     } else {
         if { [catch { set PKG_VERSION [package require ${PKG_NAME} ${PKG_VERSION}]}] } {
-            ${MISSING_MODE} &quot;${ERR_PREFIX} version ${PKG_VERSION} ou supérieur pour fonctionner. [<a name="::ZCT::pkg::How_Download(2)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_64">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
+            ${MISSING_MODE} &quot;${ERR_PREFIX} version ${PKG_VERSION} ou supérieur pour fonctionner. [<a name="::ZCT::pkg::How_Download(2)"><a href="./ZCT.tcl.html#::ZCT::pkg::How_Download_71">::ZCT::pkg::How_Download</a></a> ${PKG_NAME}]&quot;
         }
     }
     ${::ZCT::PPL} &quot;${OK_PREFIX} avec la version ${PKG_VERSION} avec succès&quot;
 }
 <font color="#208020"># Si un package est absent lors du &quot;pkg load&quot; nous retournons une aide pour l'installer le package manquant</font>
-<strong><a name="::ZCT::pkg::How_Download_64">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a></a></strong><a name="::ZCT::pkg::How_Download"></a> { PKG_NAME } {
+<strong><a name="::ZCT::pkg::How_Download_71">proc <a href="ZCT.tcl-annot.html#::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a></a></strong><a name="::ZCT::pkg::How_Download"></a> { PKG_NAME } {
     switch -nocase ${PKG_NAME} {
-        Logger      { return &quot;Il fait partie de la game de tcllib.\n Téléchargement sur https://www.tcl.tk/software/tcllib/&quot;}
-        Tcl         { return &quot;Télécharger la derniere version sur https://www.tcl.tk/software/tcltk/&quot;}
-        default     { return &quot;Aucune information sur ${PKG_NAME}, vous devez chercher sur internet&quot;  }
+        Logger      	{ return &quot;Il fait partie de la game de tcllib.\n Téléchargement sur https://www.tcl.tk/software/tcllib/&quot; }
+        IRCServices  	{ return &quot;Télécharger la derniere version sur https://github.com/ZarTek-Creole/TCL-PKG-IRCServices&quot; }
+        Tcl         	{ return &quot;Télécharger la derniere version sur https://www.tcl.tk/software/tcltk/&quot; }
+        default     	{ return &quot;Aucune information sur ${PKG_NAME}, vous devez chercher sur internet&quot;   }
     }
 }
 <font color="#208020"># Verifications de presence de variables.</font>
@@ -90,7 +98,10 @@ namespace eval ::ZCT::pkg {
 <font color="#208020"># set VARS_list1			[list &quot;var1&quot; &quot;var2&quot;]</font>
 <font color="#208020"># set VARS_list2			[list &quot;var3&quot; &quot;var4&quot;]</font>
 <font color="#208020"># Il verifiera la presence de ${list1(var1)}, ${list1(var2)}, ${list2(var3)} et ${list2(var4)}</font>
-<strong><a name="::ZCT::Is:ArrayList:Exists_79">proc <a href="ZCT.tcl-annot.html#::ZCT::Is:ArrayList:Exists">::ZCT::Is:ArrayList:Exists</a></a></strong><a name="::ZCT::Is:ArrayList:Exists"></a> { NAMESPACE } {
+<font color="#208020">#</font>
+<font color="#208020"># @param NAMESPACE Le nom de l'espace nom dans le quel rechercher</font>
+<font color="#208020"># @return NULL</font>
+<strong><a name="::ZCT::Is:ArrayList:Exists_90">proc <a href="ZCT.tcl-annot.html#::ZCT::Is:ArrayList:Exists">::ZCT::Is:ArrayList:Exists</a></a></strong><a name="::ZCT::Is:ArrayList:Exists"></a> { NAMESPACE } {
     set ::TMP_NS_ArrayList ${NAMESPACE}
     namespace inscope ${NAMESPACE} {
         variable VARS_LIST
@@ -122,16 +133,16 @@ namespace eval ::ZCT::pkg {
 
 }
 <font color="#208020"># Creer des couleurs pour le partyline</font>
-<font color="#208020"># par exemple pour du texte en rouge en partyline :</font>
+<font color="#208020"># par exemple pour du TEXT en rouge en partyline :</font>
 <font color="#208020"># putlog &quot;[pcolor_red]mon text rouge[pcolors_end] et ici aucune couleur&quot;</font>
 foreach {color_name value} { red 1 yellow 3 cyan 5 magenta 6 blue 4 green 2 } {
-    <strong><a name="::ZCT::pcolor_${color_name}_114">proc <a href="ZCT.tcl-annot.html#::ZCT::pcolor_${color_name}">::ZCT::pcolor_${color_name}</a></a></strong> {} &quot;return \033\\\[01\\;3${value}m&quot;
+    <strong><a name="::ZCT::pcolor_${color_name}_125">proc <a href="ZCT.tcl-annot.html#::ZCT::pcolor_${color_name}">::ZCT::pcolor_${color_name}</a></a></strong> {} &quot;return \033\\\[01\\;3${value}m&quot;
 }
-<strong><a name="::ZCT::pcolors_end_116">proc <a href="ZCT.tcl-annot.html#::ZCT::pcolors_end">::ZCT::pcolors_end</a></a></strong><a name="::ZCT::pcolors_end"></a> { } {
+<strong><a name="::ZCT::pcolors_end_127">proc <a href="ZCT.tcl-annot.html#::ZCT::pcolors_end">::ZCT::pcolors_end</a></a></strong><a name="::ZCT::pcolors_end"></a> { } {
     return \033\[\;0m
 }
 <font color="#208020"># procedure qui retourne où il est appellé</font>
-<strong><a name="::ZCT::calledby_120">proc <a href="ZCT.tcl-annot.html#::ZCT::calledby">::ZCT::calledby</a></a></strong><a name="::ZCT::calledby"></a> {} {
+<strong><a name="::ZCT::calledby_131">proc <a href="ZCT.tcl-annot.html#::ZCT::calledby">::ZCT::calledby</a></a></strong><a name="::ZCT::calledby"></a> {} {
     set level [expr [info leve] - 2]
     if { ${level} &gt; 0 } {
         return [lindex [info level ${level} ] 0]
@@ -144,10 +155,10 @@ foreach {color_name value} { red 1 yellow 3 cyan 5 magenta 6 blue 4 green 2 } {
     }
 }
 <font color="#208020"># Putlog amelioreé, avec des niveau (couleurs differentes) et type de text</font>
-if { ${::ZCT::PKG(eggdrop)} } {
-    <strong><a name="::ZCT::putlog_134">proc <a href="ZCT.tcl-annot.html#::ZCT::putlog">::ZCT::putlog</a></a></strong><a name="::ZCT::putlog"></a> { text {level_name &quot;&quot;} {text_name &quot;&quot;} } {
+if { ${::ZCT::eggdrop} } {
+    <strong><a name="::ZCT::putlog_145">proc <a href="ZCT.tcl-annot.html#::ZCT::putlog">::ZCT::putlog</a></a></strong><a name="::ZCT::putlog"></a> { text {level_name &quot;&quot;} {text_name &quot;&quot;} } {
         variable ::ZCT::SCRIPT
-        set UP_LEVEL_NAME [<a name="::ZCT::calledby(1)"><a href="./ZCT.tcl.html#::ZCT::calledby_120">::ZCT::calledby</a></a>]
+        set UP_LEVEL_NAME [<a name="::ZCT::calledby(1)"><a href="./ZCT.tcl.html#::ZCT::calledby_131">::ZCT::calledby</a></a>]
         if { ${text_name} == &quot;&quot; } {
             if { ${level_name} != &quot;&quot; } {
                 set text_name &quot; - ${level_name}&quot;
@@ -172,65 +183,16 @@ if { ${::ZCT::PKG(eggdrop)} } {
         interp alias {} putlog {} ::ZCT::putlog
     }
 }
-namespace eval ::ZCT::TXT {
-    namespace export *
-}
-namespace eval ::ZCT::TXT::visuals {
-    namespace export *
-}
-<font color="#208020"># permet de centrer du text sur une longueur donné</font>
-<strong><a name="::ZCT::TXT::visuals::espace_168">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a></a></strong><a name="::ZCT::TXT::visuals::espace"></a> { text length } {
-    set text			[string trim ${text}]
-    set text_length		[string length ${text}];
-    set espace_length	[expr (${length} - ${text_length})/2.0]
-    set ESPACE_TMP		[split ${espace_length} .]
-    set ESPACE_ENTIER	[lindex ${ESPACE_TMP} 0]
-    set ESPACE_DECIMAL	[lindex ${ESPACE_TMP} 1]
-    if { ${ESPACE_DECIMAL} == 0 } {
-        set espace_one			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
-        set espace_two			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
-        return &quot;${espace_one}${text}${espace_two}&quot;
-    } else {
-        set espace_one			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
-        set espace_two			[string repeat &quot; &quot; [expr (${ESPACE_ENTIER}+1)]];
-        return &quot;${espace_one}${text}${espace_two}&quot;
-    }
-
-}
-<font color="#208020">##############################################################################</font>
-<font color="#208020">### Substitution des symboles couleur/gras/soulignement/...</font>
-<font color="#208020">###############################################################################</font>
-<font color="#208020"># Modification de la fonction de MenzAgitat</font>
-<font color="#208020"># &lt;cXX&gt; : Ajouter un Couleur avec le code XX : &lt;c01&gt;; &lt;c02,01&gt;</font>
-<font color="#208020"># &lt;/c&gt;  : Enlever la Couleur (refermer la deniere declaration &lt;cXX&gt;) : &lt;/c&gt;</font>
-<font color="#208020"># &lt;b&gt;   : Ajouter le style Bold/gras</font>
-<font color="#208020"># &lt;/b&gt;  : Enlever le style Bold/gras</font>
-<font color="#208020"># &lt;u&gt;   : Ajouter le style Underline/souligner</font>
-<font color="#208020"># &lt;/u&gt;  : Enlever le style Underline/souligner</font>
-<font color="#208020"># &lt;i&gt;   : Ajouter le style Italic/Italique</font>
-<font color="#208020"># &lt;s&gt;   : Enlever les styles precedent</font>
-<strong><a name="::ZCT::TXT::visuals::apply_198">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a></a></strong><a name="::ZCT::TXT::visuals::apply"></a> { data } {
-    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${data} &quot;\003\\1&quot; data
-    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${data} &quot;\002&quot; data
-    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${data} &quot;\037&quot; data
-    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${data} &quot;\026&quot; data
-    return [regsub -all -nocase {&lt;s&gt;} ${data} &quot;\017&quot;]
-}
-<font color="#208020"># Enleve les style visuals</font>
-<strong><a name="::ZCT::TXT::visuals::remove_206">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a></a></strong><a name="::ZCT::TXT::visuals::remove"></a> { data } {
-    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${data} &quot;&quot; data
-    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${data} &quot;&quot; data
-    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${data} &quot;&quot; data
-    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${data} &quot;&quot; data
-    return [regsub -all -nocase {&lt;s&gt;} ${data} &quot;&quot;]
-}
 <font color="#208020"># Procedure interne qui permet de creer les procs et les subprocs automatiquement</font>
 <font color="#208020"># https://forum.eggdrop.fr/Une-proc-qui-gere-lexploration-des-sous-commandes-par-les-namespaces-t-1951.html</font>
-<strong><a name="::ZCT::create_sub_procs_215">proc <a href="ZCT.tcl-annot.html#::ZCT::create_sub_procs">::ZCT::create_sub_procs</a></a></strong><a name="::ZCT::create_sub_procs"></a> { namespace } {
+<font color="#208020">#</font>
+<font color="#208020"># @param namespace Le nom d'espacement a suivre</font>
+<font color="#208020"># @return NULL - Cree des (SUB-)PROCS</font>
+<strong><a name="::ZCT::create_sub_procs_177">proc <a href="ZCT.tcl-annot.html#::ZCT::create_sub_procs">::ZCT::create_sub_procs</a></a></strong><a name="::ZCT::create_sub_procs"></a> { namespace } {
     <font color="#208020"># Boucle sur les namespaces enfants de $namespace (::example) retourne -&gt; ::example::text; ::example::text2</font>
     foreach child_name [namespace children ${namespace}] {
         <font color="#208020"># Création de procédure portant le nom des namespaces enfants ::example::text, ::example::text2</font>
-        <strong><a name="${child_name}_219">proc <a href="ZCT.tcl-annot.html#${child_name}">${child_name}</a></a></strong> { {subcommand &quot;&quot;} args } {
+        <strong><a name="${child_name}_181">proc <a href="ZCT.tcl-annot.html#${child_name}">${child_name}</a></a></strong> { {subcommand &quot;&quot;} args } {
             <font color="#208020"># tout ce qui fais partie ici, sera exécuté lors de l'exécution de la proc créer</font>
             <font color="#208020"># les variables, commandes</font>
             <font color="#208020"># le  proc_path contient chemin de la proc (lors de sont exécution et non maintenant donc)</font>
@@ -256,7 +218,130 @@ namespace eval ::ZCT::TXT::visuals {
     }
     <font color="#208020"># fin de la boucle</font>
 }
-<a name="::ZCT::create_sub_procs(1)"><a href="./ZCT.tcl.html#::ZCT::create_sub_procs_215">::ZCT::create_sub_procs</a></a> ::ZCT
+namespace eval ::ZCT::TXT {
+    namespace export *
+}
+namespace eval ::ZCT::TXT::visuals {
+    namespace export *
+}
+<font color="#208020"># Supprimer les accents dans une chaîne de caractères</font>
+<font color="#208020"># Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.</font>
+<font color="#208020"># source : https://boulets.eggdrop.fr/tcl/routines/tcl-toolbox-0011.html</font>
+<font color="#208020">#</font>
+<font color="#208020"># @param TEXT Le TEXT dont les accents doivent être enlever</font>
+<font color="#208020"># @return Le TEXT sans accents, ni cédiles</font>
+<strong><a name="::ZCT::TXT::remove_accents_219">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::remove_accents">::ZCT::TXT::remove_accents</a></a></strong><a name="::ZCT::TXT::remove_accents"></a> { TEXT } {
+	return [::tcl::string::map -nocase {
+		&quot;à&quot; &quot;a&quot; &quot;â&quot; &quot;a&quot; &quot;ä&quot; &quot;a&quot; &quot;ã&quot; &quot;a&quot; &quot;å&quot; &quot;a&quot; &quot;á&quot; &quot;a&quot; &quot;à&quot; &quot;a&quot; &quot;å&quot; &quot;a&quot;
+		&quot;é&quot; &quot;e&quot; &quot;è&quot; &quot;e&quot; &quot;ê&quot; &quot;e&quot; &quot;ë&quot; &quot;e&quot;
+		&quot;î&quot; &quot;i&quot; &quot;ï&quot; &quot;i&quot; &quot;î&quot; &quot;i&quot; &quot;í&quot; &quot;i&quot; &quot;ì&quot; &quot;i&quot;
+		&quot;ô&quot; &quot;o&quot; &quot;ö&quot; &quot;o&quot; &quot;õ&quot; &quot;o&quot; &quot;ø&quot; &quot;o&quot; &quot;ò&quot; &quot;o&quot; &quot;ó&quot; &quot;o&quot;
+		&quot;ù&quot; &quot;u&quot; &quot;û&quot; &quot;u&quot; &quot;ü&quot; &quot;u&quot; &quot;ú&quot; &quot;u&quot;
+		&quot;ý&quot; &quot;y&quot; &quot;ÿ&quot; &quot;y&quot;
+		&quot;ç&quot; &quot;c&quot; &quot;ð&quot; &quot;d&quot; &quot;ñ&quot; &quot;n&quot; &quot;š&quot; &quot;s&quot; &quot;ž&quot; &quot;z&quot;
+	} ${TEXT}]
+}
+
+<font color="#208020"># Supprimer les accents dans une chaîne de caractères</font>
+<font color="#208020"># Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.</font>
+<font color="#208020"># source : https://boulets.eggdrop.fr/tcl/routines/tcl-toolbox-0011.html</font>
+<font color="#208020">#</font>
+<font color="#208020"># @param TEXT Le TEXT contenant des variables de subtitutions</font>
+<font color="#208020"># @param Channel Le salon pour remplacer %chan% (facultatif)</font>
+<font color="#208020"># @return Le TEXT avec les doonées de subtitutions replacer</font>
+<strong><a name="::ZCT::TXT::REPLACE_SUBSTITUTE_238">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::REPLACE_SUBSTITUTE">::ZCT::TXT::REPLACE_SUBSTITUTE</a></a></strong><a name="::ZCT::TXT::REPLACE_SUBSTITUTE"></a> { TEXT {Channel &quot;&quot;} } {
+	regsub -all %chan%			${TEXT} ${Channel} TEXT;
+	regsub -all %botnick%		${TEXT} [regsub -all {\W} ${::ClaraServ::config(service_nick)} {\\&amp;}] TEXT;
+	regsub -all %hour%			${TEXT} [set hour [strftime %H [unixtime]]] TEXT;
+	regsub -all %hour_short%	${TEXT} [if { ${hour} != 00 } { set dummy [string trimleft ${hour} 0] } { set dummy 0 }] TEXT;
+	regsub -all %minutes%		${TEXT} [set minutes [strftime %M [unixtime]]] TEXT;
+	regsub -all %minutes_short%	${TEXT} [if { ${minutes} != 00 } { set dummy [string trimleft ${minutes} 0] } { set dummy 0 }] TEXT;
+	regsub -all %seconds%		${TEXT} [set seconds [strftime %S [unixtime]]] TEXT;
+	regsub -all %seconds_short%	${TEXT} [if { ${seconds} != 00 } { set dummy [string trimleft ${seconds} 0] } { set dummy 0 }] TEXT;
+	regsub -all %day_num%		${TEXT} [strftime %d [unixtime]] TEXT;
+	regsub -all %day%			${TEXT} [string map -nocase {Mon lundi Tue mardi Wed mercredi Thu jeudi Fri vendredi Sat samedi Sun dimanche} [strftime &quot;%a&quot; [unixtime]]] TEXT;
+	regsub -all %month_num%		${TEXT} [strftime %m [unixtime]] TEXT;
+	regsub -all %month%			${TEXT} [string map {Jan janvier Feb février Mar mars Apr avril May mai Jun juin Jul juillet Aou août Sep septembre Oct octobre Nov novembre Dec décembre} [strftime %b [unixtime]]] TEXT;
+	regsub -all %year%			${TEXT} [strftime %Y [unixtime]] TEXT;
+	return ${TEXT}
+}
+
+<font color="#208020"># Centrer un TEXT avec des espaces sur une longueur donnée</font>
+<font color="#208020">#</font>
+<font color="#208020"># @param TEXT Le TEXT qui doit être centré</font>
+<font color="#208020"># @param LENGTH La longueur voulu avec les espacements</font>
+<font color="#208020"># @return Le TEXT centré avec le nombre d'espaces pour avoir une longueur égal à LENGTH</font>
+<strong><a name="::ZCT::TXT::visuals::espace_260">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a></a></strong><a name="::ZCT::TXT::visuals::espace"></a> { TEXT LENGTH } {
+    set text			[string trim ${TEXT}]
+    set text_length		[string length ${TEXT}];
+    set espace_length	[expr (${LENGTH} - ${text_length})/2.0]
+    set ESPACE_TMP		[split ${espace_length} .]
+    set ESPACE_ENTIER	[lindex ${ESPACE_TMP} 0]
+    set ESPACE_DECIMAL	[lindex ${ESPACE_TMP} 1]
+    if { ${ESPACE_DECIMAL} == 0 } {
+        set espace_one			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
+        set espace_two			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
+        return &quot;${espace_one}${TEXT}${espace_two}&quot;
+    } else {
+        set espace_one			[string repeat &quot; &quot; ${ESPACE_ENTIER}];
+        set espace_two			[string repeat &quot; &quot; [expr (${ESPACE_ENTIER}+1)]];
+        return &quot;${espace_one}${TEXT}${espace_two}&quot;
+    }
+}
+
+<font color="#208020"># Enleve les style visuals</font>
+<font color="#208020">#</font>
+<font color="#208020"># @param TEXT Le TEXT avec des codes style</font>
+<font color="#208020"># @return Le TEXT sans les codes styles</font>
+<strong><a name="::ZCT::TXT::visuals::remove_282">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a></a></strong><a name="::ZCT::TXT::visuals::remove"></a> { TEXT } {
+    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${TEXT} {} TEXT;
+    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${TEXT} {} TEXT;
+    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${TEXT} {} TEXT;
+    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${TEXT} {} TEXT;
+    return [regsub -all -nocase {&lt;s&gt;} ${TEXT} {}];
+}
+
+<font color="#208020">##############################################################################</font>
+<font color="#208020">### Substitution des symboles couleur/gras/soulignement/...</font>
+<font color="#208020">###############################################################################</font>
+<font color="#208020"># Modification de la fonction de MenzAgitat</font>
+<font color="#208020"># &lt;cXX&gt; : Ajouter un Couleur avec le code XX : &lt;c01&gt;; &lt;c02,01&gt;</font>
+<font color="#208020"># &lt;/c&gt;  : Enlever la Couleur (refermer la deniere declaration &lt;cXX&gt;) : &lt;/c&gt;</font>
+<font color="#208020"># &lt;b&gt;   : Ajouter le style Bold/gras</font>
+<font color="#208020"># &lt;/b&gt;  : Enlever le style Bold/gras</font>
+<font color="#208020"># &lt;u&gt;   : Ajouter le style Underline/souligner</font>
+<font color="#208020"># &lt;/u&gt;  : Enlever le style Underline/souligner</font>
+<font color="#208020"># &lt;i&gt;   : Ajouter le style Italic/Italique</font>
+<font color="#208020"># &lt;s&gt;   : Enlever les styles precedent</font>
+<font color="#208020">##</font>
+<font color="#208020"># Black       = 00</font>
+<font color="#208020"># White       = 01</font>
+<font color="#208020"># Dark Blue   = 02</font>
+<font color="#208020"># Green       = 03</font>
+<font color="#208020"># Red         = 04</font>
+<font color="#208020"># Brown       = 05</font>
+<font color="#208020"># Purple      = 06</font>
+<font color="#208020"># Orange      = 07</font>
+<font color="#208020"># Yellow      = 08</font>
+<font color="#208020"># Light Green = 09</font>
+<font color="#208020"># DarkCyan    = 10</font>
+<font color="#208020"># LightCyan   = 11</font>
+<font color="#208020"># LightBlue   = 12</font>
+<font color="#208020"># Pink        = 13</font>
+<font color="#208020"># Dark Grey   = 14</font>
+<font color="#208020"># Light Grey  = 15</font>
+<font color="#208020">##</font>
+<font color="#208020"># @param TEXT Le TEXT avec des codes style a remplacer avec de vrai codes styles (couleurs, gras..)</font>
+<font color="#208020"># @return Le TEXT avec les codes styles en TCl</font>
+<strong><a name="::ZCT::TXT::visuals::apply_322">proc <a href="ZCT.tcl-annot.html#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a></a></strong><a name="::ZCT::TXT::visuals::apply"></a> { TEXT } {
+    regsub -all -nocase {&lt;c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;|&lt;/c([0-9]{0,2}(,[0-9]{0,2})?)?&gt;} ${TEXT} &quot;\003\\1&quot; TEXT;
+    regsub -all -nocase {&lt;b&gt;|&lt;/b&gt;} ${TEXT} &quot;\002&quot; TEXT;
+    regsub -all -nocase {&lt;u&gt;|&lt;/u&gt;} ${TEXT} &quot;\037&quot; TEXT;
+    regsub -all -nocase {&lt;i&gt;|&lt;/i&gt;} ${TEXT} &quot;\026&quot; TEXT;
+    return [regsub -all -nocase {&lt;s&gt;} ${TEXT} &quot;\017&quot;];
+}
+
+<a name="::ZCT::create_sub_procs(1)"><a href="./ZCT.tcl.html#::ZCT::create_sub_procs_177">::ZCT::create_sub_procs</a></a> ::ZCT
 
 package provide ZCT ${::ZCT::PKG(version)}
 ${::ZCT::PPL} &quot;Package ZCT version ${::ZCT::PKG(version)} par ${::ZCT::PKG(auteur)} chargé.&quot;</pre>
@@ -266,7 +351,7 @@ Index by:  <a href="index_main.html#byfilename">file name</a> |
 <a href="index_main.html#byprocname">procedure name</a> |
 <a href="index_main.html#bycall">procedure call</a> |
 <a href="index_annot_full.html">annotation</a><br>
-<cite>Index generated 2022-07-31 at 03:52.</cite>
+<cite>Index generated 2022-08-07 at 21:26.</cite>
 </font>
 </body>
 </html>

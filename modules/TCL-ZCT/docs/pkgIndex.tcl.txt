@@ -8,4 +8,4 @@
 # script is sourced, the variable ${dir} must contain the
 # full path name of this file's directory.
 
-package ifneeded ZCT 0.0.4 [list source [file join ${dir} ZCT.tcl]]
+package ifneeded ZCT 0.0.9 [list source [file join ${dir} ZCT.tcl]]
