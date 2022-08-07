@@ -180,8 +180,8 @@ variable database {
 	{{!cle} {1} {<c12>Tiens voilà la clé<c04> ╥―O ⚿ <c12> pour fermer ta bouche<c04> %pseudo%<c12> , ça nous fera des vacances !}}
 
 
-	{{!stringcmds} {0} {<c07>%sender%<c12> dit le string est le premier instrument à cordes, quand on pète ça fait une mélodie<c04> PweT ! ♪ ♫ ♩}}
-	{{!stringcmds} {1} {<c12>il ne faut pas trop tirer sur la ficelle de son string <c04>%pseudo%<c12> sinon... tu l'as dans le Q !!! }}
+	{{!string} {0} {<c07>%sender%<c12> dit le string est le premier instrument à cordes, quand on pète ça fait une mélodie<c04> PweT ! ♪ ♫ ♩}}
+	{{!string} {1} {<c12>il ne faut pas trop tirer sur la ficelle de son string <c04>%pseudo%<c12> sinon... tu l'as dans le Q !!! }}
 
 
 	{{!bjr} {0} {<c07>%sender%<c12> dit un grand Bonjour ou Bonsoir à<c04> tout le monde !<b> ヽ(•‿•)ノ}}
