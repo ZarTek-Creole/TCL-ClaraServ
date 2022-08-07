@@ -168,7 +168,7 @@ proc ::ClaraServ::FCT::Check:Config { } {
 	foreach CONF ${::ClaraServ::config(vars_list)} {
 		if { ![info exists ::ClaraServ::config($CONF)] } {
 			putlog "\[ Erreur \] Configuration de ClaraServ Service Incorrecte... '::ClaraServ::config($CONF)' Paramettre manquant"
-			exit
+			exitInformation
 		}
 		if { $::ClaraServ::config($CONF) == "" } {
 			putlog "\[ Erreur \] Configuration de ClaraServ Service Incorrecte... '::ClaraServ::config($CONF)' Valeur vide"
@@ -440,7 +440,7 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
 }
 proc ::ClaraServ::IRC:CMD:PUB:CMDS { sender destination cmd data } {
 	#  /msg ClaraServ !cmds
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${destination} [format "<c04> .: <c12>Liste des commandes envoyé en privé à %s<c04> :." ${sender}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${destination} [format "<c04> .: <c12>Liste des commandes envoyée en privé à %s<c04> :." ${sender}]
 	::ClaraServ::IRC:CMD:PRIV:CMDS ${sender} ${destination} ${cmd} ${data}
 }
 proc ::ClaraServ::IRC:CMD:PRIV:CMDS { sender destination cmd data } {
@@ -457,7 +457,7 @@ proc ::ClaraServ::IRC:CMD:PRIV:CMDS { sender destination cmd data } {
 
 proc ::ClaraServ::IRC:CMD:PUB:ABOUT { sender destination cmd data } {
 	#  /msg ClaraServ !about
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${destination} [format "<c04> .: <c12>Information de %s envoyé en privé à %s<c04> :." ${::ClaraServ::config(service_nick)} ${sender}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${destination} [format "<c04> .: <c12>Information de %s envoyée en privé à %s<c04> :." ${::ClaraServ::config(service_nick)} ${sender}]
 	::ClaraServ::IRC:CMD:PRIV:ABOUT ${sender} ${destination} ${cmd} ${data}
 }
 proc ::ClaraServ::IRC:CMD:PRIV:ABOUT { sender destination cmd data } {
@@ -475,7 +475,7 @@ proc ::ClaraServ::IRC:CMD:PRIV:ABOUT { sender destination cmd data } {
 ##########################################
 proc ::ClaraServ::IRC:CMD:PUB:HELP { sender destination cmd data } {
 	# /msg #chan !help
-	::ClaraServ::FCT::SENT:MSG:TO:USER	${destination} [format "<c04> .: <c12>Aide envoyé en privé à %s<c04> :." ${sender}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER	${destination} [format "<c04> .: <c12>Aide envoyée en privé à %s<c04> :." ${sender}]
 	::ClaraServ::IRC:CMD:PRIV:HELP ${sender} ${destination} ${cmd} ${data}
 }
 proc ::ClaraServ::IRC:CMD:PRIV:HELP { sender destination cmd data } {
