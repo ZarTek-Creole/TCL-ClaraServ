@@ -411,7 +411,6 @@ proc ::ClaraServ::FCT::Create:Services {} {
 		}
 	}
 	# Creer un event sur PRIVMSG fin
-
 }
 #######################
 #  --> Commandes <--  #
@@ -463,10 +462,10 @@ proc ::ClaraServ::IRC:CMD:PUB:ABOUT { sender destination cmd data } {
 proc ::ClaraServ::IRC:CMD:PRIV:ABOUT { sender destination cmd data } {
 	#  /msg ClaraServ about
 	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c04> .: <c12>A propos de %s<c04> :." ${::ClaraServ::Script(name)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c12>Version     </c>-<c04> v%s" ${::ClaraServ::Script(version)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c12>Auteur      </c>-<c04> %s" ${::ClaraServ::Script(auteur)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c12>WebSite     </c>-<c04> %s" ${::ClaraServ::Script(url)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c12>Dépendances </c>-<c04> ZCT v%s, IRCS v%s" ${::ClaraServ::Script(need_zct)} ${::ClaraServ::Script(need_ircs)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07>Version     <c12>:<c06> v%s" ${::ClaraServ::Script(version)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07>Auteur      <c12>:<c06> %s" ${::ClaraServ::Script(auteur)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07>WebSite     <c12>:<c06> %s" ${::ClaraServ::Script(url)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07>Dépendances <c12>:<c07> ZCT v<c06>%s<c12>,<c07> IRCS v<c06>%s" ${::ClaraServ::Script(need_zct)} ${::ClaraServ::Script(need_ircs)}]
 	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
 	::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
 }
