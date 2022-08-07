@@ -48,8 +48,8 @@ namespace eval ClaraServ {
 		"name"		"ClaraServ Service"
 		"version"	"1.1.3"
 		"auteur"	"ZarTek"
-		"need_zct"	"0.0.1"
-		"need_ircs"	"0.0.4"
+		"need_zct"	"0.0.6"
+		"need_ircs"	"0.0.5"
 	}
 	set config(path_script)	[file dirname [info script]];
 
@@ -80,7 +80,7 @@ namespace eval ClaraServ {
 		"db_lang"
 	];
 	# Verification si le package ZCT a été mis dans le projet courant et si oui  le sourcé(charger)
-	if { [file exists ${DIR(CUR)}/TCL-ZCT/ZCT.tcl] && [catch { source ${DIR(CUR)}/TCL-ZCT/ZCT.tcl  } err] } { die "\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/TCL-ZCT/ZCT.tcl' à échoué: ${err}"; }
+	if { [file exists ${DIR(CUR)}/modules/TCL-ZCT/ZCT.tcl] && [catch { source ${DIR(CUR)}/modules/TCL-ZCT/ZCT.tcl  } err] } { die "\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/modules/TCL-ZCT/ZCT.tcl' à échoué: ${err}"; }
 	# Necesite le package ZCT, tentative de chargment de celui-ci
 	if { [catch { package require ZCT ${SCRIPT(need_zct)} } err] } { die "\[${SCRIPT(name)} - Erreur\] Nécessite le package ZCT ${SCRIPT(need_zct)} (ou supérieur) pour fonctionner.\nLe chargement du script a été annulé.\nTélécharger-le sur 'https://github.com/ZarTek-Creole/TCL-ZCT'.\n${err}" ; }
 	# Importation des fonctions de ZTC
@@ -89,10 +89,10 @@ namespace eval ClaraServ {
 
 	# Verification si le package ZCT a été mis dans le projet courant et si oui  le sourcé(charger)
 	if {
-		[file exists ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl] && \
-		[catch { source ${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl } err]
+		[file exists ${DIR(CUR)}/modules/TCL-PKG-IRCServices/ircservices.tcl] && \
+			[catch { source ${DIR(CUR)}/modules/TCL-PKG-IRCServices/ircservices.tcl } err]
 	} {
-		die "\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/TCL-PKG-IRCServices/ircservices.tcl' à échoué: ${err}";
+		die "\[${SCRIPT(name)} - Erreur\] Chargement '${DIR(CUR)}/modules/TCL-PKG-IRCServices/ircservices.tcl' à échoué: ${err}";
 	}
 	# Necesite le package ZCT, tentative de chargment de celui-ci via la fct de ZCT
 	pkg load IRCServices ${SCRIPT(need_ircs)} ${SCRIPT(name)}
@@ -232,12 +232,12 @@ proc ::ClaraServ::FCT::DB:CMD:LIST { } {
 
 proc ::ClaraServ::FCT::SENT:NOTICE { DEST MSG } {
 	variable BOT_ID
-	${BOT_ID}	notice ${DEST} [apply_visuals ${MSG} ]
+	${BOT_ID}	notice ${DEST} [::ZCT::TXT::visuals::apply ${MSG} ]
 }
 
 proc ::ClaraServ::FCT::SENT:PRIVMSG { DEST MSG } {
 	variable BOT_ID
-	${BOT_ID}	privmsg ${DEST} [apply_visuals ${MSG} ]
+	${BOT_ID}	privmsg ${DEST} [::ZCT::TXT::visuals::apply ${MSG} ]
 }
 proc ::ClaraServ::FCT::SENT:MSG:TO:USER { DEST MSG } {
 	global ::ClaraServ::config
@@ -271,7 +271,7 @@ proc ::ClaraServ::FCT::CMD:SHOW:LIST { DEST } {
 	set l_espace		13;
 	set CMD_LIST		""
 	foreach CMD [::ClaraServ::FCT::DB:CMD:LIST] {
-		lappend CMD_LIST	"<c04>[TXT:ESPACE:DISPLAY ${CMD} ${l_espace}]<c12>"
+		lappend CMD_LIST	"<c04>[::ZCT::TXT::visuals::espace ${CMD} ${l_espace}]<c12>"
 		if { [incr i] > ${max}-1 } {
 			unset i
 			::ClaraServ::FCT::SENT:MSG:TO:USER ${DEST} [join ${CMD_LIST} " | "];
@@ -373,159 +373,172 @@ proc ::ClaraServ::FCT::Socket:Connexion {} {
 
 	}
 	${BOT_ID} registerevent PRIVMSG {
-		set cmd		[lindex [msg] 0]
-		set data	[lrange [msg] 1 end]
+		set IRC_CMD		[lindex [msg] 0]
+		set IRC_VALUE	[lrange [msg] 1 end]
+
+		putlog "PRIVMSG -> $IRC_CMD * $IRC_VALUE"
 		##########################
 		#--> Commandes Privés <--#
 		##########################
 		# si [target] ne commence pas par # c'est un pseudo
 		if { [string index [target] 0] != "#"} {
-			if { ${cmd} == "join"		}	{
-				# [22:50:42] Received: :001119S0G PRIVMSG 00CAAAAAB :join
-				::ClaraServ::IRC:CMD:PRIV:JOIN [who2] [target] ${cmd} ${data}
+			# Si la commande existe pas, on dit a l'utilisateur qu'elle est inconnue
+			if { [info procs ::ClaraServ::IRC:CMD:PRIV:[string toupper ${IRC_CMD}]] == "" } {
+				::ClaraServ::FCT::SENT:MSG:TO:USER [who] [format "Commande %s inconnue" ${IRC_CMD}]
+				::ClaraServ::IRC:CMD:PUB:HELP [who] ${IRC_VALUE}
+				return 0;
 			}
-			if { ${cmd} == "part"		}	{
-				# [21:49:04] Received: :001119S0G PRIVMSG 00CAAAAAB :part
-				::ClaraServ::IRC:CMD:PRIV:PART [who2] [target] ${cmd} ${data}
-			}
-			if { ${cmd} == "help"		}	{
-				# [21:49:04] Received: :001119S0G PRIVMSG 00CAAAAAB :part
-				::ClaraServ::IRC:CMD:PRIV:HELP [who2] [target] ${cmd} ${data}
+			# au sinon, on l'execute
+			if { [catch { set OK [::ClaraServ::IRC:CMD:PRIV:[string toupper ${IRC_CMD}] [who2] [target] ${IRC_CMD} ${IRC_VALUE}] } EXEC_ERROR] } {
+				#Si il y a une erreur on l'affiche sur le chan log
+				foreach line [split ${::errorInfo} "\n"] {
+					::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG ${line}
+					putlog ${line} error IRC:CMD:MSG:PRIV
+				}
+				return 0;
+			} else {
+				# si elle reusi on retourne le status
+				return ${OK};
 			}
 		}
 		##########################
 		#--> Commandes Salons <--#
 		##########################
 		# si [target] commence par # c'est un salon
-		
 		if { [string index [target] 0] == "#"} {
-			if { ${cmd} == "!cmds"		}	{
-				# [22:10:39] Received: :ZarTek PRIVMSG #Eva :!cmds
-				::ClaraServ::IRC:CMD:PUB:CMDS [who] [target] ${cmd} ${data}
+			putlog "test1 => ::ClaraServ::IRC:CMD:PUB:[string toupper [string range ${IRC_CMD} 1 end]]] "
+			# Ont verifie si la commande existe
+			if { [info procs ::ClaraServ::IRC:CMD:PUB:[string toupper [string range ${IRC_CMD} 1 end]]] != "" } {
+				# si elle existe ont l'execute
+				if { [catch { set OK [::ClaraServ::IRC:CMD:PUB:[string toupper [string range ${IRC_CMD} 1 end]] [who2] [target] ${IRC_CMD} ${IRC_VALUE}] } EXEC_ERROR] } {
+					#Si il y a une erreur on l'affiche sur le chan log
+					foreach line [split ${::errorInfo} "\n"] {
+						::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG ${line}
+						putlog ${line} error IRC:CMD:MSG:PRIV
+					}
+					return 0;
+				}
 			}
-			if { ${cmd} == "!help"		}	{
-				# Received: :ZarTek PRIVMSG #Eva :!help
-				::ClaraServ::IRC:CMD:PUB:HELP [who] [target] ${cmd} ${data}
-			}
-			if { ${cmd} == "!random"	}	{
-				# [22:10:04] Received: :ZarTek PRIVMSG #Eva :!random
-				::ClaraServ::IRC:CMD:PUB:RANDOM [who] [target] ${cmd} ${data}
-			}
-			# Nous verifions si la commande corresponds a une commandes de la database:
-			if { [lsearch -nocase [::ClaraServ::FCT::DB:CMD:LIST] ${cmd}] != "-1" } {
-				if { [catch {::ClaraServ::IRC:CMD:PUB:DYNAMIC [who] [target] ${cmd} ${data} } error] } {
-					::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "\[ERROR1\] CMD: ${cmd} - Error: ${error}"
+			# Si la commande existe pas en tant que PROC, alors nous verifions si la commande corresponds a une commandes de la database:
+			if { [lsearch -nocase [::ClaraServ::FCT::DB:CMD:LIST] ${IRC_CMD}] != "-1" } {
+				#Si la database trouve une corespondance ont execute :
+				if { [catch {::ClaraServ::IRC:CMD:PUB:DYNAMIC [who] [target] ${IRC_CMD} ${IRC_VALUE} } error] } {
+					foreach line [split ${::errorInfo} "\n"] {
+						::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG ${line}
+						putlog ${line} error IRC:CMD:MSG:PRIV
+					}
 				}
 			}
 		}
-		}; # Creer un event sur PRIVMSG
+	}
+	# Creer un event sur PRIVMSG fin
 
+}
+#######################
+#  --> Commandes <--  #
+#######################
+proc ::ClaraServ::IRC:CMD:PRIV:HELP { sender destination cmd data } {
+	::ClaraServ::IRC:CMD:PUB:HELP ${sender} ${cmd}
+}
+proc ::ClaraServ::IRC:CMD:PUB:HELP { sender cmd } {
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Aide publique<c04> :."
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !help   - <c06>  Affiche cette aide"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !cmds   - <c06>  Affiche la list des commandes"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !random - <c06>  Affiche un text aleatoire"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Aide privé<c04> :."
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> help    - <c06>  Affiche cette aide"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> join    - <c06>  faire joindre un salon"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> part    - <c06>  faire quitter un salon"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
+	::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
+}
+proc ::ClaraServ::IRC:CMD:PUB:RANDOM { sender destination cmd data } {
+	variable config
+	set CMD_RANDOM	[lindex [::ClaraServ::FCT::DB:CMD:LIST] [rand [llength [::ClaraServ::FCT::DB:CMD:LIST]]]]
+	if { [catch {ClaraServ::IRC:CMD:PUB:DYNAMIC ${sender} ${destination} ${CMD_RANDOM} ${data} } error] } {
+		::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "\[ERROR2\] CMD: ${CMD_RANDOM} - Error: ${error}"
 	}
-	#######################
-	#  --> Commandes <--  #
-	#######################
-	proc ::ClaraServ::IRC:CMD:PRIV:HELP { sender destination cmd data } {
-		::ClaraServ::IRC:CMD:PUB:HELP ${sender} ${destination} ${cmd} ${data}
+}
+proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
+	if { ${pseudo} == "" } {
+		set data [::ClaraServ::FCT::DB:GET ${cmd} 0];
+	} else {
+		set data [::ClaraServ::FCT::DB:GET ${cmd} 1];
 	}
-	proc ::ClaraServ::IRC:CMD:PUB:HELP { sender destination cmd data } {
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Aide publique<c04> :."
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !help   - <c06>  Affiche cette aide"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !cmds   - <c06>  Affiche la list des commandes"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !random - <c06>  Affiche un text aleatoire"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Aide privé<c04> :."
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> help    - <c06>  Affiche cette aide"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> join    - <c06>  faire joindre un salon"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> part    - <c06>  faire quitter un salon"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-		::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
+	if { ${data} != "-1" } {
+		set data	[::ClaraServ::FCT::substitute_special_vars_2nd_pass ${destination} ${data}];
+		set data	[string map -nocase [list "%pseudo%" "${pseudo}" "%sender%" "${sender}" "%destination%" "${destination}"] ${data}]
+		::ClaraServ::FCT::SENT:PRIVMSG ${destination} ${data}
 	}
-	proc ::ClaraServ::IRC:CMD:PUB:RANDOM { sender destination cmd data } {
-		variable config
-		set CMD_RANDOM	[lindex [::ClaraServ::FCT::DB:CMD:LIST] [rand [llength [::ClaraServ::FCT::DB:CMD:LIST]]]]
-		if { [catch {ClaraServ::IRC:CMD:PUB:DYNAMIC ${sender} ${destination} ${CMD_RANDOM} ${data} } error] } {
-			::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "\[ERROR2\] CMD: ${CMD_RANDOM} - Error: ${error}"
-		}
-	}
-	proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
-		if { ${pseudo} == "" } {
-			set data [::ClaraServ::FCT::DB:GET ${cmd} 0];
+	::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
+}
+
+proc ::ClaraServ::IRC:CMD:PUB:CMDS { sender destination cmd data } {
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Liste des commandes d'animation<c04> :."
+	::ClaraServ::FCT::CMD:SHOW:LIST ${sender}
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Autre<c04> :."
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c12>!help    </c>-<c04> Affiche l'aide"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c12>!random  </c>-<c04> Affiche un text aleatoire"
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04>  * <b>Note:</b> Il y a certaine commandes qui ne sont pas activées sur tous les salons."
+	::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
+}
+##########################################
+# --> Procedures des Commandes Privés <--#
+##########################################
+proc ::ClaraServ::IRC:CMD:PRIV:JOIN { sender destination cmd data } {
+	variable config
+	variable ::ClaraServ::FCT::BOT_ID
+	set chan		[lindex ${data} 0]
+	set password	[lindex ${data} 1]
+	if { ${password} == "" } {
+		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Mauvaise syntaxe: /msg ${config(service_nick)} join #salon admin_password"
+	} elseif { ${password} eq "${config(admin_password)}" } {
+		if { [::ClaraServ::FCT::DB:SALON:ADD ${chan}] == 1} {
+			${BOT_ID} join ${chan}
+			${BOT_ID} mode ${chan} +${config(service_usermodes)} ${config(service_nick)}
+			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "AddChan : ${chan}"
+			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> ${chan} </c>par <c04>${sender} "  }
 		} else {
-			set data [::ClaraServ::FCT::DB:GET ${cmd} 1];
+			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "AddChan : ${chan} | Erreur Non ajouter "
+			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> ${chan} </c>par <c04>${sender} | Erreur Non ajouter " }
 		}
-		if { ${data} != "-1" } {
-			set data	[::ClaraServ::FCT::substitute_special_vars_2nd_pass ${destination} ${data}];
-			set data	[string map -nocase [list "%pseudo%" "${pseudo}" "%sender%" "${sender}" "%destination%" "${destination}"] ${data}]
-			::ClaraServ::FCT::SENT:PRIVMSG ${destination} ${data}
-		}
-		::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
-	}
 
-	proc ::ClaraServ::IRC:CMD:PUB:CMDS { sender destination cmd data } {
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Liste des commandes d'animation<c04> :."
-		::ClaraServ::FCT::CMD:SHOW:LIST ${sender}
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Autre<c04> :."
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c12>!help    </c>-<c04> Affiche l'aide"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c12>!random  </c>-<c04> Affiche un text aleatoire"
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04>  * <b>Note:</b> Il y a certaine commandes qui ne sont pas activées sur tous les salons."
-		::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
+	} else {
+		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Accés Refusè."
+		if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> ${chan} </c>par <c04>${sender} </c>-><c04> Accés Refusè."  }
 	}
-	##########################################
-	# --> Procedures des Commandes Privés <--#
-	##########################################
-	proc ::ClaraServ::IRC:CMD:PRIV:JOIN { sender destination cmd data } {
-		variable config
-		variable ::ClaraServ::FCT::BOT_ID
-		set chan		[lindex ${data} 0]
-		set password	[lindex ${data} 1]
-		if { ${password} == "" } {
-			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Mauvaise syntaxe: /msg ${config(service_nick)} join #salon admin_password"
-		} elseif { ${password} eq "${config(admin_password)}" } {
-			if { [::ClaraServ::FCT::DB:SALON:ADD ${chan}] == 1} {
-				${BOT_ID} join ${chan}
-				${BOT_ID} mode ${chan} +${config(service_usermodes)} ${config(service_nick)}
-				::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "AddChan : ${chan}"
-				if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> ${chan} </c>par <c04>${sender} "  }
-			} else {
-				::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "AddChan : ${chan} | Erreur Non ajouter "
-				if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> ${chan} </c>par <c04>${sender} | Erreur Non ajouter " }
-			}
+}
 
+proc ::ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
+	variable config
+	variable ::ClaraServ::FCT::BOT_ID
+	# /msg clara part #salon lepassquetamisenconf
+	set chan		[lindex ${data} 0]
+	set password	[lindex ${data} 1]
+	if { ${password} == "" } {
+		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Mauvaise syntaxe: /msg ${config(service_nick)} part #salon admin_password"
+	} elseif { ${password} eq "${config(admin_password)}" } {
+		if { [string match -nocase ${config(service_channel)} ${chan}] } {
+			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "DelChan : ${chan} | Erreur: impossible ${config(service_channel)} est le salon de logs."
+			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} | Erreur: impossible ${config(service_channel)} est le salon de logs." }
+		} elseif { [::ClaraServ::FCT::DB:DATA:REMOVE "salon" ${chan}] == 1 } {
+			${BOT_ID} part ${chan}
+			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "DelChan : ${chan}"
+			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} "  }
 		} else {
-			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Accés Refusè."
-			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Join :<c04> ${chan} </c>par <c04>${sender} </c>-><c04> Accés Refusè."  }
+			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "DelChan : ${chan} | Erreur Non ajouter "
+			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} | Erreur Non suprimer " }
 		}
+
+
+	} else {
+		::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Accés Refusè."
+		if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} </c>-><c04> Accés Refusè."  }
 	}
+}
 
-	proc ::ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
-		variable config
-		variable ::ClaraServ::FCT::BOT_ID
-		# /msg clara part #salon lepassquetamisenconf
-		set chan		[lindex ${data} 0]
-		set password	[lindex ${data} 1]
-		if { ${password} == "" } {
-			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Mauvaise syntaxe: /msg ${config(service_nick)} part #salon admin_password"
-		} elseif { ${password} eq "${config(admin_password)}" } {
-			if { [string match -nocase ${config(service_channel)} ${chan}] } {
-				::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "DelChan : ${chan} | Erreur: impossible ${config(service_channel)} est le salon de logs."
-				if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} | Erreur: impossible ${config(service_channel)} est le salon de logs." }
-			} elseif { [::ClaraServ::FCT::DB:DATA:REMOVE "salon" ${chan}] == 1 } {
-				${BOT_ID} part ${chan}
-				::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "DelChan : ${chan}"
-				if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} "  }
-			} else {
-				::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "DelChan : ${chan} | Erreur Non ajouter "
-				if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} | Erreur Non suprimer " }
-			}
-
-
-		} else {
-			::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "Accés Refusè."
-			if {${config(admin_console)} eq "1"} { ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG "<c12>Part :<c04> ${chan} </c>par <c04>${sender} </c>-><c04> Accés Refusè."  }
-		}
-	}
-
-	::ClaraServ::INIT
+::ClaraServ::INIT

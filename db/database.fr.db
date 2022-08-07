@@ -78,7 +78,7 @@ variable database {
 	{{!piscine} {1} {<c07>%sender%<c12> rappel à <c04>%pseudo%<c12> qu'(il-elle) n'est pas dispo, (il-elle) a pisciiiiiiiiiine !!! }}
 
 
-	{{!saute} {0} {<c03>O <c04><b>n <c06> S<c05> <b>a<c13>u <c07><b><b>T<c10><b>e<c14>, <c01> <b>S <c04><b>a<c02> <b>U<c13>t<c14><b>E<c05> , <c06> <b>s <c07>A <c03><b>u<c10>T<c13><b>e<c01> ... h<b>O<b>p h<b>O<b>p h<b>O<b>p <c12> on met le feu sur<b><c04> $chan <b><c01> ou quoi ? }}
+	{{!saute} {0} {<c03>O <c04><b>n <c06> S<c05> <b>a<c13>u <c07><b><b>T<c10><b>e<c14>, <c01> <b>S <c04><b>a<c02> <b>U<c13>t<c14><b>E<c05> , <c06> <b>s <c07>A <c03><b>u<c10>T<c13><b>e<c01> ... h<b>O<b>p h<b>O<b>p h<b>O<b>p <c12> on met le feu sur<b><c04> %chan <b><c01> ou quoi ? }}
 	{{!saute} {1} {<c07><b>%sender% <c06> S<c05> <b>a<c13>u <c07><b><b>T<c10><b>e<c14>, <c01> <b>S <c04><b>a<c02> <b>U<c13>t<c14><b>E<c05> , <c06> <b>s <c07>A <c03><b>u<c10>T<c13><b>e <c04><b>%pseudo% }}
 
 
@@ -146,7 +146,7 @@ variable database {
 
 
 	{{!aime} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'aime <c04>(elle-lui)-même ! <c13> ♥‿♥}}
-	{{!aime} {1} {<c07>%sender%<c12> déclare dClarant toute la salle qu'il aime<c04> %pseudo% !!<c13> (ღ˘⌣˘)♥♥♥♥♥ }}
+	{{!aime} {1} {<c07>%sender%<c12> déclare devant toute la salle qu'il aime<c04> %pseudo% !!<c13> (ღ˘⌣˘)♥♥♥♥♥ }}
 
 
 	{{!relou} {0} {<c12>Il semblerait que <c07>%sender%<c12> se trouve relou <c04>(elle-lui)-même !}}
@@ -169,7 +169,7 @@ variable database {
 	{{!coca} {1} {<c07>%sender%<c12> offre une cannette de <c04>CoCa<c01> -<c02> Cola®<c12> à <c04>%pseudo%<c12> Hmmm :D}}	
 	
 	{{!love} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'aime de tout son coeur<c04> ( ˘ ³˘)<c13>❤ ᶫᵒᵛᵉᵧₒᵤ !}}
-	{{!love} {1} {<c07>%sender%<c12> t'aime de tout son coeur<c04> %pseudo% ! <c12> DéClaration dClarant vous sur <c13>$chan ! <c04>(Ɔ ˘⌣˘)♥(˘⌣˘ C)}}
+	{{!love} {1} {<c07>%sender%<c12> t'aime de tout son coeur<c04> %pseudo% ! <c12> Déclaration devant vous sur <c13>%chan% ! <c04>(Ɔ ˘⌣˘)♥(˘⌣˘ C)}}
 
 
 	{{!fouet} {0} {<c12>Il semblerait que <c04>%pseudo%<c12> aime se mettre des coups de fouet <b><c01> ===<c05> ~~~~~~}}
