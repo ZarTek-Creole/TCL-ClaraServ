@@ -4,35 +4,6 @@
 [cc-by]: http://creativecommons.org/licenses/by/4.0/
 [cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
 
-- [A propos](#a-propos)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-  - [Téléchargement](#téléchargement)
-  - [Configuration de l'eggdrop](#configuration-de-leggdrop)
-  - [Configuration de ClaraServ Service](#configuration-de-claraserv-service)
-  - [Configuration de votre IRCD (UnrealIRCd 5 et +)](#configuration-de-votre-ircd-unrealircd-5-et-)
-    - [Comment créer un link ClaraServ sur UnrealIRCd](#comment-créer-un-link-claraserv-sur-unrealircd)
-      - [Port dédié](#port-dédié)
-      - [Ou Mono Port](#ou-mono-port)
-      - [Ajoutez la uline](#ajoutez-la-uline)
-      - [Ajoutez le link](#ajoutez-le-link)
-    - [Comment créer un link ClaraServ sur UnrealIRCd](#comment-créer-un-link-claraserv-sur-unrealircd-1)
-    - [Ajoutez le link](#ajoutez-le-link-1)
-  - [Rehashez votre eggdrop](#rehashez-votre-eggdrop)
-- [Resolution de probléme](#resolution-de-probléme)
-  - [Debug Link](#debug-link)
-  - [Probléme connu](#probléme-connu)
-- [Utilisation](#utilisation)
-- [Contribuer ou aider ce le projet ClaraServ](#contribuer-ou-aider-ce-le-projet-claraserv)
-  - [Ameliorer le code](#ameliorer-le-code)
-  - [Signaler un probleme](#signaler-un-probleme)
-  - [Donation](#donation)
-  - [Contact](#contact)
-    - [Tickets](#tickets)
-    - [IRC](#irc)
-  - [Remerciements](#remerciements)
-
-<!-- PROJECT LOGO -->
 <br />
 <p align="center">
   <a href="github.com/ZarTek-Creole/TCL-Clara-Service">
@@ -53,51 +24,53 @@
 </p>
 
 <!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents / Table des matières</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project / À propos du projet</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started / Commencez</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites / Conditions préalables</a></li>
-        <li><a href="#installation">Installation / Configuration</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage / Utilisation</a></li>
-    <li><a href="#roadmap">Roadmap / Feuille de route</a></li>
-    <li><a href="#contributing">Contributing / Contributions </a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements /Remerciements</a></li>
-  </ol>
-</details>
 
-<!-- ABOUT THE PROJECT -->
-# A propos
-Service IRC d'animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait reagir le services en créant une action à eux-même ou a un autre utilisateur
+- [À propos](#à-propos)
+- [Prérequis](#prérequis)
+- [Installation](#installation)
+  - [Téléchargement](#téléchargement)
+  - [Configuration de l’eggdrop](#configuration-de-leggdrop)
+  - [Configuration de ClaraServ Service](#configuration-de-claraserv-service)
+  - [Configuration de votre IRCD (UnrealIRCd 5 et +)](#configuration-de-votre-ircd-unrealircd-5-et-)
+    - [Comment créer un link ClaraServ sur UnrealIRCd](#comment-créer-un-link-claraserv-sur-unrealircd)
+      - [Port dédié](#port-dédié)
+  - [Rehashez votre eggdrop](#rehashez-votre-eggdrop)
+- [Les commandes de ClaraServ](#les-commandes-de-claraserv)
+  - [En privé à ClaraServ](#en-privé-à-claraserv)
+  - [En publique (sur un salon)](#en-publique-sur-un-salon)
+- [Resolution de problèmes](#resolution-de-problèmes)
+  - [Débug Link](#débug-link)
+  - [Les problèmes connus](#les-problèmes-connus)
+- [Utilisation](#utilisation)
+- [Contribuer ou aider ce projet ClaraServ](#contribuer-ou-aider-ce-projet-claraserv)
+  - [Améliorer le code](#améliorer-le-code)
+  - [Signaler un problème](#signaler-un-problème)
+  - [Donation](#donation)
+  - [Contact](#contact)
+    - [Tickets](#tickets)
+    - [IRC](#irc)
+- [Remerciements](#remerciements)
+# À propos
+Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
 
-<!-- GETTING STARTED -->
 
-# Prerequisites
+# Prérequis
 * [eggdrop (v1.9+)](http://www.eggheads.org/)
-* Serveur IRCD: [UnrealIRCd](https://www.unrealircd.org/), [InspIRCd](https://www.inspircd.org/) (Compatible avec les anciens et nouveau protocol/version)
+* Serveur IRCD : [UnrealIRCd](https://www.unrealircd.org/), [InspIRCd](https://www.inspircd.org/) (Compatible avec les anciens et nouvelles versions)
 * [Package IRCServices (v0.0.1+)](github.com/ZarTek-Creole/TCL-PKG-IRCServices)
 * [Client GIT](https://git-scm.com/)
 
 
 # Installation
 ## Téléchargement
-Première étape, téléchargez dans le repertoire scripts/ de votre eggdrop le code ClaraServ grace au [Client GIT](https://git-scm.com/)
+Première étape, téléchargez dans le répertoire scripts/ de votre eggdrop le code ClaraServ grâce au [Client GIT](https://git-scm.com/)
 <br />
 <br />
 Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
 git clone https://github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
-## Configuration de l'eggdrop
+## Configuration de l’eggdrop
 Deuxième étape, ouvrez le fichier de configuration de votre eggdrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
 ```
 source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
@@ -107,99 +80,108 @@ source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
 Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraServ.conf```,
 éditez-le et configurez celui-ci en fonction de votre serveur IRCD
 
-##  Configuration de votre IRCD (UnrealIRCd 5 et +)
-Quatrième étape, il vous suffit de configurer le link dans votre fichier "unrealircd.conf" en fonction de la configuration que vous aurez réalisé dans "ClaraServ.conf". 
+##  Configuration de votre IRCD (UnrealIRCd 5 et +)
+Quatrième étape, il vous suffit de configurer le link dans votre fichier “unrealircd.conf” en fonction de la configuration que vous aurez réalisé dans “ClaraServ.conf”. 
 
 ### Comment créer un link ClaraServ sur UnrealIRCd
-Afin de réaliser votre link ClaraServ, veuillez vérifier si vous disposez d'un port dédié pour vos links ( plusieurs listen ) ou bien d'un mono port ( un seul listen ) :  
+Afin de réaliser votre link ClaraServ, veuillez vérifier si vous disposez d’un port dédié pour vos links (plusieurs listen) ou bien d’un mono port (un seul listen) :  
 
 #### Port dédié 
 ```
-listen IP-serveur:port-dedie {  
-    options {  
-		serversonly;  
-	};  
-};  
-```  
-####  Ou Mono Port 
+listen IP-serveur:port-dedie {  
+    options {  
+    serversonly;  
+  };  
+};  
+```  
+####  Ou Mono Port 
 ```
 listen IP-serveur:mono-port;
 ```
-  
+  
 #### Ajoutez la uline
 ```
-ulines {  
-ClaraServ.nom-de-domaine.fr;  
-...  
-...  
+ulines {  
+ClaraServ.nom-de-domaine.fr;  
+...  
+...  
 };
 ```
 #### Ajoutez le link
 ```
-link EvaServ.nom-de-domaine.fr {  
-	username *;  
-	hostname IP-link;  
-	bind-ip *;  
-	port Port-link;  
-	hub *;  
-	password-connect "mot-de-passe-link";  
-	password-receive "mot-de-passe-link";  
-	class servers;  
+link EvaServ.nom-de-domaine.fr {  
+  username *;  
+  hostname IP-link;  
+  bind-ip *;  
+  port Port-link;  
+  hub *;  
+  password-connect "mot-de-passe-link";  
+  password-receive "mot-de-passe-link";  
+  class servers;  
 };
 ```
-Enregistrez le fichier de configuration. N'oubliez pas de _Rehash_ votre serveur.  
+Enregistrez le fichier de configuration. N’oubliez pas de _Rehash_ votre serveur.  
 ```/rehash```
 
 ### Comment créer un link ClaraServ sur UnrealIRCd
 
-Afin de réaliser votre link Serveur ou Service, veuillez vérifier que vous disposez bien du _bind servers_ ci-dessous :  
+Afin de réaliser votre link Serveur ou Service, veuillez vérifier que vous disposez bien du _bind serveur_ ci-dessous :  
 ```
- <bind address="IP-serveur" port="port-dedie" type="servers"> 
+ <bind address="IP-serveur" port="port-dedie" type="servers"> 
 ```
 ### Ajoutez le link
-  
-* Serveur 1  
+  
+* Serveur 1  
 ```
-  <link name="irc2.domaine.tld" ipaddr="10.0.0.2" port="7000" autoconnect="60" hidden="no" sendpass="mot-de-passe" recvpass="mot-de-passe">
+  <link name="irc2.domaine.tld" ipaddr="10.0.0.2" port="7000" autoconnect="60" hidden="no" sendpass="mot-de-passe" recvpass="mot-de-passe">
 ``` 
-* Serveur 2  
+* Serveur 2  
 ```
-  <link name="irc1.domaine.tld" ipaddr="10.0.0.1" port="7000" hidden="no" sendpass="mot-de-passe" recvpass="mot-de-passe">
-  ```
+  <link name="irc1.domaine.tld" ipaddr="10.0.0.1" port="7000" hidden="no" sendpass="mot-de-passe" recvpass="mot-de-passe">
+  ```
 
-* Link Service  
+* Link Service  
 ```
-<link name="EvaServ.domaine.tld" ipaddr="10.0.0.1" port="7000" allowmask="10.0.0.1" sendpass="mot-de-passe" recvpass="mot-de-passe">  
+<link name="EvaServ.domaine.tld" ipaddr="10.0.0.1" port="7000" allowmask="10.0.0.1" sendpass="mot-de-passe" recvpass="mot-de-passe">  
 
 <uline server="Service.domaine.tld" silent="no">
 ```
- 
-Attention afin de réaliser votre link veuillez vérifier que votre configuration comporte bien le module ci dessous :  
+ 
+Attention, dans le but de réaliser votre link, veuillez vérifier que votre configuration comporte bien le module ci-dessous :  
 ```
 <module name="m_spanningtree.so">
 ```
 ## Rehashez votre eggdrop
-Cinquième étape, connectez-vous en party-line avec votre eggdrop puis tapez les deux commandes suivantes :
+Cinquième étape, connectez-vous en Party-Line avec votre eggdrop puis tapez la commande suivante :
 ```
 .rehash
 ```
-ou redemarer votre eggdrop
+ou redémarrer votre eggdrop
 
-# Resolution de probléme
-## Debug Link
-Si vous rencontrer un probleme a la liaison de votre ClaraServ vers votre IRCD activer le mode "débug"
-Pour activer le mode *débug* changez la valeur ```set config(uplink_debug)``` dans ```ClaraServ.conf``` en mettant 1 a la place de 0.
+# Les commandes de ClaraServ
+ℹ️ Les informations entre <texte> sont obligatoire et ceux entre [texte] sont facultatif.
+## En privé à ClaraServ
+!help                    -   Affiche l'aide
+!<commande> [Pseudonyme] -   Exécute une animation
+!random     [Pseudonyme] -   Choisi une animation de manière aléatoire
+!about                   -   Affiche des informations sur ClaraServ
 
-## Probléme connu
+## En publique (sur un salon)
+# Resolution de problèmes
+## Débug Link
+Si vous rencontrez un problème à la liaison de votre ClaraServ vers votre IRCD, activer le mode “débug”
+Pour activer le mode *débug* changez la valeur ```set config(uplink_debug)``` dans ```ClaraServ.conf``` en mettant 1 à la place de 0.
+
+## Les problèmes connus
 Voir les [problèmes en suspens](github.com/ZarTek-Creole/TCL-Clara-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
 
 # Utilisation
 
 
 
-# Contribuer ou aider ce le projet ClaraServ
+# Contribuer ou aider ce projet ClaraServ
 
-## Ameliorer le code
+## Améliorer le code
 Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer. Toute contribution que vous apportez est ** grandement appréciée **.
 1. Forkez le projet
 2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
@@ -207,37 +189,36 @@ Les contributions sont ce qui fait de la communauté open source un endroit incr
 4. Poussez vers la branche (`git push origin feature/AmazingFeature`)
 5. Ouvrez une [Pull Request](github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
 
-## Signaler un probleme
-Vous pouvez [signaler](github.com/ZarTek-Creole/TCL-Clara-Service/issues) un probleme
+## Signaler un problème
+Vous pouvez [signaler](github.com/ZarTek-Creole/TCL-Clara-Service/issues) un problème
 
 ## Donation
-Ce projet est partager librement et est entierement gratuit. Il à été developper durant le temps libre de l'auteur.
-Le developemment a necesité de nombreuse heure, d'un serveur, etc
+Ce projet est librement partagé et est entièrement gratuit. Il a été développé durant le temps libre de l’auteur.
+Le développement a nécessité de nombreuse heure, d’un serveur, etc
 
-Le support est également totalement gratuit, la seul maniere deremercier l'auteur et permettre le suivi du code et de nouveau projet sont [les donations](https://github.com/ZarTek-Creole/DONATE), toute sommes même les plus minime sont **utile**
+Le support est également totalement gratuit, la seule manière de remercier l’auteur et permettre le suivi du code et de nouveau projet sont [les donations](https://github.com/ZarTek-Creole/DONATE), toutes sommes même les plus minimes sont **utiles**
 
-<!-- CONTACT -->
 ## Contact
 
 ZarTek - [@ZarTek](github.com/ZarTek-Creole)
 
-Lien du projet: [github.com/ZarTek-Creole/TCL-Clara-Service](github.com/ZarTek-Creole/TCL-Clara-Service)
+Lien du projet : [github.com/ZarTek-Creole/TCL-Clara-Service](github.com/ZarTek-Creole/TCL-Clara-Service)
 
 ### Tickets
-Signalez tout bogues, toutes idées :
-* [Creez un ticket]([#4-configuration-de-unrealircd](github.com/ZarTek-Creole/TCL-Clara-Service/issues))
+Signalez tout bogue, toutes idées :
+* [Créez un ticket](github.com/ZarTek-Creole/TCL-Clara-Service/issues)
 
 ### IRC
 Vous pouvez me contacter sur IRC :
 
-   * [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/#Zartek)
-   * [irc.Extra-Cool.Fr +6697 #Zartek](irc://irc.Extra-Cool.Fr:+6697/#Zartek)
+   * [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/#Zartek)
+   * [irc.Extra-Cool.Fr +6697 #Zartek](irc://irc.Extra-Cool.Fr:+6697/#Zartek)
 
-## Remerciements
-* Amandine de eggdrop.Fr pour son aide/idées/testes/..
-* MenzAgitat car dans mes developpements il y a toujours des astuces/maniere de faire fournis par MenzAgitat ou bout code de MenzAgitat
-* A tout les [donateurs](https://github.com/ZarTek-Creole/DONATE) et [donatrices](https://github.com/ZarTek-Creole/DONATE) qui font vivre [les projets](https://github.com/ZarTek-Creole/)
-* A toutes les personnes qui propose des idées, signales des bogues, contribuent aux projets
+# Remerciements
+* A Amandine d'eggdrop.Fr pour son aide/idées/testes/…
+* A MenzAgitat car dans mes développements il y a toujours des astuces/manière de faire fournir par MenzAgitat ou bout code de MenzAgitat
+* A tous les [donateurs](https://github.com/ZarTek-Creole/DONATE) et [donatrices](https://github.com/ZarTek-Creole/DONATE) qui font vivre [les projets](https://github.com/ZarTek-Creole/)
+* A toutes les personnes qui proposent des idées, signalent des bogues, contribuent aux projets
 
 
 
