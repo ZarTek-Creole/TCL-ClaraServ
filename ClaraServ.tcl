@@ -50,9 +50,8 @@ namespace eval ClaraServ {
 		"url"		"https://github.com/ZarTek-Creole/TCL-ClaraServ"
 		"need_zct"	"0.0.9"
 		"need_ircs"	"0.0.7"
-		"dirname"	[file dirname [info script]]
 	}
-
+	set Script(dirname)	[file dirname [info script]]
 
 	set config(db_list)		[list \
 		"salon.db"
@@ -179,12 +178,12 @@ proc ::ClaraServ::FCT::Check:Config { } {
 }
 
 proc ::ClaraServ::FCT::DB:GET { CMD NIVEAU } {
-	foreach index [lsearch -all -nocase ${::ClaraServ::database} "*${CMD}*"] {
+	foreach index [lsearch -all -nocase [::ZCT::TXT::remove_accents ${::ClaraServ::database}] "*${CMD}*"] {
 		set index_data	[lindex ${::ClaraServ::database} ${index}]
 		set type		[lindex ${index_data} 1]
 		set data		[lindex ${index_data} 2]
 		if { ${type} == ${NIVEAU} } {
-			return ${data}
+			return [::ZCT::TXT::remove_accents ${data}]
 		}
 	}
 	return -1
@@ -323,11 +322,9 @@ proc ::ClaraServ::FCT::Create:Services {} {
 		}
 		set DB(Channels) "[::ClaraServ::FCT::Get:ScriptDir "db"]/salon.db"
 		set FILE_PIPE	[open ${DB(Channels)} "r"]
-		set fc	-1
 		while {![eof ${FILE_PIPE}]} {
 			set data	[gets ${FILE_PIPE}]
-			incr fc
-			if { ${data} !="" } {
+			if { ${data} != "" } {
 				[bid] join ${data}
 				if { ${::ClaraServ::config(service_usermodes)} != "" } {
 					[sid] mode ${data} ${::ClaraServ::config(service_usermodes)} ${::ClaraServ::config(service_nick)}
@@ -339,8 +336,8 @@ proc ::ClaraServ::FCT::Create:Services {} {
 
 	}
 	${::ClaraServ::BOT_ID} registerevent PRIVMSG {
-		set IRC_CMD		[lindex [msg] 0]
-		set IRC_VALUE	[::ZCT::TXT::remove_accents [lrange [msg] 1 end]]
+		set IRC_CMD		[::ZCT::TXT::remove_accents [lindex [msg] 0]]
+		set IRC_VALUE	[lrange [msg] 1 end]
 
 		##########################
 		#--> Commandes Privés <--#
@@ -385,7 +382,7 @@ proc ::ClaraServ::FCT::Create:Services {} {
 				}
 			}
 			# Si la commande existe pas en tant que PROC, alors nous verifions si la commande corresponds a une commandes de la database:
-			if { [lsearch -nocase [::ClaraServ::FCT::DB:CMD:LIST] ${IRC_CMD}] != "-1" } {
+			if { [lsearch -nocase [::ZCT::TXT::remove_accents [::ClaraServ::FCT::DB:CMD:LIST]] ${IRC_CMD}] != "-1" } {
 				#Si la database trouve une corespondance ont execute :
 				if { [catch {::ClaraServ::IRC:CMD:PUB:DYNAMIC [who] [target] ${IRC_CMD} ${IRC_VALUE} } error] } {
 					foreach line [split ${::errorInfo} "\n"] {
@@ -417,7 +414,7 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC { sender destination cmd pseudo } {
 		set data [::ClaraServ::FCT::DB:GET ${cmd} 1];
 	}
 	if { ${data} != "-1" } {
-		set data	[::ZCT::TXT::REPLACE_SUBSTITUTE ${data} ${destination};
+		set data	[::ZCT::TXT::REPLACE_SUBSTITUTE ${data} ${destination}];
 		set data	[string map -nocase [list "%pseudo%" "${pseudo}" "%sender%" "${sender}" "%destination%" "${destination}"] ${data}]
 		::ClaraServ::FCT::SENT:PRIVMSG ${destination} ${data}
 	}
