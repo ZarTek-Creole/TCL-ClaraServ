@@ -9,7 +9,6 @@ Index by:  <a href="index_main.html#ZCT.tcl">file name</a> |
 </font>
 <hr>
 <h2><a href="ZCT.tcl.html">ZCT.tcl</a> Annotations</h2>
-Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <hr>
 
 <table border="1" cellpadding="3" cellspacing="0" width="100%">
@@ -32,15 +31,22 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <tr><td><code><a href="#::ZCT::pkg::How_Download">::ZCT::pkg::How_Download</a> { PKG_NAME }</code><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Si un package est absent lors du "pkg load" nous retournons une aide pour l'installer le package</td></tr>
 <tr><td><code><a href="#::ZCT::pkg::load">::ZCT::pkg::load</a> { PKG_NAME {PKG_VERSION {}} {SCRIPT_NAME {}} {MISSING_MODE die} }</code><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Charger une</td></tr>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chargeur de package en cas d'absence de celui-ci 
+ il indique comment le</td></tr>
 <tr><td><code><a href="#::ZCT::putlog">::ZCT::putlog</a> { text {level_name {}} {text_name {}} }</code><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plutlog ameliorer, avec des niveau (couleurs differentes) et type de</td></tr>
-<tr><td><code><a href="#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a> { data }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::remove_accents">::ZCT::TXT::remove_accents</a> { TEXT }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Supprimer les accents dans une chaîne de caractères
+ Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::REPLACE_SUBSTITUTE">::ZCT::TXT::REPLACE_SUBSTITUTE</a> { TEXT {Channel {}} }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Supprimer les accents dans une chaîne de caractères
+ Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a> { TEXT }</code><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#############################################################################
 ## Substitution des symboles</td></tr>
-<tr><td><code><a href="#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a> { text length }</code><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;permet de centrer du text sur une longueur</td></tr>
-<tr><td><code><a href="#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a> { data }</code><br>
+<tr><td><code><a href="#::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a> { TEXT LENGTH }</code><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Centrer un TEXT avec des espaces sur une longueur</td></tr>
+<tr><td><code><a href="#::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a> { TEXT }</code><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enleve les style</td></tr>
 </table>
 <p>
@@ -54,7 +60,7 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <pre>proc ${child_name} { {subcommand {}} args }</pre>
 <dl>
 <dd>Création de procédure portant le nom des namespaces enfants ::example::text, ::example::text2<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#${child_name}_210">ZCT.tcl, line 210</a>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#${child_name}_181">ZCT.tcl, line 181</a>
 </dl></dl>
 
 <hr>
@@ -62,7 +68,7 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <pre>proc ::ZCT::calledby {  }</pre>
 <dl>
 <dd>procedure qui retourne où il est appellé<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::calledby_113">ZCT.tcl, line 113</a>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::calledby_131">ZCT.tcl, line 131</a>
 </dl></dl>
 
 <hr>
@@ -71,7 +77,11 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <dl>
 <dd>Procedure interne qui permet de creer les procs et les subprocs automatiquement
  https://forum.eggdrop.fr/Une-proc-qui-gere-lexploration-des-sous-commandes-par-les-namespaces-t-1951.html<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::create_sub_procs_206">ZCT.tcl, line 206</a>
+<dt><strong>Parameters:</strong>
+<dd><code>namespace</code> - Le nom d'espacement a suivre
+<dt><strong>Returns:</strong>
+<dd> NULL - Cree des (SUB-)PROCS
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::create_sub_procs_177">ZCT.tcl, line 177</a>
 </dl></dl>
 
 <hr>
@@ -86,7 +96,11 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
  set VARS_list1			[list "var1" "var2"]
  set VARS_list2			[list "var3" "var4"]
  Il verifiera la presence de ${list1(var1)}, ${list1(var2)}, ${list2(var3)} et ${list2(var4)}<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::Is:ArrayList:Exists_72">ZCT.tcl, line 72</a>
+<dt><strong>Parameters:</strong>
+<dd><code>NAMESPACE</code> - Le nom de l'espace nom dans le quel rechercher
+<dt><strong>Returns:</strong>
+<dd> NULL
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::Is:ArrayList:Exists_90">ZCT.tcl, line 90</a>
 </dl></dl>
 
 <hr>
@@ -94,7 +108,7 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <pre>proc ::ZCT::pcolor_${color_name} {  }</pre>
 <dl>
 <dd><dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pcolor_${color_name}_107">ZCT.tcl, line 107</a>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pcolor_${color_name}_125">ZCT.tcl, line 125</a>
 </dl></dl>
 
 <hr>
@@ -102,7 +116,7 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <pre>proc ::ZCT::pcolors_end {  }</pre>
 <dl>
 <dd><dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pcolors_end_109">ZCT.tcl, line 109</a>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pcolors_end_127">ZCT.tcl, line 127</a>
 </dl></dl>
 
 <hr>
@@ -110,28 +124,69 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
 <pre>proc ::ZCT::pkg::How_Download { PKG_NAME }</pre>
 <dl>
 <dd>Si un package est absent lors du "pkg load" nous retournons une aide pour l'installer le package manquant<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pkg::How_Download_57">ZCT.tcl, line 57</a>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pkg::How_Download_71">ZCT.tcl, line 71</a>
 </dl></dl>
 
 <hr>
 <h3><a name="::ZCT::pkg::load">::ZCT::pkg::load</a></h3>
 <pre>proc ::ZCT::pkg::load { PKG_NAME {PKG_VERSION {}} {SCRIPT_NAME {}} {MISSING_MODE die} }</pre>
 <dl>
-<dd>Charger une package<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pkg::load_37">ZCT.tcl, line 37</a>
+<dd>Chargeur de package en cas d'absence de celui-ci 
+ il indique comment le télécharger<dl>
+<dt><strong>Parameters:</strong>
+<dd><code>PKG_NAME</code> - Le nom exact du packages (obligatoire)
+ 
+<dd><code>PKG_VERSION</code> - La version minimal que le packages doit charger
+ 
+<dd><code>SCRIPT_NAME</code> - Le nom de votre script dans le quel vous voulez charger le package
+ 
+<dd><code>MISSING_MODE</code> - Comment afficher les erreur ? putlog, puts, die(par default) ?
+<dt><strong>Returns:</strong>
+<dd> Le status charger ou erreur
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::pkg::load_51">ZCT.tcl, line 51</a>
 </dl></dl>
 
 <hr>
 <h3><a name="::ZCT::putlog">::ZCT::putlog</a></h3>
 <pre>proc ::ZCT::putlog { text {level_name {}} {text_name {}} }</pre>
 <dl>
-<dd>Plutlog ameliorer, avec des niveau (couleurs differentes) et type de text<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::putlog_126">ZCT.tcl, line 126</a>
+<dd><dl>
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::putlog_145">ZCT.tcl, line 145</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::TXT::remove_accents">::ZCT::TXT::remove_accents</a></h3>
+<pre>proc ::ZCT::TXT::remove_accents { TEXT }</pre>
+<dl>
+<dd>Supprimer les accents dans une chaîne de caractères
+ Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.
+ source : https://boulets.eggdrop.fr/tcl/routines/tcl-toolbox-0011.html<dl>
+<dt><strong>Parameters:</strong>
+<dd><code>TEXT</code> - Le TEXT dont les accents doivent être enlever
+<dt><strong>Returns:</strong>
+<dd> Le TEXT sans accents, ni cédiles
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::remove_accents_219">ZCT.tcl, line 219</a>
+</dl></dl>
+
+<hr>
+<h3><a name="::ZCT::TXT::REPLACE_SUBSTITUTE">::ZCT::TXT::REPLACE_SUBSTITUTE</a></h3>
+<pre>proc ::ZCT::TXT::REPLACE_SUBSTITUTE { TEXT {Channel {}} }</pre>
+<dl>
+<dd>Supprimer les accents dans une chaîne de caractères
+ Utile par exemple pour effectuer une recherche de TEXT en ne tenant pas compte des caractères accentués.
+ source : https://boulets.eggdrop.fr/tcl/routines/tcl-toolbox-0011.html<dl>
+<dt><strong>Parameters:</strong>
+<dd><code>TEXT</code> - Le TEXT contenant des variables de subtitutions
+ 
+<dd><code>Channel</code> - Le salon pour remplacer %chan% (facultatif)
+<dt><strong>Returns:</strong>
+<dd> Le TEXT avec les doonées de subtitutions replacer
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::REPLACE_SUBSTITUTE_238">ZCT.tcl, line 238</a>
 </dl></dl>
 
 <hr>
 <h3><a name="::ZCT::TXT::visuals::apply">::ZCT::TXT::visuals::apply</a></h3>
-<pre>proc ::ZCT::TXT::visuals::apply { data }</pre>
+<pre>proc ::ZCT::TXT::visuals::apply { TEXT }</pre>
 <dl>
 <dd>#############################################################################
 ## Substitution des symboles couleur/gras/soulignement/...
@@ -144,24 +199,56 @@ Created from <strong><code>././TCL-ZCT/ZCT.tcl</strong></code>
  <u>   : Ajouter le style Underline/souligner
  </u>  : Enlever le style Underline/souligner
  <i>   : Ajouter le style Italic/Italique
- <s>   : Enlever les styles precedent<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::apply_189">ZCT.tcl, line 189</a>
+ <s>   : Enlever les styles precedent
+#
+ Black       = 00
+ White       = 01
+ Dark Blue   = 02
+ Green       = 03
+ Red         = 04
+ Brown       = 05
+ Purple      = 06
+ Orange      = 07
+ Yellow      = 08
+ Light Green = 09
+ DarkCyan    = 10
+ LightCyan   = 11
+ LightBlue   = 12
+ Pink        = 13
+ Dark Grey   = 14
+ Light Grey  = 15
+#<dl>
+<dt><strong>Parameters:</strong>
+<dd><code>TEXT</code> - Le TEXT avec des codes style a remplacer avec de vrai codes styles (couleurs, gras..)
+<dt><strong>Returns:</strong>
+<dd> Le TEXT avec les codes styles en TCl
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::apply_322">ZCT.tcl, line 322</a>
 </dl></dl>
 
 <hr>
 <h3><a name="::ZCT::TXT::visuals::espace">::ZCT::TXT::visuals::espace</a></h3>
-<pre>proc ::ZCT::TXT::visuals::espace { text length }</pre>
+<pre>proc ::ZCT::TXT::visuals::espace { TEXT LENGTH }</pre>
 <dl>
-<dd>permet de centrer du text sur une longueur donné<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::espace_159">ZCT.tcl, line 159</a>
+<dd>Centrer un TEXT avec des espaces sur une longueur donnée<dl>
+<dt><strong>Parameters:</strong>
+<dd><code>TEXT</code> - Le TEXT qui doit être centré
+ 
+<dd><code>LENGTH</code> - La longueur voulu avec les espacements
+<dt><strong>Returns:</strong>
+<dd> Le TEXT centré avec le nombre d'espaces pour avoir une longueur égal à LENGTH
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::espace_260">ZCT.tcl, line 260</a>
 </dl></dl>
 
 <hr>
 <h3><a name="::ZCT::TXT::visuals::remove">::ZCT::TXT::visuals::remove</a></h3>
-<pre>proc ::ZCT::TXT::visuals::remove { data }</pre>
+<pre>proc ::ZCT::TXT::visuals::remove { TEXT }</pre>
 <dl>
 <dd>Enleve les style visuals<dl>
-<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::remove_197">ZCT.tcl, line 197</a>
+<dt><strong>Parameters:</strong>
+<dd><code>TEXT</code> - Le TEXT avec des codes style
+<dt><strong>Returns:</strong>
+<dd> Le TEXT sans les codes styles
+<dt><strong>Defined in:</strong><dd><a href="ZCT.tcl.html#::ZCT::TXT::visuals::remove_282">ZCT.tcl, line 282</a>
 </dl></dl>
 
 <hr>
@@ -170,7 +257,7 @@ Index by:  <a href="index_main.html#byfilename">file name</a> |
 <a href="index_main.html#byprocname">procedure name</a> |
 <a href="index_main.html#bycall">procedure call</a> |
 <a href="index_annot_full.html">annotation</a><br>
-<cite>Index generated 2022-07-24 at 10:18.</cite>
+<cite>Index generated 2022-08-07 at 21:26.</cite>
 </font>
 </body>
 </html>
