@@ -6,24 +6,24 @@ variable database {
 	{{!rhum} {1} {<c07>%sender%<c12> paye un verre de rhum à <c04>%pseudo%<c12> , à la tienne biloute :p ça pique hein ^^ }}
 
 
-	{{!chocolat} {0} {<c12>Que de gourmandise, <c07>%sender%<c12> s'autorise 1 carré de chocolat ... puis 2 ... puis 3 ... A cette allure, d'ici<c04> 10 minutes <c12> tout le paquet va y passer !}}
-	{{!chocolat} {1} {<c12>C'est pour toi ! Oui oui, <c07>%sender%<c12> souhaite te faire plaisir et t'offre ces quelques carrés de chocolat. Offerts de bon coeur pour<c04> %pseudo%}}
+	{{!chocolat} {0} {<c12>Que de gourmandise, <c07>%sender%<c12> s'autorise 1 carré de chocolat 🍫 ... puis 2 ... puis 3 ... A cette allure, d'ici<c04> 10 minutes <c12> tout le paquet va y passer !}}
+	{{!chocolat} {1} {<c12>C'est pour toi ! Oui oui, <c07>%sender%<c12> souhaite te faire plaisir et t'offre ces quelques carrés de chocolat 🍫. Offerts de bon coeur pour<c04> %pseudo%}}
 
 
-	{{!danse} {0} {<c12>On dirait que <c07>%sender%<c12> a une envie folle de danser !! <b> <c04>ƪ(˘⌣˘)┐ ƪ(˘⌣˘)ʃ ┌(˘⌣˘)ʃ}}
-	{{!danse} {1} {<c07>%sender%<c12> a le corps qui bouge et aimerait inviter <c04>%pseudo%<c12> à danser, serrés l'un contre l'autre<b><c04> ヘ( ^o^)ノ＼(^_^ )}}
+	{{!danse} {0} {<c12>On dirait que <c07>%sender%<c12> a une envie folle de danser 💃 !! <b> <c04>ƪ(˘⌣˘)┐ ƪ(˘⌣˘)ʃ ┌(˘⌣˘)ʃ}}
+	{{!danse} {1} {<c07>%sender%<c12> a le corps qui bouge et aimerait inviter <c04>%pseudo%<c12> à danser 💃, serrés l'un contre l'autre<b><c04> ヘ( ^o^)ノ＼(^_^ )}}
 
 
-	{{!fleur} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre des fleurs <c04>(elle-lui)-même! <c04>✿ <c03>❀ <c07>❁}}
-	{{!fleur} {1} {<c07>%sender%<c12> offre de belles <c04>@<c03>-,<c03>-'<c03>--,<c03>-<c07>@</c><c03>-,-'---<c06> @<c03>-,-'--,--<c12> à<c04> %pseudo%}}
+	{{!fleur} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre des fleurs 🌹🌻🌺🌷 <c04>(elle-lui)-même! <c04>✿ <c03>❀ <c07>❁}}
+	{{!fleur} {1} {<c07>%sender%<c12> offre de belles 🌹 🌻🌺🌷 <c04>@<c03>-,<c03>-'<c03>--,<c03>-<c07>@</c><c03>-,-'---<c06> @<c03>-,-'--,--<c12> à<c04> %pseudo%}}
 
 
-	{{!coeur} {0} {<c12>Il semblerait que <c07>%sender%<c12> aime <c04>les coeurs  <c06> \♥<c13>\(\¯\`\♥\´\¯\)<c06> \♥}}
-	{{!coeur} {1} {<c13>❤<c06> ❤ <c07>❤<c02> ❤ <c04><b> %pseudo% <b><c02> ❤ <c07>❤<c06> ❤<c13>❤ }}
+	{{!coeur} {0} {<c12>Il semblerait que <c07>%sender%<c12> aime <c04>les coeurs 💖 💗  💝 <c06> \♥<c13>\(\¯\`\♥\´\¯\)<c06> \♥}}
+	{{!coeur} {1} {💘<c13>❤<c06> ❤ <c07>❤<c02> ❤ <c04><b> %pseudo% <b><c02> ❤ <c07>❤<c06> ❤<c13>💘}}
 
 
-	{{!mouton} {0} {<c12>Il semblerait que <c07>%sender%<c12> soit un mouton ^^ <c04>béééééééééééééééééééééé }}
-	{{!mouton} {1} {<c07>%sender%<c12> a une soudaine envie de faire le mouton pour<c04> %pseudo%<c12> . bééééééééééééééééééééééé }}
+	{{!mouton} {0} {<c12>Il semblerait que <c07>%sender%<c12> soit un mouton 🐑 ^^ <c04>béééééééééééééééééééééé }}
+	{{!mouton} {1} {<c07>%sender%<c12> a une soudaine envie de faire le mouton 🐑 pour<c04> %pseudo%<c12> 🐏. bééééééééééééééééééééééé }}
 
 
 	{{!rateau} {0} {<c12>Il semblerait que <c07>%sender%<c12> se soit pris le rateau de l'année ! <b><c04> (✖╭╮✖)}}
@@ -34,28 +34,28 @@ variable database {
 	{{!chante} {1} {<c07>%sender%<c12> prend le micro et monte sur son bureau pour chanter avec<c04> %pseudo%. <c12> On va faire péter les baffles yéééééééé <c04>♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪}}
 
 
-	{{!cochon} {0} {<c12>spider cochon, spider cochon, il peut marcher au plafond, est-ce qu'il peeeut faire la toile, bien sûr que non, c'est un cochon. Prends garde !! spider cochon <c13>^(°@°)^ <c12> est là !!!!!!! }}
-	{{!cochon} {1} {<c07>%sender%<c12> dit que <c04>%pseudo%<c12> est un(e) cochon(ne)<c13>^(°@°)^ <c12> . Vas-y roule-toi dans la boue et va manger des glands :x }}
+	{{!cochon} {0} {<c12>spider cochon, spider cochon, il peut marcher au plafond 🐖, est-ce qu'il peeeut faire la toile🐽, bien sûr que non, c'est un cochon 🐷. Prends garde !! spider cochon <c13>^(°@°)^ <c12> est là !!!!!!! }}
+	{{!cochon} {1} {<c07>%sender%<c12> dit que <c04>%pseudo%<c12> est un(e) cochon(ne) 🐖 <c13>^(°@°)^ <c12> 🐽. Vas-y roule-toi dans la boue et va manger des glands :x }}
 
 
-	{{!the} {0} {<c12>Coooooool ! <c07>%sender%<c12> part en cuisine pour préparer <c04>du thé <b><c05> \[\_\_\]\D\ }}
-	{{!the} {1} {<c07>%sender%<c12> offre une bonne tasse de Thé toute chaude à <c04>%pseudo%<c12> >> Une rondelle de citron, du lait, du sucre ? <b><c05> \[\_\_\]\D\ }}
+	{{!thé} {0} {<c12>Coooooool ! <c07>%sender%<c12> part en cuisine pour préparer <c04>du thé <b>🍵<c05> [\_\_]\D\ }}
+	{{!thé} {1} {<c07>%sender%<c12> offre une bonne tasse de Thé 🍵 toute chaude à <c04>%pseudo%<c12> >> Une rondelle de citron, du lait, du sucre ? <b><c05> [\_\_]\D\ }}
 
 
-	{{!seau} {0} {<c07> %sender% <c04>se vide un seau d'eau froide sur la tête.<c12> Tu as trop chaud <c07>%sender%<c12> ? }}
-	{{!seau} {1} {<c07>%sender%<c12> balance un seau d'eau froide sur<c04> %pseudo%. <c12> Ca va te calmer je pense ;) }}
+	{{!seau} {0} {<c07> %sender% <c04>se vide un seau d'eau froide 🪣 sur la tête.<c12> Tu as trop chaud <c07>%sender%<c12> ? }}
+	{{!seau} {1} {<c07>%sender%<c12> balance un seau d'eau froide 🪣 sur<c04> %pseudo%. <c12> Ca va te calmer je pense ;) }}
 
 
-	{{!waff} {0} {<c07>%sender%<c12> est un(e) petit(e) caniche, peluche pour vieux :D }}
-	{{!waff} {1} {<c07>Waff <c12> est mort de rire en imaginant <c04>%pseudo%<c12> s'acharner contre un meuble comme un caniche en manque xD l'image est moche mais rigolote :D }}
+	{{!waff} {0} {<c07>%sender%<c12> est un(e) petit(e) caniche 🐕‍🦺, peluche 🐶 pour vieux :D }}
+	{{!waff} {1} {<c07>Waff <c12> est mort de rire en imaginant <c04>%pseudo%<c12> s'acharner contre un meuble comme un caniche 🐶 en manque xD l'image est moche mais rigolote :D }}
 
 
-	{{!eau} {0} {<c07> %sender% <c04>se vide un seau d'eau froide sur la tête.<c12> Tu as trop chaud <c07>%sender%<c12> ? }}
-	{{!eau} {1} {<c07>%sender%<c12> balance un seau d'eau froide sur<c04> %pseudo%. <c12> Ca va te calmer je pense ;) }}
+	{{!eau} {0} {<c07> %sender% <c04>se vide un seau 🪣 d'eau froide 🚰 sur la tête.<c12> Tu as trop chaud <c07>%sender%<c12> ? }}
+	{{!eau} {1} {<c07>%sender%<c12> balance un seau 🪣 d'eau froide 🚰 sur<c04> %pseudo%. <c12> Ca va te calmer je pense ;) }}
 
 
-	{{!jump} {0} {<b><c02,00>< <c07>,00o<c03>,00/ <c04>,0Jump <c01> o <c06>,0Jump <c01> o <c10>,0Jump <c01> o <c03>,0Jump <c01> o <c14>,0Jump <c01> o <c07>,0Jump <c01> o <c05>,00<c10>,00o <c04>,00> }}
-	{{!jump} {1} {<b><c02,00>< <c07>,00o<c03>,00/ <c04>,0Jump <c01> o <c06>,0Jump <c01> o <c10>,0Jump<c01>  %pseudo% <c03>,0Jump <c01> o <c14>,0Jump <c01> o <c07>,0Jump <c01> o <c05>,00<c10>,00o <c04>,00> }}
+	{{!jump} {0} {<b><c02,00>< <c07,00>0o<c03,00>0/ <c04,00>Jump <c01> o <c06,00>Jump <c01> o <c10,00>Jump <c01> o <c03,00>Jump <c01> o <c14,00>Jump <c01> o <c07,00>Jump <c01> o <c05,00>0<c10,00>0o <c04,00>0> }}
+	{{!jump} {1} {<b><c02,00>< <c07,00>0o<c03,00>0/ <c04,00>Jump <c01> o <c06,00>Jump <c01> o <c10,00>Jump<c01>  %pseudo% <c03,00>Jump <c01> o <c14,00>Jump <c01> o <c07,00>Jump <c01> o <c05,00>0<c10,00>0o <c04,00>0> }}
 
 
 	{{!truite} {0} {<c07> %sender% <c04>se flagelle la tronche à coup de truite <c12> >(////°> }}
@@ -66,12 +66,12 @@ variable database {
 	{{!dzoss} {1} {<c07>%sender%<c12> se jette violement sur <c04>%pseudo%<c12> pour le-la D-Zosser. }}
 
 
-	{{!apero} {0} {<c07> %sender% <c04>déclare qu'il est l'heure de sortir les bouteilles du bar pour l'apéro ! Qui s'occupe des cacahuètes et des chips ? :p  }}
-	{{!apero} {1} {<c07>%sender%<c12> demande à <c04>%pseudo%<c12> ce qu'(il-elle) veut boire car c'est l'heure de l'apéro la ! C'est parti pour un petit pastis, Sky cola ou un jus de fruit ! <c07>\(* ˘⌣˘)◞<c01> d\[\_\]\ <c12> Tchin !<c01>  \[\_\]b <c04>\ヽ(•‿• ) }}
+	{{!apéro} {0} {<c07> %sender% <c04>déclare qu'il est l'heure de sortir les bouteilles du bar pour l'apéro ! Qui s'occupe des cacahuètes et des chips ? :p  }}
+	{{!apéro} {1} {<c07>%sender%<c12> demande à <c04>%pseudo%<c12> ce qu'(il-elle) veut boire car c'est l'heure de l'apéro la ! C'est parti pour un petit pastis, Sky cola ou un jus de fruit ! <c07>\(* ˘⌣˘)◞<c01> d[\_]\ <c12> Tchin !<c01>  [\_]b <c04>\ヽ(•‿• ) }}
 
 
-	{{!dodo} {0} {<c07>%sender%<c12> va aller faire un bon gros dodo <c04>(-.-)Zzz...<c12> et souhaite une bonne nuit à tout le monde. Faites de doux rêves les ami(e)s <c04><b> ヽ(´ー`)人(´∇｀)人(`Д´)ノ }}
-	{{!dodo} {1} {<c07>%sender%<c12> aimerait bien se faire border par <c04>%pseudo%<c12> car c'est l'heure d'aller au dodo ^^ ! Bonne nuit <3 }}
+	{{!dodo} {0} {<c07>%sender%<c12> va aller faire un bon gros dodo 😴 <c04>(-.-)Zzz...<c12> et souhaite une bonne nuit à tout le monde. Faites de doux rêves les ami(e)s 🛌🛌🛌<c04><b> ヽ(´ー`)人(´∇｀)人(`Д´)ノ }}
+	{{!dodo} {1} {<c07>%sender%<c12> aimerait bien se faire border par <c04>%pseudo%<c12> car c'est l'heure 😴 d'aller au dodo ^^ ! Bonne nuit 🛌🛌🛌 <3 }}
 
 
 	{{!piscine} {0} {<c07> %sender% <c04>n'a pas l'air d'être dispo... <c12> J'peux pas j'ai pisciiiiiine cine cine cine j'peux pas j'ai pisciiiiiiiiineuh }}
@@ -82,7 +82,7 @@ variable database {
 	{{!saute} {1} {<c07><b>%sender% <c06> S<c05> <b>a<c13>u <c07><b><b>T<c10><b>e<c14>, <c01> <b>S <c04><b>a<c02> <b>U<c13>t<c14><b>E<c05> , <c06> <b>s <c07>A <c03><b>u<c10>T<c13><b>e <c04><b>%pseudo% }}
 
 
-	{{!bouge} {0} {<c01> Sur les C<b>h<b><c12> a<b><c13>a<b><c01> t <b>R<b>a<b>d<b>i<b>O<b>o <c01> on a La maladie du <b> <c04>B<b><c01> ouger <c04><b>B<c01> <b>ouger, on s'assoit pas ! <c06> <b>J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P }}
+	{{!bouge} {0} {<c01> Sur les C<b>h<b><c12> a<b><c13>a<b><c01> t <b>R<b>a<b>d<b>i<b>O<b>o <c01> on a La maladie du <b> <c04>B<b><c01>ouger <c04><b>B<c01><b>ouger, on s'assoit pas ! <c06> <b>J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P }}
 	{{!bouge} {1} {<c06> <b>J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c01> Lève-toi et danse<c04> %pseudo%<c01> , c'est<c04> %sender% <c01> qui te le demande <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P }}
 
 
@@ -98,8 +98,8 @@ variable database {
 	{{!ruisseau} {1} {<c07>%sender%<c12> aimerait bien faire comprendre à <c04>%pseudo%<c12> que si tu es assis(e) près d'un ruisseau et que tu as soif, même si tu es idiot(e), tu sais que l'eau va te désaltérer.<c04> C'est ça comprendre... }}
 
 
-	{{!lune} {0} {<c12>Quand le sage désigne la lune, l'idiot regarde le doigt... regarde la lune ☽ s'il te plait ! }}
-	{{!lune} {1} {<c07>%sender%<c12> a beaucoup de sagesse... Quand le sage désigne la lune ☽, l'idiot regarde le doigt... <c04>%pseudo%<c12> regarde la lune s'il te plait ! }}
+	{{!lune} {0} {<c12>Quand le sage désigne la lune 🌛, l'idiot regarde le doigt... regarde la 🌜 lune ☽ s'il te plait🌙 ! }}
+	{{!lune} {1} {<c07>%sender%<c12> a beaucoup de sagesse... 🌛 Quand le sage désigne la 🌜 lune ☽, l'idiot regarde le doigt... <c04>%pseudo%<c12> regarde la lune 🌙 s'il te plait ! }}
 
 
 	{{!zen} {0} {<c12>Chaque fois qu'une personne sourit, elle ajoute quelque chose à la durée de sa vie, restes ZeN ☯ et tu vivras longtemps. }}
@@ -111,12 +111,12 @@ variable database {
 
 
 
-	{{!video} {0} {<c07>%sender%<c12> va aller se matter une bonne vidéoooooooooooooooooooo <c04><b> \[\●▪▪●\]\ }}
-	{{!video} {1} {<c07>%sender%<c12> chuchote à l'oreille de <c04>%pseudo%<c12> qu'(il-elle) ferait mieux d'aller se matter une vidéo<c04> \[\●▪▪●\]\ <c12> ... ça détend ^^ tu seras moins stressé(e) et plus détendu(e) :) }}
+	{{!vidéo} {0} {<c07>%sender%<c12> va aller se matter une bonne vidéoooooooooooooooooooo <c04><b> [\●▪▪●]\ }}
+	{{!vidéo} {1} {<c07>%sender%<c12> chuchote à l'oreille de <c04>%pseudo%<c12> qu'(il-elle) ferait mieux d'aller se matter une vidéo<c04> [\●▪▪●]\ <c12> ... ça détend ^^ tu seras moins stressé(e) et plus détendu(e) :) }}
 
 
 	{{!clope} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre une bonne pause clope bien meritée (c'est pas bien de fumer)}}
-	{{!clope} {1} {<c07>%sender%<c12> offre une cigarette (<u><c01,07>)¯¯¯¯</c>)<c01> ¯<c12> )<c01,00>¯¯¯¯¯¯¯<u><b>))</c> <c04>,0)<c15>~~\017 <c12> à <c04>%pseudo%<c12> (c'est pas bien de fumer)}}
+	{{!clope} {1} {<c07>%sender%<c12> offre une cigarette (<u><c01,07>)¯¯¯¯</c>)<c01> ¯<c12> )<c01,00>¯¯¯¯¯¯¯<u><b>))</c> <c04,00>)<c15>~~\017 <c12> à <c04>%pseudo%<c12> (c'est pas bien de fumer)}}
 
 
 	{{!mord} {0} {<c12>Il semblerait que <c07>%sender%<c12> se mord (elle-lui)-même, sado maso ?}}
@@ -124,9 +124,9 @@ variable database {
 
 
 	{{!tendresse} {0} {<c07>%sender%<c12> se donne un peu de tendresse à (elle-lui)-même, puisque personne ne lui en donne <c13>(♥‿♥)}}
-	{{!tendresse} {1} {<c07>%sender%<c12> prend<c04> %pseudo%<c12> dans ses bras, et lui fait un super calin <3 C'est ça l'amour <c13>♥(Ɔ ˘⌣˘)˘⌣˘ C)♥}}
-	{{!biere} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre une bonne biere fraîche à <c04>(elle-lui)-même !}}
-	{{!biere} {1} {<c07>%sender%<c12> offre une bonne biere fraîche à<c04> %pseudo%}}
+	{{!tendresse} {1} {<c07>%sender%<c12> prend<c04> %pseudo%<c12> dans ses bras, et lui fait un super câlin <3 C'est ça l'amour <c13>♥(Ɔ ˘⌣˘)˘⌣˘ C)♥}}
+	{{!bière} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre une bonne bière fraîche à <c04>(elle-lui)-même !}}
+	{{!bière} {1} {<c07>%sender%<c12> offre une bonne bière fraîche à<c04> %pseudo%}}
 
 
 	{{!pelle} {0} {<c12>Il semblerait que <c07>%sender%<c12> se roule une pelle à <c04>(elle-lui)-même !}}
@@ -176,8 +176,8 @@ variable database {
 	{{!fouet} {1} {<c07>%sender%<c12> fouette vigoureusement<c04> %pseudo%<c12> . T'aime ça coquin(e) hein <b><c01> ===<c05> ~~~~~~}}
 
 
-	{{!cle} {0} {<c07>%sender%<c12> Prend la clé<c04> ╥―O ⚿ <c12> des champs car (il-elle) aurait du la fermer !}}
-	{{!cle} {1} {<c12>Tiens voilà la clé<c04> ╥―O ⚿ <c12> pour fermer ta bouche<c04> %pseudo%<c12> , ça nous fera des vacances !}}
+	{{!clé} {0} {<c07>%sender%<c12> Prend la 🗝️clé🔑<c04> ╥―O ⚿ <c12> des champs car (il-elle) aurait du la fermer !}}
+	{{!clé} {1} {<c12>Tiens voilà les 🗝️clés🔑<c04> ╥―O ⚿ <c12> pour fermer ta bouche<c04> %pseudo%<c12> , ça nous fera des vacances !}}
 
 
 	{{!string} {0} {<c07>%sender%<c12> dit le string est le premier instrument à cordes, quand on pète ça fait une mélodie<c04> PweT ! ♪ ♫ ♩}}
@@ -193,17 +193,17 @@ variable database {
 
 
 
-	{{!etoile} {0} {<c07>%sender%<c12> se lance de la poussière d'étoile <c07>';`*^',*;~`;.,*`.`*~;*~`;,.'*`.;*``;.^.*`~..;`*.^;.,*`;~..*;`~*.,:*`** <c12> car (il-elle) se trouve vraiment <b> <c04>SPÉCIAL ! }}
-	{{!etoile} {1} {<c07>%sender%<c12> lance de la poussière d'étoile tout autour de<c04> %pseudo% <c07>';`*^',*;~`;.,*`.`*~;*~`;,.'*`.;*``;.^.*`~..;`*.^;.,*`;~..*;`~*.,:*`** <c12> parce-que TU es vraiment <b> <c04>SPÉCIAL ! }}
+	{{!étoile} {0} {<c07>%sender%<c12> se lance de la poussière d'étoile 🌟<c07>';`*^',*;~`;.,*`.`*~;*~`;,.'*`.;*``;.^.*`~..;`*.^;.,*`;~..*;`~*.,:*`** <c12> car (il-elle) se trouve vraiment <b> <c04>SPÉCIAL ! }}
+	{{!étoile} {1} {<c07>%sender%<c12> lance de la poussière d'étoile 🌟 tout autour de<c04> %pseudo% <c07>';`*^',*;~`;.,*`.`*~;*~`;,.'*`.;*``;.^.*`~..;`*.^;.,*`;~..*;`~*.,:*`** <c12> parce-que TU es vraiment <b> <c04>SPÉCIAL ! }}
 
 
-	{{!ange} {0} {<c12>Il semblerait que <c07>%sender%<c12> soit un ange ! <c13>~Å~ <c02> ~Å~ <c12> ~Å~	}}
-	{{!ange} {1} {<c07>%sender%<c12> t'envoie de petits anges gardiens pour te surveiller<c04> %pseudo% <c13>~Å~ <c02> ~Å~ <c12> ~Å~<c04> %pseudo%  <c03>~Å~ <c10>~Å~ <c13>~Å~<c04> %pseudo% <c11>~Å~ <c06> ~Å~ <c14>~Å~<c04> %pseudo% <c15>~Å~ <c13>~Å~ <c14>~Å~}}
+	{{!ange} {0} {<c12>Il semblerait que <c07>%sender%<c12> soit un ange 👼! <c13>~Å~ <c02> ~Å~ <c12> ~Å~	}}
+	{{!ange} {1} {<c07>%sender%<c12> t'envoie de petits anges gardiens 👼👼👼 pour te surveiller<c04> %pseudo% <c13>~Å~ <c02> ~Å~ <c12> ~Å~<c04> %pseudo%  <c03>~Å~ <c10>~Å~ <c13>~Å~<c04> %pseudo% <c11>~Å~ <c06> ~Å~ <c14>~Å~<c04> %pseudo% <c15>~Å~ <c13>~Å~ <c14>~Å~}}
 
 
 
 	{{!orangina} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre un <b><c08,12>~ORANGINA®~ <b><c12> ,0à (elle-lui)-même ! hmmm :D}}
-	{{!orangina} {1} {<c07>%sender%<c12> offre une cannette d'<b><c08,12>~ORANGINA®~ <b><c12> ,0 à <c04>,0%pseudo% <c12> Il faut bien le secouer ! Hmmm :D}}
+	{{!orangina} {1} {<c07>%sender%<c12> offre une cannette d'<b><c08,12>~ORANGINA®~ <b><c12> ,0 à <c04,00>%pseudo% <c12> Il faut bien le secouer ! Hmmm :D}}
 
 
 	{{!milkshake} {0} {<c04>%pseudo% <c12> nargue tout le monde avec son <b> <c03>Mi<c06> L<b>kS<c13>h<b>Ak <b><c04> 凸( ^o^)ノ<c01> └┘<c12> !!!}}
@@ -220,8 +220,8 @@ variable database {
 
 
 
-	{{!tropicana} {0} {<c12>Quelles sont belles ces <c07>Oranges<b> ◯◯◯ <b><c12> !!! <c07>%sender%<c12> va s'en faire un bon jus version <b> <c03>,7Tropícana®}}
-	{{!tropicana} {1} {<c12>Besoin de vitamines <c04>%pseudo%<c12> ? Pas de soucis, <c07>%sender%<c12> va te presser quelques Oranges <b> <c07>◯◯◯<b><c12> en mode <b> <c03>,7Tropícana®}}
+	{{!tropicana} {0} {<c12>Quelles sont belles ces <c07>Oranges<b> ◯◯◯ <b><c12> !!! <c07>%sender%<c12> va s'en faire un bon jus version <b> <c03,07>Tropícana®}}
+	{{!tropicana} {1} {<c12>Besoin de vitamines <c04>%pseudo%<c12> ? Pas de soucis, <c07>%sender%<c12> va te presser quelques Oranges <b> <c07>◯◯◯<b><c12> en mode <b> <c03,07>Tropícana®}}
 
 
 
@@ -234,8 +234,8 @@ variable database {
 	{{!perf} {1} {<c12>O <c03>u <c04>l<c05> a<c06> l <c07>a<c13>l<c14>a<c12> ! <c07>%sender%<c12> propose une bonne Perfusion de café ☕ à<c04> %pseudo% <b> <c04>ε(๏̯͡๏)з<b><c12> qui a la tête dans le <b> <c04>(_|_)<c12> <b> !}}
 
 
-	{{!redbull} {0} {<c12>La boisson énergétique <b> <c04>,2Red <c04>,15Bull®<b><c12> ,0 ne donne pas d'ailes mais <c07>%sender%<c12> s'en fiche, il-elle s'en boit une canette quand même !}}
-	{{!redbull} {1} {<c12>En cas de coup de mou<b><c14>(•̪●)<b><c12> , <c07>%sender%<c12> conseil à<c04> %pseudo%<c12> de prendre une canette de <c02>  <b> <c04>,2Red <c04>,15Bull®<b><c12> ,0 il parait que ça donne des ailes <b> <c04>Ƹ(̾●̮̮̃̾•̃̾)Ʒ }}
+	{{!redbull} {0} {<c12>La boisson énergétique <b> <c04,02>Red <c04,01>5Bull®<b><c12> ,0 ne donne pas d'ailes mais <c07>%sender%<c12> s'en fiche, il-elle s'en boit une canette quand même !}}
+	{{!redbull} {1} {<c12>En cas de coup de mou<b><c14>(•̪●)<b><c12> , <c07>%sender%<c12> conseil à<c04> %pseudo%<c12> de prendre une canette de <c02>  <b> <c04,02>Red <c04,01>5Bull®<b><c12> ,0 il parait que ça donne des ailes <b> <c04>Ƹ(̾●̮̮̃̾•̃̾)Ʒ }}
 
 
 
@@ -244,8 +244,8 @@ variable database {
 
 
 
-	{{!vittel} {0} {<c12>T'es malade ou quoi<c04> %sender% <b> <c04>(☉_☉)<c12> ?<b><c12> tu te mets à boire de la <c01> \[ <c12> ■<b> <c04>Vittel® <c01> <b>\]<c12> ,0 ... ou alors c'est peu être pour noyer le <b><c00,02>\[Ricard®<c08,02>☀<c00,02>\] }}
-	{{!vittel} {1} {<c12>Elle est si bonne ma <c01> \[ <c12> ■<b> <c04>Vittel® <c01> <b>\]<c12> ,0 que j'en fais profiter les amis ;) Un petit verre <c04>%pseudo%<c12> ? C'est <c07>%sender%<c12> qui paie sa tournée ...	Mais t'inquiète, on oublie pas le <b><c00,02>\[Ricard®<c08,02>☀<c00,02>\]<b><c12> ,0 qui va avec !<b><c04> ( -‿•)◞└┘└┘ヽ(˘‿˘ ) }}
+	{{!vittel} {0} {<c12>T'es malade ou quoi<c04> %sender% <b> <c04>(☉_☉)<c12> ?<b><c12> tu te mets à boire de la <c01> [ <c12> ■<b> <c04>Vittel® <c01> <b>]<c12> ,0 ... ou alors c'est peu être pour noyer le <b><c00,02>[Ricard®<c08,02>☀<c00,02>] }}
+	{{!vittel} {1} {<c12>Elle est si bonne ma <c01> [ <c12> ■<b> <c04>Vittel® <c01> <b>]<c12> ,0 que j'en fais profiter les amis ;) Un petit verre <c04>%pseudo%<c12> ? C'est <c07>%sender%<c12> qui paie sa tournée ...	Mais t'inquiète, on oublie pas le <b><c00,02>[Ricard®<c08,02>☀<c00,02>]<b><c12> ,0 qui va avec !<b><c04> ( -‿•)◞└┘└┘ヽ(˘‿˘ ) }}
 
 
 	{{!carambar} {0} {<c07>%sender%<c12> S'offre un <c00,06> <c00,00> <c05,08> <b>CaRaMbAR® <c00,06><b><c00,00> <c00,06> <c12> ,0 pour sortir une bonne Blagounette ! <c04><b> ƪ(ړײ)‎ƪ​​}}
@@ -253,20 +253,20 @@ variable database {
 
 
 
-	{{!anni} {0} {<u> <c04>Anniversaire<u><c12> : Evènement qui se répète avec une régularité et une précision  <c03>inéluctables<c12> ! ⌛. C’est ainsi qu'aujourdhui, à la date prévue initialement <c07>%sender%<c12> vous dit : c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> MoN\ Anniversaire !!!  <c03>˚✰  。 <c04>❤˚* ˚ <c07> ★}}
-	{{!anni} {1} {<c07>%sender%<c12> demande à <c04>%pseudo%<c12> si le poids des bougies dépasse celui du gâteau ! Car aujourdhui c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> SoN  Anniversaire !!!  <c03>˚✰	。 <c04>❤˚* ˚ <c07> ★<c12> <b> bon Anni<c04> %pseudo%<c12> ! <b><c13>(っ˘з(˘⌣˘ )}}
+	{{!anni} {0} {<u> <c04>Anniversaire<u><c12> : Evènement qui se répète avec une régularité et une précision  <c03>inéluctables<c12> ! ⌛. C’est ainsi qu'aujourd'hui, à la date prévue initialement <c07>%sender%<c12> vous dit : c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> MoN Anniversaire !!!  <c03>˚✰  。 <c04>❤˚* ˚ <c07> ★}}
+	{{!anni} {1} {<c07>%sender%<c12> demande à <c04>%pseudo%<c12> si le poids des bougies dépasse celui du gâteau ! Car aujourd'hui c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> SoN  Anniversaire !!!  <c03>˚✰	。 <c04>❤˚* ˚ <c07> ★<c12> <b> bon Anni<c04> %pseudo%<c12> ! <b><c13>(っ˘з(˘⌣˘ )}}
 
 
-	{{!pizza} {0} {<c07>%sender%<c12> s'offre une PizZa juste sortie du four <c04>♨<c12> de  <c03>,3\[ \]<c00,00>\[ \]<c00,04> Pizza Hut® <c00,00>\[ \] <c03>,3\[ \]</c><c12> ,0 Hummm !!! <b> <c04>(∩_∩)}}
-	{{!pizza} {1} {<c07>%sender%<c12> offre une part de sa PizZa juste sortie du four <c04>♨<c12> de  <c03>,3\[ \]<c00,00>\[ \]<c00,04> Pizza Hut® <c00,00>\[ \] <c03>,3\[ \]</c><c12> ,0 à <c04>%pseudo%<c12> !!! <b> <c04>(∩_∩)}}
+	{{!pizza} {0} {<c07>%sender%<c12> s'offre une PizZa juste sortie du four <c04>♨<c12> de  <c03,03>[ ]<c00,00>[ ]<c00,04> Pizza Hut® <c00,00>[ ] <c03,03>[ ]</c><c12> ,0 Hummm !!! <b> <c04>(∩_∩)}}
+	{{!pizza} {1} {<c07>%sender%<c12> offre une part de sa PizZa juste sortie du four <c04>♨<c12> de  <c03,03>[ ]<c00,00>[ ]<c00,04> Pizza Hut® <c00,00>[ ] <c03,03>[ ]</c><c12> ,0 à <c04>%pseudo%<c12> !!! <b> <c04>(∩_∩)}}
 
 
 	{{!mms} {0} {<c07>%sender%<c12> mange des <c05> <b>M&M'<c01> s®<c01>  <b> <c04>( <c04>m <c04>)<c04> <b> <c03>( <c03>m <c03>) <c03> <b> <c04>( <c04>m <c04>)<c04> <b><c12> (<c12> m<c12> )<c01>  <b><c14>(<c14>m<c14>)<c12> Mmmm C'est Vraiment Bon ! <b><c04> (｡●́‿●̀｡)}}
 	{{!mms} {1} {<c07>%sender%<c12> donne des <c05> <b>M&M'<c01> s®<c01>  <b> <c04>( <c04>m <c04>)<c04> <b> <c03>( <c03>m <c03>) <c03> <b> <c04>( <c04>m <c04>)<c04> <b><c12> (<c12> m<c12> )<c01>  <b><c14>(<c14>m<c14>)<c12> à <c04>%pseudo%<c12> !! Va donc trier tes <c05> M&M'<c01> s<c12> ça t'occuperas ! <b><c04> ٩(×̯×)۶}}
 
 
-	{{!mars} {0} {<c12>Une barre chocolatée ? <c07>%sender%<c12> se mange un <b> <c04>,1 MarS® <b><c12> ,0 et ça Repart ! <c04><b> °\(^▿^)/}}
-	{{!mars} {1} {<c07>%sender%<c12> offre de bon coeur <c13>❤<c12> une barre chocolatée <b> <c04>,1 MarS® <b><c12> ,0 à <c04>%pseudo%<c12> , et ça Repart ! <c04><b> °\(^▿^)/}}
+	{{!mars} {0} {<c12>Une barre chocolatée ? <c07>%sender%<c12> se mange un <b> <c04,01> MarS® <b><c12> ,0 et ça Repart ! <c04><b> °\(^▿^)/}}
+	{{!mars} {1} {<c07>%sender%<c12> offre de bon coeur <c13>❤<c12> une barre chocolatée <b> <c04,01> MarS® <b><c12> ,0 à <c04>%pseudo%<c12> , et ça Repart ! <c04><b> °\(^▿^)/}}
 
 
 	{{!plouf} {0} {<c12>Un petit plouf ? <c07>%sender%<c12> fait un plongeon dans la piscine pour se rafraichir!<c02> <b> ._.·´¯(_..·´¯(_<c04> (^▿^)<c02> ..·´¯(_..·´¯(.}}
@@ -297,8 +297,8 @@ variable database {
 	{{!vent} {1} {<c07>%sender%<c12> dit : Tu sens cet air frais ? c'est ça un <c01> ≋<c12> vent<c01>  ≋<c12> !<c04> %pseudo% <c04><b>(¬_¬”)}}
 
 
-	{{!ecran} {0} {<c07>%sender%<c12> se dit: <c04>WAWWW <c12> c'est vraiment super intéressant ce que je vois sur mon écran! (je fais semblant d'écouter...) <c04><b>(O﹏o)}}
-	{{!ecran} {1} {<c12>C'est bizarre, mon écran ne m'affiche que des conneries, ha non, c'est <c04>%pseudo%<c12> qui parle ... <c04><b>(O﹏o)}}
+	{{!écran} {0} {<c07>%sender%<c12> se dit: <c04>WAWWW <c12> c'est vraiment super intéressant ce que je vois sur mon écran! (je fais semblant d'écouter...) <c04><b>(O﹏o)}}
+	{{!écran} {1} {<c12>C'est bizarre, mon écran ne m'affiche que des conneries, ha non, c'est <c04>%pseudo%<c12> qui parle ... <c04><b>(O﹏o)}}
 
 
 	{{!boude} {0} {<c07>%sender%<c12> fait la tête et va bouder dans son coin ! <b> <c04>(╥﹏╥) }}
@@ -309,20 +309,20 @@ variable database {
 	{{!gratte} {1} {<c07>%sender%<c12> dit à <c04>%pseudo%<c12> tu peux aller te gratter je pense ! <b> <c04>m(><)m  }}
 
 
-	{{!popcorn} {0} {<c07>%sender%<c12> sort le popcorn, s'installe confortablement et observe ! <b><c04> (˚▽˚) }}
-	{{!popcorn} {1} {<c07>%sender%<c12> offre du popcorn à <c04>%pseudo%<c12> , installe toi et regarde ! <b><c04> (˚▽˚) }}
+	{{!popcorn} {0} {<c07>%sender%<c12> sort le popcorn 🍿, s'installe confortablement et observe ! <b><c04> (˚▽˚) }}
+	{{!popcorn} {1} {<c07>%sender%<c12> offre du popcorn 🍿 à <c04>%pseudo%<c12> , installe toi et regarde ! <b><c04> (˚▽˚) }}
 
 
-	{{!shocked} {0} {<c07>%sender%<c12> est choqué(e) en voyant ce qui se dit ! <b> <c04>(─‿‿─) }}
-	{{!shocked} {1} {<c07>%sender%<c12> est choqué(e) en voyant les propos de<c04> %pseudo%	<c12> ! <b> <c04>(─‿‿─) }}
+	{{!choqué} {0} {<c07>%sender%<c12> est choqué(e) en voyant ce qui se dit ! <b> <c04>(─‿‿─) }}
+	{{!choqué} {1} {<c07>%sender%<c12> est choqué(e) en voyant les propos de<c04> %pseudo%	<c12> ! <b> <c04>(─‿‿─) }}
 
 
-	{{!mariage} {0} {<c07>%sender%<c12> est prêt(e) pour le MARIAGE ! <b><c04> ✿ ❀(っ◔◡◔)っ ❤ }}
-	{{!mariage} {1} {<c07>%sender%<c12> fait sa demande de mariage à<c04> %pseudo%<c12> ! ! <b><c04> ✿ ❀ (>‿♥) ❤❤❤ }}
+	{{!mariage} {0} {<c07>%sender%<c12> est prêt(e) pour le MARIAGE ! 💒 <b><c04> ✿ ❀(っ◔◡◔)っ ❤ }}
+	{{!mariage} {1} {<c07>%sender%<c12> fait sa demande de mariage à<c04> %pseudo%<c12> 💒 ! ! <b><c04> ✿ ❀ (>‿♥) ❤❤❤ }}
 
 
-	{{!bus} {0} {<c12>Oulala lala ! <c07>%sender%<c12> dit qu'un bus vient d'arriver ! <b><c04> ⚠ (☉̃ₒ☉) ⚠}}
-	{{!bus} {1} {<c07>%sender%<c12> dit à <c04>%pseudo%<c12> , tu peux remonter dans le bus et aller jusqu'au prochain arrêt ? (merci)<b><c04> ⚠ (☉̃ₒ☉) ⚠	}}
+	{{!bus} {0} {<c12>Oulala lala ! <c07>%sender%<c12> dit qu'un bus🚌 vient d'arriver 🚐! <b><c04> ⚠ (☉̃ₒ☉) ⚠}}
+	{{!bus} {1} {<c07>%sender%<c12> dit à <c04>%pseudo%<c12> , tu peux remonter dans le bus 🚌 et aller jusqu'au prochain arrêt 🚐? (merci)<b><c04> ⚠ (☉̃ₒ☉) ⚠	}}
 
 
 	{{!kebab} {0} {<c07>%sender%<c12> a faim, et va aller se manger un bon kebab !<b><c04> (>‿◠)✌ }}
@@ -336,20 +336,21 @@ variable database {
 	{{!vnr} {0} {<c07>%sender%<c12> est enervé(e) !<b><c04> (>‘o’)>}}
 	{{!vnr} {1} {<c07>%sender%<c12> trouve que <c04>%pseudo%<c12> est bien énervé(e) !<b><c04> (>‘o’)> }}
 
-	{{!calin} {0} {<c12>Il semblerait que  <c03>%sender% <c12> s'enlace <c07>(elle-lui)-même ! <c13>❤❤❤}}
-	{{!calin} {1} {<c04> %sender% <c12> prend <c04>%pseudo%<c12> dans ses bras et lui fait un énorme calin <c13>❤❤❤}}
+	{{!câlin} {0} {<c12>Il semblerait que <c03>%sender% <c12> s'enlace <c07>(elle-lui)-même ! <c13>❤❤❤}}
+	{{!câlin} {1} {<c04> %sender% <c12> prend <c04>%pseudo%<c12> dans ses bras et lui fait un énorme câlin <c13>❤❤❤}}
 
 	{{!rose} {0} {<c12>Il semblerait que <c07>%sender%<c12> s'offre une rose <c04>(elle-lui)-même ! <c03>--------\{--- <c04>(@}}
 	{{!rose} {1} {<c07>%sender%<c12> offre une belle rose  <c03>---<--´,--<\{- <c04>@ <c12> à<c04> %pseudo%}}
 
-	{{!fessee} {0} {<c07>%sender%<c12> va donner une bonne fessée à ceux/celles qui le méritent ! Attention !!<c04> :PPP}}
-	{{!fessee} {1} {<c07>%sender%<c12> met une grosse fessée qui CLAQUEeeeee sur les fesses rebondies de <c04>%pseudo%<c12> il/elle doit surement aimer ca pour en redemander, sado maso??<c04> :PPP}}
+	{{!fessée} {0} {<c07>%sender%<c12> va donner une bonne fessée à ceux/celles qui le méritent ! Attention !!<c04> :PPP}}
+	{{!fessée} {1} {<c07>%sender%<c12> met une grosse fessée qui CLAQUEeeeee sur les fesses rebondies de <c04>%pseudo%<c12> il/elle doit surement aimer ca pour en redemander, sado maso??<c04> :PPP}}
 
 	{{!fesses} {0} {<c12>Il semblerait que <c07>%sender%<c12> bouge son p'tit cul sur la piste <c04>(_\\_) (_|_) (_/_) (_|_) (_\\_) !}}
 	{{!fesses} {1} {<c07>%sender%<c12> monte sur la piste de danse et remue son p'tit cul<c04> (_\\_) (_|_) (_/_) (_|_) (_\\_)<c12> avec<c04> %pseudo% !}}
 
-	{{!cafe} {0} {<c12>Génial ! <c07>%sender%<c12> part en cuisine pour préparer du <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04>,4_<c00> a <c04>_<b> <c04>,0]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03>,3_<c00> é_<b> <c03>,0]}}
-	{{!cafe} {1} {<c07>%sender%<c12> offre une bonne tasse de <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04>,4_<c00> a <c04>_<b> <c04>,0]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03>,3_<c00> é <c03>_<b> <c03>,0]<b></c><c12> toute chaude à <c04>%pseudo%<c12> >> Un peu de lait, du sucre ? }}
+	{{!café} {0} {<c12>Génial ! <c07>%sender%<c12> part en cuisine pour préparer du <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04,04>_<c00> a <c04>_<b> <c04,00>]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03,03>_<c00> é_<b> <c03,00>]}}
+	{{!café} {1} {<c07>%sender%<c12> offre une bonne tasse de <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04,04>_<c00> a <c04>_<b> <c04,00>]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03,03>_<c00> é <c03>_<b> <c03,00>]<b></c><c12> toute chaude à <c04>%pseudo%<c12> >> Un peu de lait, du sucre ? }}
 
-	{{!gateau} {0} {<c07>%sender%<c12> va se manger une bonne part de gateau<c12> tout(e) seul(e) ! <c04><b> ≧✯◡✯≦✌}}
+	{{!gâteau} {0} {<c07>%sender%<c12> va se manger une bonne part de 🥞 gâteau 🍰<c12> tout(e) seul(e) ! <c04><b> ≧✯◡✯≦✌}}
+	{{!gâteau} {1} {<c07>%sender%<c12>donne à manger une bonne part de 🥞 gâteau 🍰<c12> pour %pseudo%! <c04><b> ≧✯◡✯≦✌}}
 }
