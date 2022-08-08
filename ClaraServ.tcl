@@ -241,7 +241,8 @@ proc ::ClaraServ::FCT::CMD:SHOW:LIST { DEST } {
 	set l_espace		13;
 	set CMD_LIST		""
 	foreach CMD [::ClaraServ::FCT::DB:CMD:LIST] {
-		lappend CMD_LIST	"<c04>[::ZCT::TXT::visuals::espace ${CMD} ${l_espace}]<c12>"
+		lappend CMD_LIST	"<c07>[string map {"!" "!<c06>"} [::ZCT::TXT::visuals::espace ${CMD} ${l_espace}]]<c12>"
+
 		if { [incr i] > ${max}-1 } {
 			unset i
 			::ClaraServ::FCT::SENT:MSG:TO:USER ${DEST} [join ${CMD_LIST} " | "];
@@ -303,7 +304,7 @@ proc ::ClaraServ::FCT::DB:DATA:REMOVE { DB DATA } {
 ####################
 #--> Procedures <--#
 ####################
-proc ::ClaraServ::FCT::Create:Services {} {
+proc ::ClaraServ::FCT::Create:Service {} {
 	if { ${::ClaraServ::config(uplink_ssl)} == 1		} { set ::ClaraServ::config(uplink_port) "+${::ClaraServ::config(uplink_port)}" }
 	if { ${::ClaraServ::config(serverinfo_id)} != ""	} { set ::ClaraServ::config(uplink_ts6) 1 } else { set ::ClaraServ::config(uplink_ts6) 0 }
 
@@ -430,9 +431,12 @@ proc ::ClaraServ::IRC:CMD:PRIV:CMDS { sender destination cmd data } {
 	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> .: <c12>Liste des commandes d'animations<c04> :."
 	::ClaraServ::FCT::CMD:SHOW:LIST 	${sender}
 	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> .: <c12>Autres<c04> :."
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c12>!help    </c>-<c04> Affiche l'aide"
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c12>!random  </c>-<c04> Affiche un text aleatoire"
-	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c12>!about  </c>-<c04> Affiche des informations sur %s" ${::ClaraServ::config(service_nick)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c12>!help                    <c12>-<c04>   Affiche l'aide"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c12>!<s><<c06>commande<s>> \[<c06>Pseudonyme<s>\] <c12>-<c04>   Exécute une animation"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c12>!random <s>\[<c06>Pseudonyme<s>\]     <c12>-<c04>   Affiche un text aleatoire"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c12>!about                   <c12>-<c04>   Affiche des informations sur %s" ${::ClaraServ::config(service_nick)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<s> ℹ️ <c04>Les informations entre <s><<c06>texte<s>><c04> sont obligatoire et ceux entre <s>\[<c06>texte<s>\]<c04> sont facultatif."
 	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
 	::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
 }
@@ -462,22 +466,25 @@ proc ::ClaraServ::IRC:CMD:PUB:HELP { sender destination cmd data } {
 }
 proc ::ClaraServ::IRC:CMD:PRIV:HELP { sender destination cmd data } {
 	# /msg ClaraServ help
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Aide pour les commandes en salon<c04> :."
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !help                                <c07>-<c06>   Affiche cette aide"
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !cmds                                <c07>-<c06>   Affiche la list des commandes"
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> !random                              <c07>-<c06>   Affiche un text aleatoire"
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} [format "<c07> !about                               <c07>-<c06>   A propos de %s" ${::ClaraServ::config(service_nick)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> .: <c12>Aide pour les commandes en privé<c04> :."
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> help                                 <c07>-<c06>   Affiche cette aide"
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c07> cmds                                 <c07>-<c06>   Affiche la list des commandes"
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} [format "<c07> about                                <c07>-<c06>   A propos de %s" ${::ClaraServ::config(service_nick)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} [format "<c07> join <s><<c06>#Salon<s>> <<c06>Mot_de_passe_admin<s>>   <c07>-<c06>   Joindre le robot %s sur le <s><<c06>#Salon<s>>" ${::ClaraServ::config(service_nick)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} [format "<c07> part <s><<c06>#Salon<s>> <<c06>Mot_de_passe_admin<s>>   <c07>-<c06>   Retiré le robot %s du <s><<c06>#Salon<s>>" ${::ClaraServ::config(service_nick)}]
-	::ClaraServ::FCT::SENT:MSG:TO:USER ${sender} "<c04> "
-	::ClaraServ::FCT::CMD:LOG ${cmd} ${sender}
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> .: <c12>Aide pour les commandes en salon<c04> :."
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c07> !help                                <c07>-<c06>   Affiche cette aide"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c07> !cmds                                <c07>-<c06>   Affiche la list des commandes"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c07> !<s><<c07>commande<s>> <s>\[<c06>Pseudonyme<s>\]             <c07>-<c06>   Exécute une animation"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c07> !random <s>\[<c06>Pseudonyme<s>\]                 <c07>-<c06>   Affiche un text aleatoire"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07> !about                               <c07>-<c06>   A propos de %s" ${::ClaraServ::config(service_nick)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> .: <c12>Aide pour les commandes en privé<c04> :."
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c07> help                                 <c07>-<c06>   Affiche cette aide"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c07> cmds                                 <c07>-<c06>   Affiche la list des commandes"
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07> about                                <c07>-<c06>   A propos de %s" ${::ClaraServ::config(service_nick)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07> join <s><<c06>#Salon<s>> <<c06>Mot_de_passe_admin<s>>   <c07>-<c06>   Joindre le robot %s sur le <s><<c06>#Salon<s>>" ${::ClaraServ::config(service_nick)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} [format "<c07> part <s><<c06>#Salon<s>> <<c06>Mot_de_passe_admin<s>>   <c07>-<c06>   Retiré le robot %s du <s><<c06>#Salon<s>>" ${::ClaraServ::config(service_nick)}]
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<s> ℹ️ <c04>Les informations entre <s><<c06>texte<s>><c04> sont obligatoire et ceux entre <s>\[<c06>texte<s>\]<c04> sont facultatif."
+	::ClaraServ::FCT::SENT:MSG:TO:USER 	${sender} "<c04> "
+	::ClaraServ::FCT::CMD:LOG ${cmd} 	${sender}
 }
 
 proc ::ClaraServ::IRC:CMD:PRIV:JOIN { sender destination cmd data } {
@@ -529,4 +536,4 @@ proc ::ClaraServ::IRC:CMD:PRIV:PART { sender destination cmd data } {
 }
 
 ::ClaraServ::INIT
-::ClaraServ::FCT::Create:Services
+::ClaraServ::FCT::Create:Service
