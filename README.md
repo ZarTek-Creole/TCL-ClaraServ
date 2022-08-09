@@ -47,9 +47,9 @@
     - [En privé (à ClaraServ)](#en-privé-à-claraserv)
     - [En publique (sur un salon)](#en-publique-sur-un-salon)
     - [les Animations (par defaut)](#les-animations-par-defaut)
-- [Les salons](#les-salons)
-- [Faire joindre ClaraServ](#faire-joindre-claraserv)
-- [Faire partir ClaraServ](#faire-partir-claraserv)
+  - [Les salons](#les-salons)
+    - [Faire joindre ClaraServ](#faire-joindre-claraserv)
+    - [Faire partir ClaraServ](#faire-partir-claraserv)
 - [Un peu plus loin](#un-peu-plus-loin)
   - [Ajouter une nouvelle animation (!commande)](#ajouter-une-nouvelle-animation-commande)
   - [Les variables de ```substitutions```](#les-variables-de-substitutions)
@@ -109,10 +109,10 @@ listen <IP-serveur>:<Port-link> {  
   };  
 };  
 ```
-```<IP-serveur>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```
-```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```
+```<IP-serveur>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
 Si vous spécifier ```tls;```, vous activer une connexion sécuriser en ```SSL```; La valeur de ```config(uplink_ssl)``` doit être mise à ```1```
-config(uplink_host) 
+ 
 
 #### Block uline
 ```
@@ -134,10 +134,10 @@ link <ClaraServ.nom-de-domaine.fr> {  
   class servers;  
 };
 ```
-```<ClaraServ.nom-de-domaine.fr>``` doit être identique a la valeur ```config(service_host)``` du fichier ```ClaraServ.conf```
-```<mot-de-passe-link>``` doit être identique a la valeur ```config(uplink_password)``` du fichier ```ClaraServ.conf```
-```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```
-```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```
+```<ClaraServ.nom-de-domaine.fr>``` doit être identique a la valeur ```config(service_host)``` du fichier ```ClaraServ.conf```<br />
+```<mot-de-passe-link>``` doit être identique a la valeur ```config(uplink_password)``` du fichier ```ClaraServ.conf```<br />
+```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
 
 Enregistrez le fichier de configuration. N’oubliez pas de **Rehash** votre serveur.  
 ```/rehash```
@@ -148,16 +148,16 @@ Afin de réaliser votre link Serveur ou Service, veuillez vérifier que vous dis
 ```
  <bind address="<IP-link>" port="<Port-link>" type="servers"> 
 ```
-```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```
-```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```
+```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
 #### Block link  
 ```
 <link name="<ClaraServ.nom-de-domaine.fr>" ipaddr="<IP-link>" port="<Port-link>" allowmask="<IP-link>" sendpass="<mot-de-passe-link>" recvpass="<mot-de-passe-link>">  
 ```
-```<ClaraServ.nom-de-domaine.fr>``` doit être identique a la valeur ```config(service_host)``` du fichier ```ClaraServ.conf```
-```<mot-de-passe-link>``` doit être identique a la valeur ```config(uplink_password)``` du fichier ```ClaraServ.conf```
-```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```
-```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```
+```<ClaraServ.nom-de-domaine.fr>``` doit être identique a la valeur ```config(service_host)``` du fichier ```ClaraServ.conf```<br />
+```<mot-de-passe-link>``` doit être identique a la valeur ```config(uplink_password)``` du fichier ```ClaraServ.conf```<br />
+```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
 #### Block uline
 ```
 <uline server="<ClaraServ.nom-de-domaine.fr>" silent="no">
@@ -175,8 +175,8 @@ Cinquième étape, connectez-vous en Party-Line avec votre eggdrop puis tapez la
 ```
 .rehash
 ```
-ou redémarrer votre eggdrop
-Notez: évitez d'areter votre EggDrop autre que *.die* en partyline -.
+ou redémarrer votre eggdrop<br /><br />
+Notez: évitez d'areter votre EggDrop autrement qu'avec la commande *.die* en partyline.<br />
 En effet la commande *kill* peut endomager les bases de données en fichiers
 # Utilisation
 ## Les commandes de ClaraServ
@@ -212,19 +212,19 @@ Liste exhautive
    !truite    |     !vent     |    !vidéo     |    !vittel    |     !vnr      |     !waff     |    !whisky    |     !zen     
    !écran     |    !étoile   
 ```
-# Les salons
-# Faire joindre ClaraServ
+## Les salons
+### Faire joindre ClaraServ
 ```
 /msg ClaraServ join <#Salon> <Mot_de_passe_admin>
 ```
-```<#Salon>``` remplacer par le nom du salon que ClaraServ doit joindre.
+```<#Salon>``` remplacer par le nom du salon que ClaraServ doit joindre.<br />
 ```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
 
-# Faire partir ClaraServ
+### Faire partir ClaraServ
 ```
 /msg ClaraServ part <#Salon> <Mot_de_passe_admin>
 ```
-```<#Salon>``` remplacer par le nom du salon que ClaraServ doit partir.
+```<#Salon>``` remplacer par le nom du salon que ClaraServ doit partir.<br />
 ```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
 
 # Un peu plus loin
@@ -235,33 +235,33 @@ Suivis le schéma des autres animation en ajoutant :
 	{{!<animation>}		{0}		{<Texte de l'animation>}}
 	{{!<animation>}		{1}		{<Texte de l'animation>}}
 ```
-```!<animation>``` est la commande pour lancer l'animation par exemple ```donation```
-La valeur ```{0}``` signifie "à soi-même", la personne fait l'animation à elle-même
-La valeur ```{1}``` signifie "moi à lui", la personne fait l'animation à quelqu'un
-```<Texte de l'animation>``` est le contenue de l'animation par exemple ```%sender% fait une donation au projet ClaraServ```
-ci-dessus remarqué ```%sender%``` qui est une variable de substitution.
+```!<animation>``` est la commande pour lancer l'animation par exemple ```donation```<br />
+La valeur ```{0}``` signifie "à soi-même", la personne fait l'animation à elle-même<br />
+La valeur ```{1}``` signifie "moi à lui", la personne fait l'animation à quelqu'un<br />
+```<Texte de l'animation>``` est le contenue de l'animation par exemple ```%sender% fait une donation au projet ClaraServ```<br />
+ci-dessus remarqué ```%sender%``` qui est une variable de substitution.<br />
 
 ## Les variables de ```substitutions```
-Les variables de substitutions permet d'être remplacée une valeur précise (dans les bases de données d'animation).
-```%pseudo%``` est remplacé par le ```pseudonyme``` à qui l'animation est *envoyé* (!animation ```pseudonyme```). 
-```%sender%``` est remplacé par le ```pseudonyme``` de la personne *lance* l'animation.
-```%destination%``` est remplacé par le nom du ```#salon```.
-```%month%``` est remplacé par le nom du mois,  il sera remplacer par ```Janvier```
-```%month_num%``` est remplacé par le chiffre du mois, il sera remplacer par ```1```
-```%hour%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```01```
-```%hour_short%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```1```
-```%minutes%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```05```
-```%minutes_short%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```5```
-```%seconds%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```09```
-```%seconds_short%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```9```
-```%year%``` est remplacer par l'année sous la forme ```2022```
-```%day%``` est remplacer par le jour de la semaine par exemple ```mardi```
-```%day_num%``` est remplacer par le numero du jour par exemple ```31```
+Les variables de substitutions permet d'être remplacée une valeur précise (dans les bases de données d'animation).<br /><br />
+```%pseudo%``` est remplacé par le ```pseudonyme``` à qui l'animation est *envoyé* (!animation ```pseudonyme```). <br />
+```%sender%``` est remplacé par le ```pseudonyme``` de la personne *lance* l'animation.<br />
+```%destination%``` est remplacé par le nom du ```#salon```.<br />
+```%month%``` est remplacé par le nom du mois,  il sera remplacer par ```Janvier```<br />
+```%month_num%``` est remplacé par le chiffre du mois, il sera remplacer par ```1```<br />
+```%hour%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```01```<br />
+```%hour_short%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```1```<br />
+```%minutes%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```05```<br />
+```%minutes_short%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```5```<br />
+```%seconds%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```09```<br />
+```%seconds_short%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```9```<br />
+```%year%``` est remplacer par l'année sous la forme ```2022```<br />
+```%day%``` est remplacer par le jour de la semaine par exemple ```mardi```<br />
+```%day_num%``` est remplacer par le numero du jour par exemple ```31```<br /><br />
 Si vous avez besoin ou avez une idée de nouvelles variables de substitutions [suggérer ici](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues)
 
 # Résolution de problèmes
 ## Débug Link
-Si vous rencontrez un problème à la liaison de votre ClaraServ vers votre IRCD, activer le mode “débug”
+Si vous rencontrez un problème à la liaison de votre ClaraServ vers votre IRCD, activer le mode “débug”<br />
 Pour activer le mode *débug* changez la valeur ```set config(uplink_debug)``` dans ```ClaraServ.conf``` en mettant ```1``` à la place de ```0```.
 
 ## Les problèmes connus
@@ -281,9 +281,8 @@ Les contributions sont ce qui fait de la communauté open source un endroit incr
 Vous pouvez [signaler](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) un problème
 
 ## Donation
-Ce projet est librement partagé et est entièrement gratuit. Il a été développé durant le temps libre de l’auteur.
-Le développement a nécessité de nombreuse heure, d’un serveur, etc
-
+Ce projet est librement partagé et est entièrement gratuit. Il a été développé durant le temps libre de l’auteur.<br />
+Le développement a nécessité de nombreuse heure, d’un serveur, etc<br /><br />
 Le support est également totalement gratuit, la seule manière de remercier l’auteur et permettre le suivi du code et de nouveau projet sont [les donations](https://github.com/ZarTek-Creole/DONATE), toutes sommes même les plus minimes sont **utiles**
 
 # Contact
