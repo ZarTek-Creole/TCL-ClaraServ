@@ -4,205 +4,379 @@
 [cc-by]: http://creativecommons.org/licenses/by/4.0/
 [cc-by-shield]: https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg
 
-
-
-<!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="github.com/ZarTek-Creole/TCL-Clara-Service">
+  <a href="github.com/ZarTek-Creole/TCL-ClaraServ">
     <img src="https://upload.wikimedia.org/wikipedia/commons/6/6c/IRC_Logo_Small-01_%281%29.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">ClaraServ - IRC Services</h3>
+  <h3 align="center">ClaraServ - IRC Service d'animation</h3>
 
   <p align="center">
-    Services IRC "ClaraServ" en TCL/Eggdrop
+    Service IRC "ClaraServ" en TCL pour EggDrop 🥚 🤖
     <br />
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service"><strong>Explore the docs / Explorez les documents »</strong></a>
-    <br />
-    <br />
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service/issues">Report Bug</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=bug&template=bug_report.md&title=Bug%3A+">Rapporter un bogue</a>
     ·
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service/issues">Request Feature</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=feature%3A+">Demander une fonctionalitée
     ·
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service/wiki">Wiki / Documenation</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues">Demander de l'aide</a>
+    ·
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues">Proposer une animation</a>
   </p>
 </p>
 
 <!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents / Table des matières</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project / À propos du projet</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started / Commencez</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites / Conditions préalables</a></li>
-        <li><a href="#installation">Installation / Configuration</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage / Utilisation</a></li>
-    <li><a href="#roadmap">Roadmap / Feuille de route</a></li>
-    <li><a href="#contributing">Contributing / Contributions </a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements /Remerciements</a></li>
-  </ol>
-</details>
 
-<!-- ABOUT THE PROJECT -->
-## About The Project
+- [À propos](#à-propos)
+  - [Capture d'écran (screenshot)](#capture-décran-screenshot)
+- [Installation & configuration](#installation--configuration)
+  - [Prérequis](#prérequis)
+  - [Téléchargement](#téléchargement)
+  - [Configuration de votre EggDrop](#configuration-de-votre-eggdrop)
+  - [Configuration de ClaraServ Service](#configuration-de-claraserv-service)
+  - [Configuration de votre IRCD](#configuration-de-votre-ircd)
+    - [Comment créer un link ClaraServ sur UnrealIRCd](#comment-créer-un-link-claraserv-sur-unrealircd)
+      - [Block Listen](#block-listen)
+      - [Block uline](#block-uline)
+      - [Block link](#block-link)
+    - [Comment créer un link ClaraServ sur InspIRCd](#comment-créer-un-link-claraserv-sur-inspircd)
+      - [Block bind](#block-bind)
+      - [Block link](#block-link-1)
+      - [Block uline](#block-uline-1)
+      - [Block module](#block-module)
+  - [Rehashez votre EggDrop](#rehashez-votre-eggdrop)
+- [Utilisation](#utilisation)
+  - [Les commandes de ClaraServ](#les-commandes-de-claraserv)
+    - [En privé (à ClaraServ)](#en-privé-à-claraserv)
+    - [En publique (sur un salon)](#en-publique-sur-un-salon)
+    - [les Animations (par defaut)](#les-animations-par-defaut)
+  - [Les salons](#les-salons)
+    - [Faire joindre ClaraServ](#faire-joindre-claraserv)
+    - [Faire partir ClaraServ](#faire-partir-claraserv)
+- [Un peu plus loin](#un-peu-plus-loin)
+  - [Ajouter une nouvelle animation (!commande)](#ajouter-une-nouvelle-animation-commande)
+  - [Les variables de ```substitutions```](#les-variables-de-substitutions)
+  - [Couleurs et style de ```substitutions```](#couleurs-et-style-de-substitutions)
+    - [Code couleurs](#code-couleurs)
+- [Résolution de problèmes](#résolution-de-problèmes)
+  - [Débug Link](#débug-link)
+  - [Les problèmes connus](#les-problèmes-connus)
+- [Contribuer ou aider ce projet ClaraServ](#contribuer-ou-aider-ce-projet-claraserv)
+  - [Améliorer le code](#améliorer-le-code)
+  - [Signaler un problème](#signaler-un-problème)
+  - [Sugestions de fonctionalités](#sugestions-de-fonctionalités)
+  - [Donation](#donation)
+- [Contact](#contact)
+  - [Tickets](#tickets)
+  - [IRC](#irc)
+- [* irc.Extra-Cool.Fr +6697 #Zartek](#-ircextra-coolfr-6697-zartek)
+- [ChangeLog](#changelog)
+- [Remerciements](#remerciements)
+- [Documentation pour les developpeurs](#documentation-pour-les-developpeurs)
+# À propos
+💡 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
+## Capture d'écran (screenshot)
+Car une image parle plus qu'une longue descriptions :
+![image](https://user-images.githubusercontent.com/11725850/183683409-a1022325-2bb6-436d-a4e6-5cb7b5bd1cca.png)
+![image](https://user-images.githubusercontent.com/11725850/183684407-49359019-197f-4bea-82ba-1312c5ce6691.png)
 
-IRC services in TCL - Trade show animation, Network help, User profile
-
-----
-
-Services IRC en TCL - Animation de salon, Aide de réseau, Profil d'utilisateur
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
-----
-Voici un exemple de la manière dont vous pouvez donner des instructions sur la configuration de votre projet localement.
-Pour obtenir une copie locale opérationnelle, suivez ces étapes simples d'exemple.
-
-### Prerequisites
-* [eggdrop (v1.9+)](http://www.eggheads.org/)
-* [Unrealircd (v5.0+)](http://www.eggheads.org/)
-* [Package IRCServices (v0.0.1+)](github.com/ZarTek-Creole/TCL-PKG-IRCServices)
-
-
-
-### Installation
-1.1.  Récuperez le code ClaraServ
-Première étape, téléchargez le code, le mettre dans votre répertoire scripts/
+# Installation & configuration
+## Prérequis
+* [EggDrop (v1.9+)](http://www.eggheads.org/)
+* Serveur IRCD : [UnrealIRCd](https://www.unrealircd.org/), [InspIRCd](https://www.inspircd.org/) (Compatible avec les anciens et nouvelles versions)
+* [Package IRCServices (v0.0.1+)](https://github.com/ZarTek-Creole/TCL-PKG-IRCServices)
+* [Client GIT](https://git-scm.com/)
+## Téléchargement
+Première étape, téléchargez dans le répertoire scripts/ de votre EggDrop le code ClaraServ grâce au [Client GIT](https://git-scm.com/).
+<br />
+<br />
 Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
-git clone --recurse-submodules github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
+git clone https://github.com/ZarTek-Creole/TCL-ClaraServ /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
-ou 
-```
-wget github.com/ZarTek-Creole/TCL-Clara-Service/archive/refs/heads/main.zip -O ClaraServ.zip
-unzip ClaraServ.zip -d /home/votre-dossier/eggdrop/scripts/ClaraServ
-```
-mettre a jour les sous modules (dependence) via git
-
-```
-git submodule update --init --recursive
-```
-1.2. Configuration de l'eggdrop
-Deuxième étape, ouvrez le fichier de configuration de votre eggdrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
+## Configuration de votre EggDrop
+Deuxième étape, ouvrez le fichier de configuration de votre EggDrop ```eggdrop.conf``` et ajoutez ✍️ la ligne ci-dessous :
 ```
 source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
 ```
 
-1.3.  Configuration de ClaraServ Service
-Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraServ.conf``` et configurez celui-ci en fonction de votre serveur IRC
+## Configuration de ClaraServ Service
+Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraServ.conf```,
+éditez-le ✍️ et configurez celui-ci en fonction de votre serveur IRCD.
 
-1.4.  Configuration de votre IRCD (UnrealIRCd 5 et +)
-Quatrième étape, il vous suffit de configurer le link dans votre fichier "unrealircd.conf" en fonction de la configuration que vous aurez réalisé dans "ClaraServ.conf". 
 
-[Comment créer un link Service sur UnrealIRCd](http://www.exolia.fr/guide-lire-11.html)
+## Configuration de votre IRCD
 
-1.5.  Rehashez votre eggdrop
-Cinquième étape, connectez-vous en party-line avec votre eggdrop puis tapez les deux commandes suivantes :
+Quatrième étape, il vous suffit de configurer le ” link ” ✍️ en fonction de la configuration que vous aurez réalisé dans **ClaraServ.conf**. 
+
+### Comment créer un link ClaraServ sur UnrealIRCd
+Afin de réaliser votre link ClaraServ, veuillez vérifier si vous disposez d’un port dédié pour vos links (plusieurs listen) ou bien d’un mono port (un seul listen) :  
+
+#### Block Listen
+```
+listen <IP-serveur>:<Port-link> {  
+  options {  
+    serversonly;  # Pour les services seulement
+		tls;          # Activer le SSL
+  };  
+};  
+```
+```<IP-serveur>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
+Si vous spécifier ```tls;```, vous activer une connexion sécuriser en ```SSL```; La valeur de ```config(uplink_ssl)``` doit être mise à ```1```
+ 
+
+#### Block uline
+```
+ulines {  
+  <ClaraServ.nom-de-domaine.fr>;  
+};
+```
+Ajoutez le nom de domaine (virtuel ou non) de votre link a la place de ```<ClaraServ.nom-de-domaine.fr>```, celui-ci doit être identique a la valeur ```config(service_host)``` du fichier ClaraServ.conf
+#### Block link
+```
+link <ClaraServ.nom-de-domaine.fr> {  
+  username          *;  
+  hostname          <IP-link>;  
+  bind-ip           *;  
+  port              <Port-link>;  
+  hub               *;  
+  password-connect  "<mot-de-passe-link>";  
+  password-receive  "<mot-de-passe-link>";  
+  class servers;  
+};
+```
+```<ClaraServ.nom-de-domaine.fr>``` doit être identique a la valeur ```config(service_host)``` du fichier ```ClaraServ.conf```<br />
+```<mot-de-passe-link>``` doit être identique a la valeur ```config(uplink_password)``` du fichier ```ClaraServ.conf```<br />
+```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
+
+Enregistrez le fichier de configuration. N’oubliez pas de **Rehash** votre serveur.  
+```/rehash```
+
+### Comment créer un link ClaraServ sur InspIRCd
+#### Block bind  
+Afin de réaliser votre link Serveur ou Service, veuillez vérifier que vous disposez bien du *bind serveur* ci-dessous :  
+```
+ <bind address="<IP-link>" port="<Port-link>" type="servers"> 
+```
+```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
+#### Block link  
+```
+<link name="<ClaraServ.nom-de-domaine.fr>" ipaddr="<IP-link>" port="<Port-link>" allowmask="<IP-link>" sendpass="<mot-de-passe-link>" recvpass="<mot-de-passe-link>">  
+```
+```<ClaraServ.nom-de-domaine.fr>``` doit être identique a la valeur ```config(service_host)``` du fichier ```ClaraServ.conf```<br />
+```<mot-de-passe-link>``` doit être identique a la valeur ```config(uplink_password)``` du fichier ```ClaraServ.conf```<br />
+```<IP-link>``` doit être identique a la valeur ```config(uplink_host)``` du fichier ```ClaraServ.conf```<br />
+```<Port-link>``` doit être identique a la valeur ```config(uplink_port)``` du fichier ```ClaraServ.conf```<br />
+#### Block uline
+```
+<uline server="<ClaraServ.nom-de-domaine.fr>" silent="no">
+```
+ Ajoutez le nom de domaine (virtuel ou non) de votre link a la place de ```<ClaraServ.nom-de-domaine.fr>```, celui-ci doit être identique a la valeur ```config(service_host)``` du fichier ClaraServ.conf
+
+ 
+#### Block module
+Attention, dans le but de réaliser votre link, veuillez vérifier que votre configuration comporte bien le module ci-dessous : 
+```
+<module name="m_spanningtree.so">
+```
+## Rehashez votre EggDrop
+Cinquième étape, connectez-vous en Party-Line avec votre EggDrop puis tapez la commande suivante :
 ```
 .rehash
-.ClaraServconnect
 ```
+ou redémarrer votre EggDrop<br /><br />
+Notez: évitez d'areter votre EggDrop autrement qu'avec la commande *.die* en partyline.<br />
+En effet la commande *kill* peut endomager les bases de données en fichiers
+# Utilisation
+## Les commandes de ClaraServ
+ℹ️ Les informations entre <texte> sont obligatoire et ceux entre [texte] sont facultatif.
+### En privé (à ClaraServ)
+```/msg ClaraServ help```
+**help**                                 -   Affiche cette aide
+**cmds**                                 -   Affiche la liste des commandes
+**about**                                -   A propos de ClaraServ
+**join** <#Salon> <Mot_de_passe_admin>   -   Joindre le robot ClaraServ sur le <#Salon>
+**part** <#Salon> <Mot_de_passe_admin>   -   Retiré le robot ClaraServ du <#Salon>
 
-2. Un peu plus loin
-2.1. Debug général
-Si ClaraServ Service ne se connecte pas, activez le mode debug depuis la party-line  pour voir les erreurs directement dans le fichier "logs/ClaraServ.debug".
+### En publique (sur un salon)
+```/msg #Salon !help```
+**!help**                                -   Affiche cette aide
+**!cmds**                                -   Affiche la liste des commandes
+**!<commande>** [Pseudonyme]             -   Exécute une animation
+**!random**     [Pseudonyme]             -   Choisi une animation de manière aléatoire
+**!about**                               -   A propos de ClaraServ
+### les Animations (par defaut)
+Liste exhautive
 ```
-.ClaraServdebug on 
+    !7up      |     !aime     |     !ange     |     !anni     |    !apéro     |    !baffe     |    !bière     |     !bjr     
+   !boude     |    !bouge     |     !bus      |     !bye      |     !café     |   !carambar   |  !champagne   |    !chante   
+  !chocolat   | !chocolatine  |    !choqué    |    !clope     |     !clé      |     !coca     |    !cochon    |    !coeur    
+ !croissant   |    !curly     |    !câlin     |    !danse     |     !dodo     |    !dzoss     |     !eau      |   !embrasse  
+   !fesses    |    !fessée    |    !fleur     |    !fouet     |    !gaufre    |    !glace     |    !gratte    |    !gâteau   
+    !jump     |    !kebab     |     !kiss     |     !love     |     !lune     |    !macdo     |   !mariage    |     !mars    
+  !massage    |    !merci     |  !milkshake   |     !mms      |    !mojito    |     !mord     |    !mouton    |     !noir    
+   !oignon    |   !orangina   |    !patate    |    !pelle     |     !perf     |   !piscine    |    !pizza     |    !plouf    
+  !popcorn    |    !pouet     |    !rateau    |   !redbull    |    !relou     |     !rhum     |     !rose     |   !ruisseau  
+   !saute     |     !seau     |     !sexy     |    !string    |  !tendresse   |     !thé      |    !triste    |  !tropicana  
+   !truite    |     !vent     |    !vidéo     |    !vittel    |     !vnr      |     !waff     |    !whisky    |     !zen     
+   !écran     |    !étoile   
 ```
-2.2. Debug Socket/Link
-Pour activer le mode *socket debug* changez la valeur ```ClaraServ(sdebug)``` dans ```ClaraServ.conf``` en mettant 1 a la place de 0.
-<!-- USAGE EXAMPLES -->
-## Usage
+[Proposer une nouvelle animation](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues)
+## Les salons
+### Faire joindre ClaraServ
+```
+/msg ClaraServ join <#Salon> <Mot_de_passe_admin>
+```
+```<#Salon>``` remplacer par le nom du salon que ClaraServ doit joindre.<br />
+```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
 
+### Faire partir ClaraServ
+```
+/msg ClaraServ part <#Salon> <Mot_de_passe_admin>
+```
+```<#Salon>``` remplacer par le nom du salon que ClaraServ doit partir.<br />
+```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
 
-Soon?
+# Un peu plus loin
+## Ajouter une nouvelle animation (!commande)
+[Proposer une nouvelle animation](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues) 
 
-----
+OU
 
-Bientôt
+Pour ajouter une animation rendez-vous dans le répertoire db/, selectionnez le fichier dans la database.<langue>.db choisi avec ```config(db_lang)``` dans ```ClaraServ.conf```.
+Suivis le schéma des autres animation en ajoutant :
+```
+	{{!<animation>}		{0}		{<Texte de l'animation>}}
+	{{!<animation>}		{1}		{<Texte de l'animation>}}
+```
+```!<animation>``` est la commande pour lancer l'animation par exemple ```donation```<br />
+La valeur ```{0}``` signifie "à soi-même", la personne fait l'animation à elle-même<br />
+La valeur ```{1}``` signifie "moi à lui", la personne fait l'animation à quelqu'un<br />
+```<Texte de l'animation>``` est le contenue de l'animation par exemple ```%sender% fait une donation au projet ClaraServ```<br />
+ci-dessus remarqué ```%sender%``` qui est une variable de substitution.<br />
 
-<!-- ROADMAP -->
-## Roadmap
+## Les variables de ```substitutions```
+Les variables de substitutions permet d'être remplacée une valeur précise (dans les bases de données d'animation).<br /><br />
+```%pseudo%``` est remplacé par le ```pseudonyme``` à qui l'animation est *envoyé* (!animation ```pseudonyme```). <br />
+```%sender%``` est remplacé par le ```pseudonyme``` de la personne *lance* l'animation.<br />
+```%destination%``` est remplacé par le nom du ```#salon```.<br />
+```%month%``` est remplacé par le nom du mois,  il sera remplacer par ```Janvier```<br />
+```%month_num%``` est remplacé par le chiffre du mois, il sera remplacer par ```1```<br />
+```%hour%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```01```<br />
+```%hour_short%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```1```<br />
+```%minutes%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```05```<br />
+```%minutes_short%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```5```<br />
+```%seconds%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```09```<br />
+```%seconds_short%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```9```<br />
+```%year%``` est remplacer par l'année sous la forme ```2022```<br />
+```%day%``` est remplacer par le jour de la semaine par exemple ```mardi```<br />
+```%day_num%``` est remplacer par le numero du jour par exemple ```31```<br /><br />
+Si vous avez besoin ou avez une idée de nouvelles variables de substitutions [suggérer ici](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues)
 
-See the [open issues](github.com/ZarTek-Creole/TCL-Clara-Service/issues) for a list of proposed features (and known issues).
+## Couleurs et style de ```substitutions```
+Les animations peuvent contenir des substitution de symbole/couleur/gras/soulignement/...
 
----
-Voir les [problèmes en suspens](github.com/ZarTek-Creole/TCL-Clara-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
+```<cXX>```       : Ajouter un Couleur avec le code XX : <c01>; <c02,01>
+```</c>```        : Enlever la Couleur (refermer la deniere declaration <cXX>) : </c>
+```<b>```         : Ajouter le style Bold/gras
+```</b>```        : Enlever le style Bold/gras
+```<u>```         : Ajouter le style Underline/souligner
+```</u>```        : Enlever le style Underline/souligner
+```<i>```         : Ajouter le style Italic/Italique
+```<s>```         : Enlever les styles precedent
 
-<!-- CONTRIBUTING -->
-## Contributing
+### Code couleurs
+Noir        /  Black       = ```00```
+Blanc       /  White       = ```01```
+Bleu foncé  /  Dark Blue   = ```02```
+Vert        /  Green       = ```03```
+Rouge       /  Red         = ```04```
+Marron      /  Brown       = ```05```
+Violet      /  Purple      = ```06```
+Orange      /  Orange      = ```07```
+Jaune       /  Yellow      = ```08```
+Vert clair  /  Light Green = ```09```
+Cyan foncé  /  Dark Cyan   = ```10```
+Cyan clair  /  Light Cyan  = ```11```
+Bleu clair  /  Light Blue  = ```12```
+Rose        /  Pink        = ```13```
+Gris foncé  /  Dark Grey   = ```14```
+Gris clair  /  Light Grey  = ```15```
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+# Résolution de problèmes
+## Débug Link
+Si vous rencontrez un problème à la liaison de votre ClaraServ vers votre IRCD, activer le mode “débug”<br />
+Pour activer le mode *débug* changez la valeur ```set config(uplink_debug)``` dans ```ClaraServ.conf``` en mettant ```1``` à la place de ```0```.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a [Pull Request](github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
+## Les problèmes connus
+Voir les [problèmes en suspens](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
 
----
-Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer. Toute contribution que vous apportez est ** grandement appréciée **.
+# Contribuer ou aider ce projet ClaraServ
+
+## Améliorer le code
+Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer.
+Toute contribution que vous apportez est **grandement appréciée**.
 1. Forkez le projet
 2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
 3. Validez vos modifications (`git commit -m 'Add some AmazingFeature'`)
 4. Poussez vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une [Pull Request](github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
+5. Ouvrez une [Pull Request](https://github.com/ZarTek-Creole/TCL-ClaraServ/pulls)
 
-<!-- LICENSE -->
-## License
+## Signaler un problème
+👩‍🏭 Vous pouvez [signaler](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=bug&template=bug_report.md&title=Bug%3A+) un problème ⚠️
 
-Distributed under the SoonDecision License. See `LICENSE` for more information.
+## Sugestions de fonctionalités
+Vous pouvez faire des [Sugestions](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=feature%3A+) d'idées 🧠
 
+## Donation
+Ce projet est librement partagé et est entièrement gratuit 💯🆓. 
+Il a été développé durant le temps libre de l’auteur. 🕞 🕧 🕑<br />
+Le développement a nécessité de nombreuse heure, d’un serveur, etc<br /><br />
+Le support est également totalement gratuit, la seule manière de remercier l’auteur et permettre le suivi du code et de nouveau projet sont [les donations](https://github.com/ZarTek-Creole/DONATE), toutes sommes même les plus minimes sont **utiles**
 
+# Contact
 
-<!-- CONTACT -->
-## Contact
+* Auteur: ZarTek - [@ZarTek](https://github.com/ZarTek-Creole) 📬
+* Lien du projet : [github.com/ZarTek-Creole/TCL-ClaraServ](https://github.com/ZarTek-Creole/TCL-ClaraServ)
 
-ZarTek - [@ZarTek](github.com/ZarTek-Creole) - ZarTek.Creole@GMail.com
+## Tickets
+Signalez tout bogue, toutes idées :
+* [Créez un ticket](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues) ⛑️
 
-Project Link: [github.com/ZarTek-Creole/TCL-Clara-Service](github.com/ZarTek-Creole/TCL-Clara-Service)
-
-1. Tickets
-Signalez tout bugs, toutes idées :
-* [Creez un ticket]([#4-configuration-de-unrealircd](github.com/ZarTek-Creole/TCL-Clara-Service/issues))
-
-2. IRC
+## IRC
 Vous pouvez me contacter sur IRC :
 
-   * [irc.epiknet.org 6667 #eggdrop](irc://irc.epiknet.org:6667/#eggdrop)
-   * [irc.epiknet.org +6697 #eggdrop](irc://irc.epiknet.org:+6697/#eggdrop)
+<<<<<<< HEAD
+* [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/%23Zartek)
+* [irc.Extra-Cool.Fr +6697 #Zartek](ircs://irc.Extra-Cool.Fr:6697/%23Zartek)
+=======
+* [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/#Zartek)
+* [irc.Extra-Cool.Fr +6697 #Zartek](irc://irc.Extra-Cool.Fr:+6697/#Zartek)
+>>>>>>> master
+# ChangeLog
+Vous pouvez lire les modifications dans le [ChangeLog](ChangeLog.html) 🔖
+# Remerciements
+* A Amandine d'EggDrop.Fr pour son aide/idées/testes/…👍
+* A [Maxime](https://www.extra-cool.fr) & [Tibs](https://www.Chatoo.fr) pour les emojis et les idées👍
+* A MenzAgitat car dans mes développements il y a toujours des astuces/manière de faire fournir par MenzAgitat ou bout code de MenzAgitat👍
+* A tous les [donateurs](https://github.com/ZarTek-Creole/DONATE) et [donatrices](https://github.com/ZarTek-Creole/DONATE) qui font vivre [les projets](https://github.com/ZarTek-Creole/) 💯 👍 🥇
+* A toutes les (futures) personnes qui proposent des idées, signalent des bogues, contribuent aux projets!👍👍👍
 
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* Amandine de eggdrop.Fr pour son aide/idées/testes/..
-* MenzAgitat car dans mes developpements il y a toujours des astuces/maniere de faire fournis par MenzAgitat ou bout code de MenzAgitat
-
-
-
-
+# Documentation pour les developpeurs
+[Documentation 📑](https://zartek-creole.github.io/TCL-ClaraServ/) 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
-[contributors-url]: github.com/ZarTek-Creole/TCL-Clara-Service/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
-[forks-url]: github.com/ZarTek-Creole/TCL-Clara-Service/network/members
-[stars-shield]: https://img.shields.io/github/stars/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
-[stars-url]: github.com/ZarTek-Creole/TCL-Clara-Service/stargazers
-[issues-shield]: https://img.shields.io/github/issues/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
-[issues-url]: github.com/ZarTek-Creole/TCL-Clara-Service/issues
-[license-shield]: https://img.shields.io/github/license/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
-[license-url]: github.com/ZarTek-Creole/TCL-Clara-Service/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/ZarTek/TCL-ClaraServ.svg?style=for-the-badge
+[contributors-url]: github.com/ZarTek-Creole/TCL-ClaraServ/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/ZarTek/TCL-ClaraServ.svg?style=for-the-badge
+[forks-url]: github.com/ZarTek-Creole/TCL-ClaraServ/network/members
+[stars-shield]: https://img.shields.io/github/stars/ZarTek/TCL-ClaraServ.svg?style=for-the-badge
+[stars-url]: github.com/ZarTek-Creole/TCL-ClaraServ/stargazers
+[issues-shield]: https://img.shields.io/github/issues/ZarTek/TCL-ClaraServ.svg?style=for-the-badge
+[issues-url]: github.com/ZarTek-Creole/TCL-ClaraServ/issues
+[license-shield]: https://img.shields.io/github/license/ZarTek/TCL-ClaraServ.svg?style=for-the-badge
+[license-url]: github.com/ZarTek-Creole/TCL-ClaraServ/blob/master/LICENSE.txt
 [product-screenshot]: images/screenshot.png
