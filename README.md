@@ -13,13 +13,13 @@
   <h3 align="center">ClaraServ - IRC Service d'animation</h3>
 
   <p align="center">
-    Service IRC "ClaraServ" en TCL pour EggDrop
+    Service IRC "ClaraServ" en TCL pour EggDrop 🥚 🤖
     <br />
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service/issues">Rapporter un bogue</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=bug&template=bug_report.md&title=Bug%3A+">Rapporter un bogue</a>
     ·
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service/issues">Demander une fonctionalitée
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=feature%3A+">Demander une fonctionalitée
     ·
-    <a href="github.com/ZarTek-Creole/TCL-Clara-Service/issues">Demander de l'aide</a>
+    <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service/issues">Demander de l'aide</a>
   </p>
 </p>
 
@@ -32,6 +32,7 @@
   - [Téléchargement](#téléchargement)
   - [Configuration de votre EggDrop](#configuration-de-votre-eggdrop)
   - [Configuration de ClaraServ Service](#configuration-de-claraserv-service)
+  - [Configuration de votre IRCD](#configuration-de-votre-ircd)
     - [Comment créer un link ClaraServ sur UnrealIRCd](#comment-créer-un-link-claraserv-sur-unrealircd)
       - [Block Listen](#block-listen)
       - [Block uline](#block-uline)
@@ -59,6 +60,7 @@
 - [Contribuer ou aider ce projet ClaraServ](#contribuer-ou-aider-ce-projet-claraserv)
   - [Améliorer le code](#améliorer-le-code)
   - [Signaler un problème](#signaler-un-problème)
+  - [Sugestions de fonctionalités](#sugestions-de-fonctionalités)
   - [Donation](#donation)
 - [Contact](#contact)
   - [Tickets](#tickets)
@@ -67,8 +69,9 @@
 - [Remerciements](#remerciements)
 - [Documentation pour les developpeurs](#documentation-pour-les-developpeurs)
 # À propos
-Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
+💡 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
 ## Capture d'écran (screenshot)
+Car une image parle plus qu'une longue descriptions :
 
 # Installation & configuration
 ## Prérequis
@@ -85,18 +88,19 @@ Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 git clone https://github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
 ## Configuration de votre EggDrop
-Deuxième étape, ouvrez le fichier de configuration de votre EggDrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
+Deuxième étape, ouvrez le fichier de configuration de votre EggDrop ```eggdrop.conf``` et ajoutez ✍️ la ligne ci-dessous :
 ```
 source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
 ```
 
 ## Configuration de ClaraServ Service
 Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraServ.conf```,
-éditez-le et configurez celui-ci en fonction de votre serveur IRCD.
+éditez-le ✍️ et configurez celui-ci en fonction de votre serveur IRCD.
 
-## Configuration de votre IRCD (pour UnrealIRCd 5 et +)
 
-Quatrième étape, il vous suffit de configurer le link dans votre fichier “unrealircd.conf” en fonction de la configuration que vous aurez réalisé dans “ClaraServ.conf”. 
+## Configuration de votre IRCD
+
+Quatrième étape, il vous suffit de configurer le ” link ” ✍️ en fonction de la configuration que vous aurez réalisé dans **ClaraServ.conf**. 
 
 ### Comment créer un link ClaraServ sur UnrealIRCd
 Afin de réaliser votre link ClaraServ, veuillez vérifier si vous disposez d’un port dédié pour vos links (plusieurs listen) ou bien d’un mono port (un seul listen) :  
@@ -280,7 +284,10 @@ Toute contribution que vous apportez est **grandement appréciée**.
 5. Ouvrez une [Pull Request](https://github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
 
 ## Signaler un problème
-👩‍🏭 Vous pouvez [signaler](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) un problème ⚠️
+👩‍🏭 Vous pouvez [signaler](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=bug&template=bug_report.md&title=Bug%3A+) un problème ⚠️
+
+## Sugestions de fonctionalités
+Vous pouvez faire des [Sugestions](https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=feature%3A+) d'idées 🧠
 
 ## Donation
 Ce projet est librement partagé et est entièrement gratuit 💯🆓. 
