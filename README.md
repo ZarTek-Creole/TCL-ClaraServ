@@ -13,7 +13,7 @@
   <h3 align="center">ClaraServ - IRC Service d'animation</h3>
 
   <p align="center">
-    Service IRC "ClaraServ" en TCL pour Eggdrop
+    Service IRC "ClaraServ" en TCL pour EggDrop
     <br />
     <a href="github.com/ZarTek-Creole/TCL-Clara-Service/issues">Rapporter un bogue</a>
     ·
@@ -27,10 +27,10 @@
 
 - [À propos](#à-propos)
   - [Capture d'écran (screenshot)](#capture-décran-screenshot)
-- [Installation](#installation)
+- [Installation & configuration](#installation--configuration)
   - [Prérequis](#prérequis)
   - [Téléchargement](#téléchargement)
-  - [Configuration de l’eggdrop](#configuration-de-leggdrop)
+  - [Configuration de votre EggDrop](#configuration-de-votre-eggdrop)
   - [Configuration de ClaraServ Service](#configuration-de-claraserv-service)
     - [Comment créer un link ClaraServ sur UnrealIRCd](#comment-créer-un-link-claraserv-sur-unrealircd)
       - [Block Listen](#block-listen)
@@ -41,7 +41,7 @@
       - [Block link](#block-link-1)
       - [Block uline](#block-uline-1)
       - [Block module](#block-module)
-  - [Rehashez votre eggdrop](#rehashez-votre-eggdrop)
+  - [Rehashez votre EggDrop](#rehashez-votre-eggdrop)
 - [Utilisation](#utilisation)
   - [Les commandes de ClaraServ](#les-commandes-de-claraserv)
     - [En privé (à ClaraServ)](#en-privé-à-claraserv)
@@ -70,21 +70,21 @@
 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
 ## Capture d'écran (screenshot)
 
-# Installation
+# Installation & configuration
 ## Prérequis
-* [eggdrop (v1.9+)](http://www.eggheads.org/)
+* [EggDrop (v1.9+)](http://www.eggheads.org/)
 * Serveur IRCD : [UnrealIRCd](https://www.unrealircd.org/), [InspIRCd](https://www.inspircd.org/) (Compatible avec les anciens et nouvelles versions)
 * [Package IRCServices (v0.0.1+)](https://github.com/ZarTek-Creole/TCL-PKG-IRCServices)
 * [Client GIT](https://git-scm.com/)
 ## Téléchargement
-Première étape, téléchargez dans le répertoire scripts/ de votre eggdrop le code ClaraServ grâce au [Client GIT](https://git-scm.com/).
+Première étape, téléchargez dans le répertoire scripts/ de votre EggDrop le code ClaraServ grâce au [Client GIT](https://git-scm.com/).
 <br />
 <br />
 Exemple pour ```/home/votre-dossier/eggdrop/scripts/ClaraServ```
 ```
 git clone https://github.com/ZarTek-Creole/TCL-Clara-Service /home/votre-dossier/eggdrop/scripts/ClaraServ
 ```
-## Configuration de l’eggdrop
+## Configuration de votre EggDrop
 Deuxième étape, ouvrez le fichier de configuration de votre EggDrop ```eggdrop.conf``` et ajoutez la ligne ci-dessous :
 ```
 source /home/votre-dossier/eggdrop/scripts/ClaraServ/ClaraServ.tcl
@@ -95,6 +95,7 @@ Troisième étape, renommez le fichier ```ClaraServ.example.conf``` en ```ClaraS
 éditez-le et configurez celui-ci en fonction de votre serveur IRCD.
 
 ## Configuration de votre IRCD (pour UnrealIRCd 5 et +)
+
 Quatrième étape, il vous suffit de configurer le link dans votre fichier “unrealircd.conf” en fonction de la configuration que vous aurez réalisé dans “ClaraServ.conf”. 
 
 ### Comment créer un link ClaraServ sur UnrealIRCd
@@ -170,12 +171,12 @@ Attention, dans le but de réaliser votre link, veuillez vérifier que votre con
 ```
 <module name="m_spanningtree.so">
 ```
-## Rehashez votre eggdrop
-Cinquième étape, connectez-vous en Party-Line avec votre eggdrop puis tapez la commande suivante :
+## Rehashez votre EggDrop
+Cinquième étape, connectez-vous en Party-Line avec votre EggDrop puis tapez la commande suivante :
 ```
 .rehash
 ```
-ou redémarrer votre eggdrop<br /><br />
+ou redémarrer votre EggDrop<br /><br />
 Notez: évitez d'areter votre EggDrop autrement qu'avec la commande *.die* en partyline.<br />
 En effet la commande *kill* peut endomager les bases de données en fichiers
 # Utilisation
@@ -270,7 +271,8 @@ Voir les [problèmes en suspens](https://github.com/ZarTek-Creole/TCL-Clara-Serv
 # Contribuer ou aider ce projet ClaraServ
 
 ## Améliorer le code
-Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer. Toute contribution que vous apportez est ** grandement appréciée **.
+Les contributions sont ce qui fait de la communauté open source un endroit incroyable pour apprendre, inspirer et créer.
+Toute contribution que vous apportez est **grandement appréciée**.
 1. Forkez le projet
 2. Créez votre branche de fonctionnalités (`git checkout -b feature/AmazingFeature`)
 3. Validez vos modifications (`git commit -m 'Add some AmazingFeature'`)
@@ -278,39 +280,39 @@ Les contributions sont ce qui fait de la communauté open source un endroit incr
 5. Ouvrez une [Pull Request](https://github.com/ZarTek-Creole/TCL-Clara-Service/pulls)
 
 ## Signaler un problème
-Vous pouvez [signaler](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) un problème
+👩‍🏭 Vous pouvez [signaler](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) un problème ⚠️
 
 ## Donation
-Ce projet est librement partagé et est entièrement gratuit. Il a été développé durant le temps libre de l’auteur.<br />
+Ce projet est librement partagé et est entièrement gratuit 💯🆓. 
+Il a été développé durant le temps libre de l’auteur. 🕞 🕧 🕑<br />
 Le développement a nécessité de nombreuse heure, d’un serveur, etc<br /><br />
 Le support est également totalement gratuit, la seule manière de remercier l’auteur et permettre le suivi du code et de nouveau projet sont [les donations](https://github.com/ZarTek-Creole/DONATE), toutes sommes même les plus minimes sont **utiles**
 
 # Contact
 
-ZarTek - [@ZarTek](https://github.com/ZarTek-Creole)
-
-Lien du projet : [github.com/ZarTek-Creole/TCL-Clara-Service](https://github.com/ZarTek-Creole/TCL-Clara-Service)
+* Auteur: ZarTek - [@ZarTek](https://github.com/ZarTek-Creole) 📬
+* Lien du projet : [github.com/ZarTek-Creole/TCL-Clara-Service](https://github.com/ZarTek-Creole/TCL-Clara-Service)
 
 ## Tickets
 Signalez tout bogue, toutes idées :
-* [Créez un ticket](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues)
+* [Créez un ticket](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) ⛑️
 
 ## IRC
 Vous pouvez me contacter sur IRC :
 
-   * [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/#Zartek)
-   * [irc.Extra-Cool.Fr +6697 #Zartek](irc://irc.Extra-Cool.Fr:+6697/#Zartek)
+* [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/#Zartek)
+* [irc.Extra-Cool.Fr +6697 #Zartek](irc://irc.Extra-Cool.Fr:+6697/#Zartek)
 # ChangeLog
-Vous pouvez lire les modifications dans le [ChangeLog](ChangeLog.html)
+Vous pouvez lire les modifications dans le [ChangeLog](ChangeLog.html) 🔖
 # Remerciements
-* A Amandine d'eggdrop.Fr pour son aide/idées/testes/…
-* A [Maxime](https://www.extra-cool.fr) & [Tibs](https://www.Chatoo.fr) pour les emojis et les idées
-* A MenzAgitat car dans mes développements il y a toujours des astuces/manière de faire fournir par MenzAgitat ou bout code de MenzAgitat
-* A tous les [donateurs](https://github.com/ZarTek-Creole/DONATE) et [donatrices](https://github.com/ZarTek-Creole/DONATE) qui font vivre [les projets](https://github.com/ZarTek-Creole/)
-* A toutes les (futures) personnes qui proposent des idées, signalent des bogues, contribuent aux projets!
+* A Amandine d'EggDrop.Fr pour son aide/idées/testes/…👍
+* A [Maxime](https://www.extra-cool.fr) & [Tibs](https://www.Chatoo.fr) pour les emojis et les idées👍
+* A MenzAgitat car dans mes développements il y a toujours des astuces/manière de faire fournir par MenzAgitat ou bout code de MenzAgitat👍
+* A tous les [donateurs](https://github.com/ZarTek-Creole/DONATE) et [donatrices](https://github.com/ZarTek-Creole/DONATE) qui font vivre [les projets](https://github.com/ZarTek-Creole/) 💯 👍 🥇
+* A toutes les (futures) personnes qui proposent des idées, signalent des bogues, contribuent aux projets!👍👍👍
 
 # Documentation pour les developpeurs
-[Documentation](https://zartek-creole.github.io/TCL-ClaraServ/) 
+[Documentation 📑](https://zartek-creole.github.io/TCL-ClaraServ/) 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
