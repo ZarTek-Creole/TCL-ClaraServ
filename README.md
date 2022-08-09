@@ -37,8 +37,8 @@
       - [Block uline](#block-uline)
       - [Block link](#block-link)
     - [Comment créer un link ClaraServ sur InspIRCd](#comment-créer-un-link-claraserv-sur-inspircd)
+      - [Block bind](#block-bind)
       - [Block link](#block-link-1)
-      - [Block link](#block-link-2)
       - [Block uline](#block-uline-1)
       - [Block module](#block-module)
   - [Rehashez votre eggdrop](#rehashez-votre-eggdrop)
@@ -47,6 +47,9 @@
     - [En privé (à ClaraServ)](#en-privé-à-claraserv)
     - [En publique (sur un salon)](#en-publique-sur-un-salon)
     - [les Animations (par defaut)](#les-animations-par-defaut)
+- [Les salons](#les-salons)
+- [Faire joindre ClaraServ](#faire-joindre-claraserv)
+- [Faire partir ClaraServ](#faire-partir-claraserv)
 - [Un peu plus loin](#un-peu-plus-loin)
   - [Ajouter une nouvelle animation (!commande)](#ajouter-une-nouvelle-animation-commande)
   - [Les variables de ```substitutions```](#les-variables-de-substitutions)
@@ -60,12 +63,12 @@
 - [Contact](#contact)
   - [Tickets](#tickets)
   - [IRC](#irc)
+- [ChangeLog](#changelog)
 - [Remerciements](#remerciements)
+- [Documentation pour les developpeurs](#documentation-pour-les-developpeurs)
 # À propos
 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
 ## Capture d'écran (screenshot)
-
-
 
 # Installation
 ## Prérequis
@@ -111,7 +114,6 @@ listen <IP-serveur>:<Port-link> {  
 Si vous spécifier ```tls;```, vous activer une connexion sécuriser en ```SSL```; La valeur de ```config(uplink_ssl)``` doit être mise à ```1```
 config(uplink_host) 
 
-
 #### Block uline
 ```
 ulines {  
@@ -141,8 +143,8 @@ Enregistrez le fichier de configuration. N’oubliez pas de **Rehash** votre ser
 ```/rehash```
 
 ### Comment créer un link ClaraServ sur InspIRCd
-#### Block link  
-Afin de réaliser votre link Serveur ou Service, veuillez vérifier que vous disposez bien du *bind serveur_*ci-dessous :  
+#### Block bind  
+Afin de réaliser votre link Serveur ou Service, veuillez vérifier que vous disposez bien du *bind serveur* ci-dessous :  
 ```
  <bind address="<IP-link>" port="<Port-link>" type="servers"> 
 ```
@@ -181,19 +183,19 @@ En effet la commande *kill* peut endomager les bases de données en fichiers
 ℹ️ Les informations entre <texte> sont obligatoire et ceux entre [texte] sont facultatif.
 ### En privé (à ClaraServ)
 ```/msg ClaraServ help```
-help                                 -   Affiche cette aide
-cmds                                 -   Affiche la liste des commandes
-about                                -   A propos de ClaraServ
-join <#Salon> <Mot_de_passe_admin>   -   Joindre le robot ClaraServ sur le <#Salon>
-part <#Salon> <Mot_de_passe_admin>   -   Retiré le robot ClaraServ du <#Salon>
+**help**                                 -   Affiche cette aide
+**cmds**                                 -   Affiche la liste des commandes
+**about**                                -   A propos de ClaraServ
+**join** <#Salon> <Mot_de_passe_admin>   -   Joindre le robot ClaraServ sur le <#Salon>
+**part** <#Salon> <Mot_de_passe_admin>   -   Retiré le robot ClaraServ du <#Salon>
 
 ### En publique (sur un salon)
 ```/msg #Salon !help```
-!help                                -   Affiche cette aide
-!cmds                                -   Affiche la liste des commandes
-!<commande> [Pseudonyme]             -   Exécute une animation
-!random     [Pseudonyme]             -   Choisi une animation de manière aléatoire
-!about                               -   A propos de ClaraServ
+**!help**                                -   Affiche cette aide
+**!cmds**                                -   Affiche la liste des commandes
+**!<commande>** [Pseudonyme]             -   Exécute une animation
+**!random**     [Pseudonyme]             -   Choisi une animation de manière aléatoire
+**!about**                               -   A propos de ClaraServ
 ### les Animations (par defaut)
 Liste exhautive
 ```
@@ -210,6 +212,21 @@ Liste exhautive
    !truite    |     !vent     |    !vidéo     |    !vittel    |     !vnr      |     !waff     |    !whisky    |     !zen     
    !écran     |    !étoile   
 ```
+# Les salons
+# Faire joindre ClaraServ
+```
+/msg ClaraServ join <#Salon> <Mot_de_passe_admin>
+```
+```<#Salon>``` remplacer par le nom du salon que ClaraServ doit joindre.
+```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
+
+# Faire partir ClaraServ
+```
+/msg ClaraServ part <#Salon> <Mot_de_passe_admin>
+```
+```<#Salon>``` remplacer par le nom du salon que ClaraServ doit partir.
+```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
+
 # Un peu plus loin
 ## Ajouter une nouvelle animation (!commande)
 Pour ajouter une animation rendez-vous dans le répertoire db/, selectionnez le fichier dans la database.<langue>.db choisi avec ```config(db_lang)``` dans ```ClaraServ.conf```.
@@ -229,7 +246,7 @@ Les variables de substitutions permet d'être remplacée une valeur précise (da
 ```%pseudo%``` est remplacé par le ```pseudonyme``` à qui l'animation est *envoyé* (!animation ```pseudonyme```). 
 ```%sender%``` est remplacé par le ```pseudonyme``` de la personne *lance* l'animation.
 ```%destination%``` est remplacé par le nom du ```#salon```.
-```%month%``` est remplacé par le nom du mois,  il sera remplacer par ``Janvier```
+```%month%``` est remplacé par le nom du mois,  il sera remplacer par ```Janvier```
 ```%month_num%``` est remplacé par le chiffre du mois, il sera remplacer par ```1```
 ```%hour%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```01```
 ```%hour_short%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```1```
@@ -240,7 +257,7 @@ Les variables de substitutions permet d'être remplacée une valeur précise (da
 ```%year%``` est remplacer par l'année sous la forme ```2022```
 ```%day%``` est remplacer par le jour de la semaine par exemple ```mardi```
 ```%day_num%``` est remplacer par le numero du jour par exemple ```31```
-Si vous avez besoin ou avez une idée de nouvelles variables de substitutions [sugerer nous ici](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues)
+Si vous avez besoin ou avez une idée de nouvelles variables de substitutions [suggérer ici](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues)
 
 # Résolution de problèmes
 ## Débug Link
@@ -249,10 +266,6 @@ Pour activer le mode *débug* changez la valeur ```set config(uplink_debug)``` d
 
 ## Les problèmes connus
 Voir les [problèmes en suspens](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues) pour une liste des fonctionnalités proposées (et des problèmes connus).
-
-
-
-
 
 # Contribuer ou aider ce projet ClaraServ
 
@@ -288,14 +301,17 @@ Vous pouvez me contacter sur IRC :
 
    * [irc.Extra-Cool.Fr 6667 #Zartek](irc://irc.Extra-Cool.Fr:6667/#Zartek)
    * [irc.Extra-Cool.Fr +6697 #Zartek](irc://irc.Extra-Cool.Fr:+6697/#Zartek)
-
+# ChangeLog
+Vous pouvez lire les modifications dans le [ChangeLog](ChangeLog.html)
 # Remerciements
 * A Amandine d'eggdrop.Fr pour son aide/idées/testes/…
-* A Maxime & Tibs pour les emojis et les idées
+* A [Maxime](https://www.extra-cool.fr) & [Tibs](https://www.Chatoo.fr) pour les emojis et les idées
 * A MenzAgitat car dans mes développements il y a toujours des astuces/manière de faire fournir par MenzAgitat ou bout code de MenzAgitat
 * A tous les [donateurs](https://github.com/ZarTek-Creole/DONATE) et [donatrices](https://github.com/ZarTek-Creole/DONATE) qui font vivre [les projets](https://github.com/ZarTek-Creole/)
 * A toutes les (futures) personnes qui proposent des idées, signalent des bogues, contribuent aux projets!
 
+# Documentation pour les developpeurs
+[Documentation](https://zartek-creole.github.io/TCL-ClaraServ/) 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/ZarTek/TCL-Clara-Service.svg?style=for-the-badge
