@@ -72,6 +72,8 @@
 💡 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
 ## Capture d'écran (screenshot)
 Car une image parle plus qu'une longue descriptions :
+![image](https://user-images.githubusercontent.com/11725850/183683409-a1022325-2bb6-436d-a4e6-5cb7b5bd1cca.png)
+![image](https://user-images.githubusercontent.com/11725850/183684407-49359019-197f-4bea-82ba-1312c5ce6691.png)
 
 # Installation & configuration
 ## Prérequis
