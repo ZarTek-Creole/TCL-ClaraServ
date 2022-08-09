@@ -23,8 +23,8 @@ variable database {
 	{{!rateau}		{0}		{<c12>Il semblerait que <c07>%sender%<c12> se soit pris le rateau de l'année ! <b><c04> (✖╭╮✖)}}
 	{{!rateau}		{1}		{<c07>%sender%<c12> dit: Quand tu te prends un râteau dans les dents, c'est avec la pelle que l'on te ramasse<c04> %pseudo% <b> <c04>(Q'-')=O (✖╭╮✖)}}
 
-	{{!chante}		{0}		{<c07>%sender%<c12> chante à tue-tête <c04>lalalalalalalala.<c12> L'année prochaine c'est inscription à The Voice DIRECT ! 🎵 🎶}}
-	{{!chante}		{1}		{<c07>%sender%<c12> prend le micro et monte sur son bureau pour chanter avec<c04> %pseudo%. <c12> On va faire péter les baffles yéééééééé <c04>♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪}}
+	{{!chante}		{0}		{<c07>%sender%<c12> ♫♪chante♫♪ à tue-tête <c04>lalalalalalalala.<c12> L'année prochaine c'est inscription à The Voice DIRECT ! 🎵 🎶 👨‍🎤}}
+	{{!chante}		{1}		{<c07>%sender%<c12> prend le micro et monte sur son bureau pour ♫♪chanter♫♪ avec<c04> %pseudo%. <c12> On va faire péter les baffles yéééééééé <c04>♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪ 🎵 🎶 👨‍🎤}}
 
 	{{!cochon}		{0}		{<c12>spider cochon, spider cochon, il peut marcher au plafond 🐖, est-ce qu'il peeeut faire la toile🐽, bien sûr que non, c'est un cochon 🐷. Prends garde !! spider cochon <c13>^(°@°)^ <c12> est là !!!!!!!}}
 	{{!cochon}		{1}		{<c07>%sender%<c12> dit que <c04>%pseudo%<c12> est un(e) cochon(ne) 🐖 <c13>^(°@°)^ <c12> 🐽. Vas-y roule-toi dans la boue et va manger des glands :x}}
@@ -185,8 +185,8 @@ variable database {
 	{{!carambar}	{0}		{<c07>%sender%<c12> S'offre un <c00,06> <c00,00> <c05,08> <b>CaRaMbAR® <c00,06><b><c00,00> <c00,06> <c12,0> pour sortir une bonne Blagounette ! <c04><b> ƪ(ړײ)‎ƪ​​}}
 	{{!carambar}	{1}		{<c07>%sender%<c12> Se demande si la blague de <c04>%pseudo%<c12> ne vient pas de la série  <c03> ❝ Blagues Loupées ❞<c12> de chez <c00,06>	<c00,00> <c05,08>	<b>CaRaMbAR® <c00,06><b><c00,00> <c00,06> <c12,0> <c04><b> (•̪(•̪●)̪●)​​ <b><c12> <( <u>Mince le Bide .....)<u>}}
 
-	{{!anni}		{0}		{<u> <c04>Anniversaire<u><c12> : Evènement qui se répète avec une régularité et une précision  <c03>inéluctables<c12> ! ⌛. C’est ainsi qu'aujourd'hui, à la date prévue initialement <c07>%sender%<c12> vous dit : c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> MoN Anniversaire !!!  <c03>˚✰  。 <c04>❤˚* ˚ <c07> ★}}
-	{{!anni}		{1}		{<c07>%sender%<c12> demande à <c04>%pseudo%<c12> si le poids des bougies dépasse celui du gâteau ! Car aujourd'hui c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> SoN  Anniversaire !!!  <c03>˚✰	。 <c04>❤˚* ˚ <c07> ★<c12> <b> bon Anni<c04> %pseudo%<c12> ! <b><c13>(っ˘з(˘⌣˘ )}}
+	{{!anni}		{0}		{<u> <c04>Anniversaire<u><c12> : Evènement qui se répète avec une régularité et une précision  <c03>inéluctables<c12> ! ⌛. C’est ainsi qu'aujourd'hui, à la date prévue initialement <c07>%sender%<c12> vous dit : c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12>  🎂MoN Anniversaire🎂 !!!  <c03>˚✰  。 <c04>❤˚* ˚ <c07> ★}}
+	{{!anni}		{1}		{<c07>%sender%<c12> demande à <c04>%pseudo%<c12> si le poids des bougies dépasse celui du gâteau ! Car aujourd'hui c'est <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> SoN  Anniversaire !!!  <c03>˚✰	。 <c04>❤˚* ˚ <c07> ★<c12> <b> bon 🎂Anniversaire🎂<c04> %pseudo%<c12> ! <b><c13>(っ˘з(˘⌣˘ )}}
 
 	{{!pizza}		{0}		{<c07>%sender%<c12> s'offre une 🍕 PizZa 🍕 juste sortie du four <c04>♨<c12> de  <c03,03>[ ]<c00,00>[ ]<c00,04> Pizza Hut® <c00,00>[ ] <c03,03>[ ]</c><c12,0> Hummm !!! <b> <c04>(∩_∩)}}
 	{{!pizza}		{1}		{<c07>%sender%<c12> offre une part de sa 🍕 PizZa 🍕 juste sortie du four <c04>♨<c12> de  <c03,03>[ ]<c00,00>[ ]<c00,04> Pizza Hut® <c00,00>[ ] <c03,03>[ ]</c><c12,0> à <c04>%pseudo%<c12> !!! <b> <c04>(∩_∩)}}
@@ -239,8 +239,8 @@ variable database {
 	{{!bus}			{0}		{<c12>Oulala lala ! <c07>%sender%<c12> dit qu'un bus🚌 vient d'arriver 🚐! <b><c04> ⚠ (☉̃ₒ☉) ⚠}}
 	{{!bus}			{1}		{<c07>%sender%<c12> dit à <c04>%pseudo%<c12>, tu peux remonter dans le bus 🚌 et aller jusqu'au prochain arrêt 🚐? (merci)<b><c04> ⚠ (☉̃ₒ☉) ⚠	}}
 
-	{{!kebab}		{0}		{<c07>%sender%<c12> a faim, et va aller se manger un bon kebab !<b><c04> (>‿◠)✌}}
-	{{!kebab}		{1}		{<c07>%sender%<c12> offre un kebab à <c04>%pseudo%<c12>, bon appetit !<b><c04> (>‿◠)}}
+	{{!kebab}		{0}		{<c07>%sender%<c12> a faim, et va aller se manger un bon 🥙kebab🥙 !<b><c04> (>‿◠)✌}}
+	{{!kebab}		{1}		{<c07>%sender%<c12> offre un 🥙kebab🥙 à <c04>%pseudo%<c12>, bon appetit !<b><c04> (>‿◠)}}
 
 	{{!triste}		{0}		{<c07>%sender%<c12> est triste !<b><c04> （ つ︣﹏╰）}}
 	{{!triste}		{1}		{<c07>%sender%<c12> trouve que <c04>%pseudo%<c12> est bien triste !<b><c04> （ つ︣﹏╰）}}
