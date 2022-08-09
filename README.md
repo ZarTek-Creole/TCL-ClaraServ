@@ -17,7 +17,7 @@
     <br />
     <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=bug&template=bug_report.md&title=Bug%3A+">Rapporter un bogue</a>
     ·
-    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=feature%3A+">Demander une fonctionalitée
+    <a href="https://github.com/ZarTek-Creole/TCL-ClaraServ/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=feature%3A+">Demander une fonctionalité
     ·
     <a href="https://github.com/ZarTek-Creole/TCL-Clara-Service/issues">Demander de l'aide</a>
   </p>
@@ -60,7 +60,7 @@
 - [Contribuer ou aider ce projet ClaraServ](#contribuer-ou-aider-ce-projet-claraserv)
   - [Améliorer le code](#améliorer-le-code)
   - [Signaler un problème](#signaler-un-problème)
-  - [Sugestions de fonctionalités](#sugestions-de-fonctionalités)
+  - [Suggestions de fonctionalités](#sugestions-de-fonctionalités)
   - [Donation](#donation)
 - [Contact](#contact)
   - [Tickets](#tickets)
@@ -69,9 +69,9 @@
 - [Remerciements](#remerciements)
 - [Documentation pour les developpeurs](#documentation-pour-les-developpeurs)
 # À propos
-💡 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou a un autre utilisateur
+💡 Service IRC d’animation de salon, vos utilisateurs peuvent taper des commandes sur IRC qui fait réagir le service en créant une action à eux-mêmes ou à un autre utilisateur
 ## Capture d'écran (screenshot)
-Car une image parle plus qu'une longue descriptions :
+Car une image parle plus qu'une longue description :
 ![image](https://user-images.githubusercontent.com/11725850/183683409-a1022325-2bb6-436d-a4e6-5cb7b5bd1cca.png)
 ![image](https://user-images.githubusercontent.com/11725850/183684407-49359019-197f-4bea-82ba-1312c5ce6691.png)
 
@@ -182,12 +182,12 @@ Cinquième étape, connectez-vous en Party-Line avec votre EggDrop puis tapez la
 ```
 .rehash
 ```
-ou redémarrer votre EggDrop<br /><br />
-Notez: évitez d'areter votre EggDrop autrement qu'avec la commande *.die* en partyline.<br />
-En effet la commande *kill* peut endomager les bases de données en fichiers
+ou redémarrez votre EggDrop<br /><br />
+Notez: évitez d'arrêter votre EggDrop autrement qu'avec la commande *.die* en partyline.<br />
+En effet la commande *kill* peut endommager les bases de données en fichiers
 # Utilisation
 ## Les commandes de ClaraServ
-ℹ️ Les informations entre <texte> sont obligatoire et ceux entre [texte] sont facultatif.
+ℹ️ Les informations entre <texte> sont obligatoires et celles entre [texte] sont facultatives.
 ### En privé (à ClaraServ)
 ```/msg ClaraServ help```
 **help**                                 -   Affiche cette aide
@@ -224,15 +224,15 @@ Liste exhautive
 ```
 /msg ClaraServ join <#Salon> <Mot_de_passe_admin>
 ```
-```<#Salon>``` remplacer par le nom du salon que ClaraServ doit joindre.<br />
-```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
+```<#Salon>``` remplacez par le nom du salon que ClaraServ doit joindre.<br />
+```<Mot_de_passe_admin>``` remplacez par le mot de passe que vous avez defini dans ```ClaraServ.conf``` à la variable ```config(admin_password)```.
 
 ### Faire partir ClaraServ
 ```
 /msg ClaraServ part <#Salon> <Mot_de_passe_admin>
 ```
-```<#Salon>``` remplacer par le nom du salon que ClaraServ doit partir.<br />
-```<Mot_de_passe_admin>``` remplacer par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
+```<#Salon>``` remplacez par le nom du salon que ClaraServ doit partir.<br />
+```<Mot_de_passe_admin>``` remplacez par le mot de passe que vous avez defini dans ```ClaraServ.conf``` a la variable ```config(admin_password)```.
 
 # Un peu plus loin
 ## Ajouter une nouvelle animation (!commande)
@@ -249,21 +249,21 @@ La valeur ```{1}``` signifie "moi à lui", la personne fait l'animation à quelq
 ci-dessus remarqué ```%sender%``` qui est une variable de substitution.<br />
 
 ## Les variables de ```substitutions```
-Les variables de substitutions permet d'être remplacée une valeur précise (dans les bases de données d'animation).<br /><br />
+Les variables de substitutions permettent d'être remplacées une valeur précise (dans les bases de données d'animations).<br /><br />
 ```%pseudo%``` est remplacé par le ```pseudonyme``` à qui l'animation est *envoyé* (!animation ```pseudonyme```). <br />
-```%sender%``` est remplacé par le ```pseudonyme``` de la personne *lance* l'animation.<br />
+```%sender%``` est remplacé par le ```pseudonyme``` de la personne qui *lance* l'animation.<br />
 ```%destination%``` est remplacé par le nom du ```#salon```.<br />
-```%month%``` est remplacé par le nom du mois,  il sera remplacer par ```Janvier```<br />
-```%month_num%``` est remplacé par le chiffre du mois, il sera remplacer par ```1```<br />
-```%hour%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```01```<br />
-```%hour_short%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacer par ```1```<br />
-```%minutes%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```05```<br />
-```%minutes_short%``` est remplacé par le chiffre de la minute actuel, par exemple si il est 1h05, il sera remplacer par ```5```<br />
-```%seconds%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```09```<br />
-```%seconds_short%``` est remplacé par le chiffre de la secondes actuelle, par exemple si il est 1:05:09, il sera remplacer par ```9```<br />
-```%year%``` est remplacer par l'année sous la forme ```2022```<br />
-```%day%``` est remplacer par le jour de la semaine par exemple ```mardi```<br />
-```%day_num%``` est remplacer par le numero du jour par exemple ```31```<br /><br />
+```%month%``` est remplacé par le nom du mois,  il sera remplacé par ```Janvier```<br />
+```%month_num%``` est remplacé par le chiffre du mois, il sera remplacé par ```1```<br />
+```%hour%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacé par ```01```<br />
+```%hour_short%``` est remplacé par le chiffre de l'heure, par exemple si il est 1h, il sera remplacé par ```1```<br />
+```%minutes%``` est remplacé par le chiffre de la minute actuelle, par exemple si il est 1h05, il sera remplacé par ```05```<br />
+```%minutes_short%``` est remplacé par le chiffre de la minute actuelle, par exemple si il est 1h05, il sera remplacé par ```5```<br />
+```%seconds%``` est remplacé par le chiffre de la seconde actuelle, par exemple si il est 1:05:09, il sera remplacé par ```09```<br />
+```%seconds_short%``` est remplacé par le chiffre de la seconde actuelle, par exemple si il est 1:05:09, il sera remplacé par ```9```<br />
+```%year%``` est remplacé par l'année sous la forme ```2022```<br />
+```%day%``` est remplacé par le jour de la semaine par exemple ```mardi```<br />
+```%day_num%``` est remplacé par le numéro du jour par exemple ```31```<br /><br />
 Si vous avez besoin ou avez une idée de nouvelles variables de substitutions [suggérer ici](https://github.com/ZarTek-Creole/TCL-Clara-Service/issues)
 
 # Résolution de problèmes
@@ -294,7 +294,7 @@ Vous pouvez faire des [Sugestions](https://github.com/ZarTek-Creole/TCL-ClaraSer
 ## Donation
 Ce projet est librement partagé et est entièrement gratuit 💯🆓. 
 Il a été développé durant le temps libre de l’auteur. 🕞 🕧 🕑<br />
-Le développement a nécessité de nombreuse heure, d’un serveur, etc<br /><br />
+Le développement a nécessité de nombreuses heure,s d’un serveur, etc<br /><br />
 Le support est également totalement gratuit, la seule manière de remercier l’auteur et permettre le suivi du code et de nouveau projet sont [les donations](https://github.com/ZarTek-Creole/DONATE), toutes sommes même les plus minimes sont **utiles**
 
 # Contact
