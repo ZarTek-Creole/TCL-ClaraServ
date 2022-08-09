@@ -182,14 +182,14 @@ proc ::ClaraServ::FCT::DB:GET { CMD NIVEAU } {
 }
 proc ::ClaraServ::FCT::DB:CMD:LIST { } {
 	set ltext		[llength ${::ClaraServ::database}];
-	set text		[lindex ${::ClaraServ::database} 0];
 	set CMD_LIST	[list];
 	set x			0;
 	while { ${x} < ${ltext} } {
-		lappend CMD_LIST [lindex [lindex ${::ClaraServ::database} ${x}] 0];
-		lappend CMD_LIST [lindex [lindex ${::ClaraServ::database} ${x}] 1];
-		incr x
+		lappend CMD_LIST [lindex [lindex [lindex ${::ClaraServ::database} ${x}] 0] 0];
+		# On fais par deux, car les commande sont definis une fois en privé et une autre en public
+		set x [expr $x+2]
 	}
+	# On trie, et on enleve les doublons "au cas où"
 	return [lsort -unique ${CMD_LIST}];
 }
 proc ::ClaraServ::FCT::SENT:NOTICE { DEST MSG } {
