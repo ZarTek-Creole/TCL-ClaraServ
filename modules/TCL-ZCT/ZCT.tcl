@@ -300,22 +300,22 @@ proc ::ZCT::TXT::visuals::remove { TEXT } {
 # <i>   : Ajouter le style Italic/Italique
 # <s>   : Enlever les styles precedent
 ##
-# Black       = 00
-# White       = 01
-# Dark Blue   = 02
-# Green       = 03
-# Red         = 04
-# Brown       = 05
-# Purple      = 06
-# Orange      = 07
-# Yellow      = 08
-# Light Green = 09
-# DarkCyan    = 10
-# LightCyan   = 11
-# LightBlue   = 12
-# Pink        = 13
-# Dark Grey   = 14
-# Light Grey  = 15
+# Noir        /  Black       = 00
+# Blanc       /  White       = 01
+# Bleu foncé  /  Dark Blue   = 02
+# Vert        /  Green       = 03
+# Rouge       /  Red         = 04
+# Marron      /  Brown       = 05
+# Violet      /  Purple      = 06
+# Orange      /  Orange      = 07
+# Jaune       /  Yellow      = 08
+# Vert clair  /  Light Green = 09
+# Cyan foncé  /  Dark Cyan   = 10
+# Cyan clair  /  Light Cyan  = 11
+# Bleu clair  /  Light Blue  = 12
+# Rose        /  Pink        = 13
+# Gris foncé  /  Dark Grey   = 14
+# Gris clair  /  Light Grey  = 15
 ##
 # @param TEXT Le TEXT avec des codes style a remplacer avec de vrai codes styles (couleurs, gras..)
 # @return Le TEXT avec les codes styles en TCl
