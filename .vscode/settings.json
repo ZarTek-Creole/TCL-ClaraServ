@@ -1,5 +1,10 @@
 {
     "editor.formatOnPaste": true,
     "editor.formatOnSaveMode": "modifications",
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "languageTool.language": "fr",
+    "languageToolLinter.languageTool.disabledRules": "fr",
+    "languageToolLinter.languageTool.motherTongue": "fr",
+    "languageToolLinter.lintOnChange": true,
+    "languageToolLinter.lintOnOpen": true
 }
