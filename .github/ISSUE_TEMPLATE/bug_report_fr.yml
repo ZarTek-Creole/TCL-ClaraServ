@@ -1,0 +1,84 @@
+name: Rapport de bogue (FR)
+description: Signaler un comportement reproductible de ClaraServ.
+title: "[Bogue] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de fournir les éléments demandés. Ne publiez jamais de mot de passe, clé privée ou jeton.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description du problème
+      description: Décrivez clairement le comportement observé.
+      placeholder: ClaraServ ne répond plus à la commande !gaufre après…
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Étapes de reproduction
+      description: Indiquez une procédure déterministe et le message IRC concerné.
+      placeholder: |
+        1. …
+        2. …
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu et comportement réel
+      placeholder: |
+        Attendu : …
+        Observé : …
+    validations:
+      required: true
+  - type: input
+    id: claraserv-version
+    attributes:
+      label: Version de ClaraServ
+      placeholder: "ex. 1.2.0 ou commit abcdef0"
+    validations:
+      required: true
+  - type: input
+    id: tcl-version
+    attributes:
+      label: Version de Tcl
+      placeholder: "Résultat de : tclsh <<< 'puts [info patchlevel]'"
+    validations:
+      required: true
+  - type: input
+    id: ircd
+    attributes:
+      label: IRCD et version
+      placeholder: "ex. UnrealIRCd 6.1.4"
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: Mode d’exécution
+      options:
+        - Tcl autonome
+        - Sous Eggdrop
+        - Autre / je ne sais pas
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Extraits de journaux et configuration pertinente
+      description: Masquez tout secret avant publication.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Vérifications
+      options:
+        - label: J’ai vérifié que le problème n’est pas déjà signalé.
+          required: true
+        - label: J’ai retiré les secrets de mon rapport.
+          required: true

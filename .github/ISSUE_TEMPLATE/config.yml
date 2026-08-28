@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions et échanges communautaires
+    url: https://github.com/ZarTek-Creole/TCL-ClaraServ/discussions
+    about: Utilisez les discussions pour les questions générales et le partage d’idées qui ne constituent pas encore une demande exploitable.
+  - name: Documentation ClaraServ
+    url: https://github.com/ZarTek-Creole/TCL-ClaraServ#readme
+    about: Consultez le guide d’installation, de configuration et de dépannage avant de créer une issue.

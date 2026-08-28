@@ -9,10 +9,9 @@ namespace eval ::IRCServices {
 	variable DIR
 	set DIR(CUR)			[file dirname [file dirname [file normalize [file join [info script] ...]]]]
 	array set PKG {
-		"version"			"0.0.7"
+		"version"			"0.1.0"
 		"need_tcl"			"8.6"
 		"need_tls"			"1.7.16"
-		"need_logger"		"0.9.4"
 		"need_zct"			"0.0.4"
 		"name"				"package IRCServices"
 	}
@@ -25,13 +24,14 @@ namespace eval ::IRCServices {
 		debug  0
 		logger 0
 	}
-	if { [file exists ${DIR(CUR)}/TCL-ZCT/ZCT.tcl] } { catch { source ${DIR(CUR)}/TCL-ZCT/ZCT.tcl } }
-	if { [catch { package require ZCT ${PKG(need_zct)} } err] } {
-		die "\[${PKG(name)} - erreur\] Nécessite le package ZCT ${PKG(need_zct)} (ou plus) pour fonctionner, Télécharger sur 'https://github.com/ZarTek-Creole/TCL-ZCT'.\nLe chargement du script a été annulé." ;
-	} else { namespace import -force ::ZCT::* }
+
+			if {[catch {package require ZCT ${PKG(need_zct)}} err]} {
+			return -code error "${PKG(name)} nécessite ZCT ${PKG(need_zct)} ou supérieur : $err"
+		}
+		namespace import -force ::ZCT::*
+
 	pkg load Tcl ${PKG(need_tcl)} ${PKG(name)}
-	pkg load logger ${PKG(need_logger)} ${PKG(name)}
-}	
+}
 
 proc ::IRCServices::config { args } {
 	variable config
@@ -129,23 +129,17 @@ proc ::IRCServices::connection { args } {
 		array set linedata	{}
 		set UID_LAST_INSERT	{}
 		array set config	[array get ::IRCServices::config]
-		if { 
-			${config(logger)}												|| \
-			${config(debug)}
-		} {
-			variable logger
-			set logger [logger::init [namespace tail [namespace current]]]
-			if { !${config(debug)} } { ${logger}::disable debug }
-		}
+
 		proc TLSSocketCallBack { level args } {
 			set SOCKET_NAME	[lindex ${args} 0]
 			set type		[lindex ${args} 1]
 			set socketid	[lindex ${args} 2]
 			set what		[lrange ${args} 3 end]
 			cmd-log debug "Socket '${SOCKET_NAME}' callback ${type}: ${what}"
-			if { [string match -nocase "*certificate*verify*failed*" ${what}] } {
-				cmd-log error "IRCServices Socket erreur: Vous essayez de vous connecter a un serveur TLS auto-signé. (${what}) [tls::status ${socketid}]"
-			}
+							if {[string match -nocase "*certificate*verify*failed*" $what]} {
+					cmd-log error "Échec de vérification TLS pour $SOCKET_NAME : $what"
+				}
+
 			if { [string match -nocase "*wrong*version*number*" ${what}] } {
 				cmd-log error "IRCServices Socket erreur: Vous essayez sans doute de connecter en SSL sur un port Non-SSL. (${what})"
 			}
@@ -159,14 +153,19 @@ proc ::IRCServices::connection { args } {
 			variable dispatch
 			if { ${sock}  eq "" } { return }
 			cmd-log debug "send: '${msg}'"
-			if { [catch {puts ${sock}  ${msg}} err] } {
-				catch { close ${sock}  }
-				set sock {}
-				if { [info exists dispatch(EOF)] } {
-					eval ${dispatch(EOF)}
+							if {[catch {
+					puts $sock $msg
+					flush $sock
+				} err]} {
+					catch {close $sock}
+					set sock {}
+					if {[info exists dispatch(EOF)]} {
+						catch {namespace eval [namespace current] $dispatch(EOF)} callbackError
+						if {$callbackError ne ""} {cmd-log error "EOF callback failed: $callbackError"}
+					}
+					cmd-log error "Error sending to IRC network: $err"
 				}
-				cmd-log error "Error in send: ${err}"
-			}
+
 		}
 
 		proc UID_GET { user } {
@@ -223,50 +222,35 @@ proc ::IRCServices::connection { args } {
 
 		proc cmd-config { args } {
 			variable config
-			variable logger
-
-			if { [llength ${args}] == 0 } {
+			if {[llength $args] == 0} {
 				return [array get config]
-			} elseif { [llength ${args}] == 1 } {
-				set key [lindex ${args} 0]
-				return $config(${key})
-			} elseif { [llength ${args}] > 2 } {
-				error "wrong # args: should be \"config key ?val?\""
 			}
-			set key		[lindex ${args} 0]
-			set value	[lindex ${args} 1]
-			if { ${key} eq "debug" } {
-				if {${value}} {
-					if { !${config(logger)} } { cmd-config logger 1 }
-					${logger}::enable debug
-				} elseif { [info exists logger] } {
-					${logger}::disable debug
+			if {[llength $args] == 1} {
+				set key [lindex $args 0]
+				if {![info exists config($key)]} {
+					return -code error "unknown configuration option: $key"
 				}
+				return $config($key)
 			}
-			if { ${key} eq "logger" } {
-				if {
-					${value}												&& \
-					!${config(logger)}
-				} {
-					set logger [logger::init [namespace tail [namespace current]]]
-				} elseif { [info exists logger] } {
-					${logger}::delete
-					unset logger
-				}
+			if {[llength $args] != 2} {
+				return -code error "wrong # args: should be \"config key ?value?\""
 			}
-			set config(${key}) ${value}
+			set config([lindex $args 0]) [lindex $args 1]
 		}
 
 		proc cmd-log {level text} {
-			variable logger
-			if { ![info exists logger] } return
-			${logger}::${level} ${text}
+			variable config
+			if {$level eq "debug" && !$config(debug)} {
+				return
+			}
+			if {$level ne "error" && !$config(logger) && !$config(debug)} {
+				return
+			}
+			puts stderr [format {[IRCServices][%s] %s} [string toupper $level] $text]
 		}
 
-		proc cmd-logname { } {
-			variable logger
-			if { ![info exists logger] } return
-			return ${logger}
+		proc cmd-logname {} {
+			return {}
 		}
 
 
@@ -274,11 +258,9 @@ proc ::IRCServices::connection { args } {
 		#
 		# destroys the current connection and its namespace
 
-		proc cmd-destroy { } {
-			variable logger
+		proc cmd-destroy {} {
 			variable sock
-			if { [info exists logger] } { ${logger}::delete }
-			catch { close ${sock} }
+			catch {close $sock}
 			namespace delete [namespace current]
 		}
 
@@ -378,7 +360,7 @@ proc ::IRCServices::connection { args } {
 		# Connect --
 		# Create the actual tcp connection.
 
-		proc cmd-connect { hostname port password {ts6 1} {name eva.info} {id 00R}} {
+			proc cmd-connect {hostname port password {ts6 1} {name eva.info} {id 00R} {description "Services for IRC Networks"}} {
 			variable sock
 			variable host
 			variable s_port
@@ -400,30 +382,34 @@ proc ::IRCServices::connection { args } {
 				set secure	0;
 				set port	${s_port}
 			}
-			if { ${secure} == 1 } {
-				if { [catch { package require tls ${PKG(need_tls)} }] } {
-					die "\[${PKG(name)} - Erreur\] Nécessite le package tls ${PKG(need_tls)} (ou plus) pour fonctionner, Télécharger sur 'https://core.tcl-lang.org/tcltls/index'. Le chargement du package a été annulé." ;
+							if {$secure} {
+					if {[catch {package require tls ${PKG(need_tls)}} tlsError]} {
+						return -code error "${PKG(name)} nécessite tls ${PKG(need_tls)} ou supérieur : $tlsError"
+					}
 				}
-				set socket_binary "::tls::socket -require 0 -request 0 -command \"[namespace current]::TLSSocketCallBack ${sock}\""
-			} else {
-				set socket_binary ::socket
-			}
-			if { ${sock} eq "" } {
-				if { [catch {
-					set sock [{*}${socket_binary} ${host} ${port}]
-					} err] } { die "\[${PKG(name)} - Erreur\] Impossible de ce connecter sur ${host}:${port}: ${err}" }
-					fconfigure ${sock}  -translation crlf -buffering line
-					fileevent ${sock} readable [namespace current]::GetEvent
+				if {$sock eq ""} {
+					if {$secure} {
+						set callback [list [namespace current]::TLSSocketCallBack]
+						set socketCommand [list ::tls::socket -require 0 -request 0 -command $callback $host $port]
+					} else {
+						set socketCommand [list ::socket $host $port]
+					}
+					if {[catch {set sock [{*}$socketCommand]} err]} {
+						return -code error "Impossible de se connecter à $host:$port : $err"
+					}
+					fconfigure $sock -translation crlf -buffering line -encoding utf-8 -blocking 0
+					fileevent $sock readable [namespace current]::GetEvent
+
 					if { ${ts6} } {
 						send "PASS :${pass}"
 						send "PROTOCTL NICKv2 VHP UMODE2 NICKIP SJOIN SJOIN2 SJ3 NOQUIT TKLEXT MLOCK SID"
 						send "PROTOCTL EAUTH=${sname},,,IRCService-${PKG(version)}"
 						send "PROTOCTL SID=${sid}"
-						send ":${sid} SERVER ${sname} 1 :Services for IRC Networks"
+							send ":${sid} SERVER ${sname} 1 :${description}"
 						send "EOS"
 					} else {
 						send "PASS ${pass}"
-						send "SERVER ${sname} 1 :Services for IRC Networks"
+							send "SERVER ${sname} 1 :${description}"
 						send "EOS"
 						#	send ":${sname} NICK $config(service_nick) 1 [clock seconds] $config(service_user) $config(service_host) ${sname} :$config(service_gecos)"
 					}
@@ -663,98 +649,114 @@ proc ::IRCServices::connection { args } {
 					${linedata(target)}] ${linedata(additional)}]
 			}
 
-			proc GetError { Message } {
-				set RE_Closing	{ERROR\s:Closing\sLink:\s([^\[]+)\[([^\]]+)\]\s\((.*)\)}
-				set DIE ""
-				# connexion du services fermer par le serveur
-				if { [regexp -nocase ${RE_Closing} ${Message} match hostname ip raison] } {
-					if {[string match -nocase "*Authentication*failed*" ${raison}]} {
-						set DIE	"Authentification du service '${hostname}' à échoué (mot de passe?)"
-					} elseif {[string match -nocase "*SID*collision*" ${raison}]} {
-						set DIE	"Le SID (Server ID) est déjà utiliser. Choisissez un autre."
-					}
-
+			proc GetError {message} {
+				set closingPattern {ERROR\s*:Closing\s+Link:\s*([^\[]+)\[([^\]]+)\]\s*\((.*)\)}
+				if {![regexp -nocase $closingPattern $message -> hostname ip reason]} {
+					return -code error "Erreur IRC reçue : $message"
 				}
-				if { ${DIE} != ""} { die "\[Error - IRCServices\] ${DIE}" }
-
+				if {[string match -nocase "*Authentication*failed*" $reason]} {
+					return -code error "Authentification du service refusée par $hostname ($ip). Vérifiez uplink_password."
+				}
+				if {[string match -nocase "*SID*collision*" $reason]} {
+					return -code error "Collision de SID signalée par $hostname ($ip). Choisissez un autre serverinfo_id."
+				}
+				return -code error "Connexion refusée par $hostname ($ip) : $reason"
 			}
 
 			# GetEvent --
-
-			# Get a line from the server and dispatch it.
-			proc GetEvent { } {
+			# Lit une ligne IRC complète, puis distribue l’événement. Les données
+			# réseau ne sont jamais interprétées comme une liste Tcl.
+			proc GetEvent {} {
 				variable linedata
 				variable sock
 				variable dispatch
 				variable [namespace current]::UID_DB
-				array set linedata	{}
-				set line "eof"
-				if {
-					[eof ${sock}] 											|| \
-					[catch {gets ${sock} } line]
-				} {
-					close ${sock}
-					set sock		{}
-					cmd-log error "Error receiving from network: ${line}"
-					if { [info exists dispatch(EOF)] } {
-						eval ${dispatch(EOF)}
-					}
-					die "Error IRCServices: perte de la connexion au serveur"
+
+				if {$sock eq ""} {
 					return
 				}
-				set line [string map { "\{" "\\\{" "\}" "\\\}" "\"" "\\\"" } ${line}]
-				cmd-log debug "Recieved: ${line}"
-				puts ${line}
-				if { [string match -nocase "error*" [lindex ${line} 0]] } { GetError ${line} }
-				if { [set pos [string first " :" ${line}]] > -1 } {
-					set header				[string range ${line} 0 [expr {${pos} - 1}]]
-					set linedata(msg)		[string range ${line} [expr {${pos} + 2}] end]
-
-				} else {
-					set header [string trim ${line}]
-					set linedata(msg)		{}
-
+				set bytesRead [gets $sock line]
+				if {$bytesRead < 0} {
+					if {![eof $sock]} {
+						return
+					}
+					catch {close $sock}
+					set sock {}
+					cmd-log error "Connexion IRC fermée par le pair."
+					if {[info exists dispatch(EOF)] && $dispatch(EOF) ne ""} {
+						catch {namespace eval [namespace current] $dispatch(EOF)} callbackError
+						if {$callbackError ne ""} {cmd-log error "EOF callback failed: $callbackError"}
+					}
+					return
 				}
-				if { [string match :* ${header}] } {
-					set header				[split [string trimleft ${header} :]]
-				} else {
-					set header				[linsert [split ${header}] 0 {}]
-				}
-				set linedata(rawline)		${line}
-				set linedata(who)			[lindex ${header} 0]
-				set linedata(who2)			[[namespace current]::UID_CONVERT ${linedata(who)}]
-				set linedata(action)		[lindex ${header} 1]
-				set linedata(target)		[lindex ${header} 2]
-				set linedata(target2)		[[namespace current]::UID_CONVERT ${linedata(target)}]
-				set linedata(additional)	[lrange ${header} 3 end]
-				set linedata(sid)			[namespace current]::network
 
-				foreach t [namespace children] {
-					set linedata(bid)			${t}::bot
-					if { [info exists ${t}::dispatch(${linedata(action)})] } {
-						catch {eval [set ${t}::dispatch(${linedata(action)})]}
-					} elseif { [string match {[0-9]??} ${t}::dispatch(action)] } {
-						eval [set ${t}::dispatch(defaultnumeric)]
-					} elseif { ${linedata(who)} eq "" } {
-						eval [set ${t}::dispatch(defaultcmd)]
+				cmd-log debug "Received: $line"
+				if {[regexp -nocase {^ERROR(?:\s|$)} $line]} {
+					if {[catch {GetError $line} errorMessage]} {
+						cmd-log error $errorMessage
+					}
+					return
+				}
+
+				array unset linedata
+				set trailingPosition [string first " :" $line]
+				if {$trailingPosition >= 0} {
+					set headerText [string range $line 0 [expr {$trailingPosition - 1}]]
+					set linedata(msg) [string range $line [expr {$trailingPosition + 2}] end]
+				} else {
+					set headerText [string trim $line]
+					set linedata(msg) {}
+				}
+
+				set headerWords [regexp -all -inline {\S+} $headerText]
+				if {[string match :* $headerText]} {
+					set headerWords [lreplace $headerWords 0 0 [string trimleft [lindex $headerWords 0] :]]
+				} else {
+					set headerWords [linsert $headerWords 0 {}]
+				}
+
+				set linedata(rawline) $line
+				set linedata(who) [lindex $headerWords 0]
+				set linedata(who2) [[namespace current]::UID_CONVERT $linedata(who)]
+				set linedata(action) [lindex $headerWords 1]
+				set linedata(target) [lindex $headerWords 2]
+				set linedata(target2) [[namespace current]::UID_CONVERT $linedata(target)]
+				set linedata(additional) [lrange $headerWords 3 end]
+				set linedata(sid) [namespace current]::network
+
+				foreach childNamespace [namespace children] {
+					set linedata(bid) ${childNamespace}::bot
+					if {[info exists ${childNamespace}::dispatch($linedata(action))]} {
+						set callback [set ${childNamespace}::dispatch($linedata(action))]
+					} elseif {[string match {[0-9]??} $linedata(action)]} {
+						set callback [set ${childNamespace}::dispatch(defaultnumeric)]
+					} elseif {$linedata(who) eq ""} {
+						set callback [set ${childNamespace}::dispatch(defaultcmd)]
 					} else {
-						eval [set ${t}::dispatch(defaultevent)]
+						set callback [set ${childNamespace}::dispatch(defaultevent)]
+					}
+					if {$callback ne "" && [catch {namespace eval [namespace current] $callback} callbackError]} {
+						cmd-log error "Callback $linedata(action) failed: $callbackError"
 					}
 				}
-				if { [info exists dispatch(${linedata(action)})] } {
-					catch {eval $dispatch(${linedata(action)})}
-				} elseif { [string match {[0-9]??} ${linedata(action)}] } {
-					eval ${dispatch(defaultnumeric)}
-				} elseif { ${linedata(who)} eq "" } {
-					eval ${dispatch(defaultcmd)}
+
+				if {[info exists dispatch($linedata(action))]} {
+					set callback $dispatch($linedata(action))
+				} elseif {[string match {[0-9]??} $linedata(action)]} {
+					set callback $dispatch(defaultnumeric)
+				} elseif {$linedata(who) eq ""} {
+					set callback $dispatch(defaultcmd)
 				} else {
-					eval ${dispatch(defaultevent)}
+					set callback $dispatch(defaultevent)
 				}
-				if { [action] == "UID" } {
-					# PROTOCOL TS6 : enregistre des ID<->nick en DB
-					set uid				[string toupper [lindex [additional] 4]]
-					set UID_DB([string toupper [target]])	${uid}
-					set UID_DB([string toupper ${uid}])		[target]
+				if {$callback ne "" && [catch {namespace eval [namespace current] $callback} callbackError]} {
+					cmd-log error "Network callback $linedata(action) failed: $callbackError"
+				}
+
+				if {$linedata(action) eq "UID" && [llength $linedata(additional)] >= 5} {
+					set uid [string toupper [lindex $linedata(additional) 4]]
+					set UID_DB([string toupper $linedata(target)]) $uid
+					set UID_DB([string toupper $uid]) $linedata(target)
 				}
 			}
 

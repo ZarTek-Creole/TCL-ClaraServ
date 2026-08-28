@@ -1,0 +1,14 @@
+flowchart LR
+    subgraph Runtime[Runtime Tcl 8.6+]
+        Clara[ClaraServ.tcl\nCommandes et règles métier]
+        ZCT[ZCT\nTexte, couleurs, substitutions]
+        IRCS[IRCServices\nSocket TCP/TLS et protocole IRC]
+        DB[(db/*.db\nAnimations et salons)]
+    end
+
+    IRCd[IRCD compatible\nLiaison serveur] <-- TCP ou TLS --> IRCS
+    IRCS --> Clara
+    Clara --> ZCT
+    Clara <--> DB
+    Eggdrop[Eggdrop facultatif\nHôte / supervision] -. source possible .-> Clara
+    Tclsh[tclsh\nExécution autonome] --> Clara

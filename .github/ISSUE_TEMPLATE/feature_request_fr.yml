@@ -1,0 +1,71 @@
+name: Demande d’évolution (FR)
+description: Proposer une amélioration cohérente avec ClaraServ.
+title: "[Évolution] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Une proposition précise est plus simple à concevoir, à tester et à maintenir.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Besoin ou problème à résoudre
+      description: Quel usage IRC souhaitez-vous améliorer et pour qui ?
+      placeholder: En tant qu’animateur de salon, je souhaite…
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Solution proposée
+      description: Décrivez les commandes, entrées, sorties et messages attendus.
+      placeholder: |
+        Commande : !…
+        Entrées : …
+        Résultat attendu : …
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives envisagées
+      description: Décrivez les contournements, comportements actuels ou autres approches.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Domaine concerné
+      options:
+        - Animation utilisateur
+        - Commande d’administration
+        - Connexion / protocole IRC
+        - Configuration ou stockage
+        - Documentation
+        - Autre
+    validations:
+      required: true
+  - type: input
+    id: ircd
+    attributes:
+      label: IRCD cible et version
+      description: Obligatoire si l’évolution dépend d’un protocole spécifique.
+      placeholder: "ex. UnrealIRCd 6.1.4"
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critères d’acceptation
+      description: Quels scénarios permettront de considérer l’évolution terminée ?
+      placeholder: |
+        - Étant donné …, quand …, alors …
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Vérifications
+      options:
+        - label: J’ai vérifié que cette demande n’existe pas déjà.
+          required: true
+        - label: Cette demande ne contient aucune donnée sensible.
+          required: true

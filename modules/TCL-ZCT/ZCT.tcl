@@ -25,7 +25,7 @@ namespace eval ::ZCT {
     namespace export *
     variable PKG
     array set PKG {
-        "version"		"0.0.9"
+        "version"		"0.1.0"
         "name"			"package ZCT"
         "auteur"		"ZarTeK-Creole @ https://github.com/ZarTek-Creole"
     }
@@ -40,7 +40,7 @@ namespace eval ::ZCT {
 
 namespace eval ::ZCT::pkg {
 }
-# Chargeur de package en cas d'absence de celui-ci 
+# Chargeur de package en cas d'absence de celui-ci
 # il indique comment le télécharger
 #
 # @param PKG_NAME Le nom exact du packages (obligatoire)
@@ -129,7 +129,7 @@ proc ::ZCT::pcolors_end { } {
 }
 # procedure qui retourne où il est appellé
 proc ::ZCT::calledby {} {
-    set level [expr [info leve] - 2]
+    set level [expr {[info level] - 2}]
     if { ${level} > 0 } {
         return [lindex [info level ${level} ] 0]
     } else {
@@ -140,35 +140,10 @@ proc ::ZCT::calledby {} {
         }
     }
 }
-# Putlog amelioreé, avec des niveau (couleurs differentes) et type de text
-if { ${::ZCT::eggdrop} } {
-    proc ::ZCT::putlog { text {level_name ""} {text_name ""} } {
-        variable ::ZCT::SCRIPT
-        set UP_LEVEL_NAME [::ZCT::calledby]
-        if { ${text_name} == "" } {
-            if { ${level_name} != "" } {
-                set text_name " - ${level_name}"
-            } else {
-                set text_name ""
-            }
-        } else {
-            set text_name " - ${text_name}"
-        }
-        switch -nocase ${level_name} {
-            "error"		{ puts "[pcolor_red]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]" }
-            "warning"	{ puts "[pcolor_yellow]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]" }
-            "notice"	{ puts "[pcolor_cyan]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]" }
-            "debug"		{ puts "[pcolor_magenta]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]" }
-            "info"		{ puts "[pcolor_blue]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]" }
-            "success"	{ puts "[pcolor_green]\[${UP_LEVEL_NAME}${text_name}\][pcolors_end] [pcolor_blue]${text}[pcolors_end]" }
-            default		{ puts "\[${UP_LEVEL_NAME}${text_name}\] [pcolor_blue]${text}[pcolors_end]" }
-        }
-    }
-    if { [info commands ::putlog.old] == "" } {
-        rename ::putlog ::putlog.old;
-        interp alias {} putlog {} ::ZCT::putlog
-    }
-}
+# ZCT n’écrase volontairement jamais les commandes de l’hôte (notamment
+# putlog sous Eggdrop). Les composants qui souhaitent un formatage avancé
+# doivent exposer leur propre fonction de journalisation.
+
 # Procedure interne qui permet de creer les procs et les subprocs automatiquement
 # https://forum.eggdrop.fr/Une-proc-qui-gere-lexploration-des-sous-commandes-par-les-namespaces-t-1951.html
 #
@@ -235,22 +210,30 @@ proc ::ZCT::TXT::remove_accents { TEXT } {
 # @param TEXT Le TEXT contenant des variables de subtitutions
 # @param Channel Le salon pour remplacer %chan% (facultatif)
 # @return Le TEXT avec les doonées de subtitutions replacer
-proc ::ZCT::TXT::REPLACE_SUBSTITUTE { TEXT {Channel ""} } {
-	regsub -all %chan%			${TEXT} ${Channel} TEXT;
-	regsub -all %botnick%		${TEXT} [regsub -all {\W} ${::ClaraServ::config(service_nick)} {\\&}] TEXT;
-	regsub -all %hour%			${TEXT} [set hour [strftime %H [unixtime]]] TEXT;
-	regsub -all %hour_short%	${TEXT} [if { ${hour} != 00 } { set dummy [string trimleft ${hour} 0] } { set dummy 0 }] TEXT;
-	regsub -all %minutes%		${TEXT} [set minutes [strftime %M [unixtime]]] TEXT;
-	regsub -all %minutes_short%	${TEXT} [if { ${minutes} != 00 } { set dummy [string trimleft ${minutes} 0] } { set dummy 0 }] TEXT;
-	regsub -all %seconds%		${TEXT} [set seconds [strftime %S [unixtime]]] TEXT;
-	regsub -all %seconds_short%	${TEXT} [if { ${seconds} != 00 } { set dummy [string trimleft ${seconds} 0] } { set dummy 0 }] TEXT;
-	regsub -all %day_num%		${TEXT} [strftime %d [unixtime]] TEXT;
-	regsub -all %day%			${TEXT} [string map -nocase {Mon lundi Tue mardi Wed mercredi Thu jeudi Fri vendredi Sat samedi Sun dimanche} [strftime "%a" [unixtime]]] TEXT;
-	regsub -all %month_num%		${TEXT} [strftime %m [unixtime]] TEXT;
-	regsub -all %month%			${TEXT} [string map {Jan janvier Feb février Mar mars Apr avril May mai Jun juin Jul juillet Aou août Sep septembre Oct octobre Nov novembre Dec décembre} [strftime %b [unixtime]]] TEXT;
-	regsub -all %year%			${TEXT} [strftime %Y [unixtime]] TEXT;
-	return ${TEXT}
+proc ::ZCT::TXT::REPLACE_SUBSTITUTE {text {channel ""}} {
+    set timestamp [clock seconds]
+    set hour [clock format $timestamp -format %H]
+    set minutes [clock format $timestamp -format %M]
+    set seconds [clock format $timestamp -format %S]
+
+    set substitutions [list \
+        %chan% $channel \
+        %botnick% $::ClaraServ::config(service_nick) \
+        %hour% $hour \
+        %hour_short% [expr {$hour == 0 ? 0 : [string trimleft $hour 0]}] \
+        %minutes% $minutes \
+        %minutes_short% [expr {$minutes == 0 ? 0 : [string trimleft $minutes 0]}] \
+        %seconds% $seconds \
+        %seconds_short% [expr {$seconds == 0 ? 0 : [string trimleft $seconds 0]}] \
+        %day_num% [clock format $timestamp -format %d] \
+        %day% [string map {Mon lundi Tue mardi Wed mercredi Thu jeudi Fri vendredi Sat samedi Sun dimanche} [clock format $timestamp -format %a]] \
+        %month_num% [clock format $timestamp -format %m] \
+        %month% [string map {Jan janvier Feb février Mar mars Apr avril May mai Jun juin Jul juillet Aou août Sep septembre Oct octobre Nov novembre Dec décembre} [clock format $timestamp -format %b]] \
+        %year% [clock format $timestamp -format %Y] \
+    ]
+    return [string map $substitutions $text]
 }
+
 
 # Centrer un TEXT avec des espaces sur une longueur donnée
 #

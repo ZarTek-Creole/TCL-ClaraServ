@@ -1,0 +1,71 @@
+name: Feature request (EN)
+description: Propose an improvement consistent with ClaraServ.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A precise proposal is easier to design, test, and maintain.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or user need
+      description: Which IRC use case should improve, and for whom?
+      placeholder: As a channel host, I want to…
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe expected commands, inputs, outputs, and messages.
+      placeholder: |
+        Command: !…
+        Inputs: …
+        Expected result: …
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe workarounds, current behaviour, or other approaches.
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Affected area
+      options:
+        - User animation
+        - Administration command
+        - IRC connection / protocol
+        - Configuration or storage
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: ircd
+    attributes:
+      label: Target IRCD and version
+      description: Required when the feature depends on a specific protocol.
+      placeholder: "e.g. UnrealIRCd 6.1.4"
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Which scenarios will demonstrate the feature is complete?
+      placeholder: |
+        - Given …, when …, then …
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I checked that this request was not already submitted.
+          required: true
+        - label: This request contains no sensitive information.
+          required: true
