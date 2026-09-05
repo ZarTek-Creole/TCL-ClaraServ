@@ -1,0 +1,370 @@
+#!/usr/bin/env bash
+# Lanceur screen pour ClaraServ — chemins relatifs à la racine du dépôt (pas de workspace hardcodé).
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SESSION_DEFAULT="claraserv"
+SESSION="${CLARASERV_SCREEN_SESSION:-$SESSION_DEFAULT}"
+CONF="${CLARASERV_CONF:-$ROOT/ClaraServ.conf}"
+TCLSH="${CLARASERV_TCLSH:-tclsh}"
+WORKDIR="${CLARASERV_WORKDIR:-$ROOT}"
+RUNTIME_DIR="${CLARASERV_RUNTIME_DIR:-$ROOT/run}"
+INSTANCE="${CLARASERV_INSTANCE:-}"
+LOG_FILE="${CLARASERV_LOG_FILE:-}"
+STOP_FILE="$RUNTIME_DIR/claraserv.stop"
+PID_FILE="$RUNTIME_DIR/claraserv.pid"
+STOP_TIMEOUT="${CLARASERV_STOP_TIMEOUT:-20}"
+ALLOW_SIGKILL="${CLARASERV_ALLOW_SIGKILL:-0}"
+FORCE=0
+DRY_RUN=0
+VERBOSE=0
+
+usage() {
+  cat <<EOF
+Usage: bin/claraserv-screen [options] <commande>
+
+Options:
+  -h, --help              Cette aide (ne nécessite pas screen)
+  --dry-run               Affiche les actions sans effet de bord
+  --verbose               Messages supplémentaires
+  --session <nom>         Nom de session screen (défaut: claraserv ou claraserv-<instance>)
+  --instance <nom>        Instance (isole run/<nom>/ ; aligner config(instance_name))
+  --conf, --config <path> Fichier ClaraServ.conf
+  --runtime-dir <chemin>  Répertoire PID/stop-file (défaut: <racine>/run[/instance])
+  --log-file <chemin>     Fichier log contrôlé (commande logs)
+  --tclsh <path>          Interpréteur Tcl (défaut: tclsh)
+  --workdir <chemin>      Répertoire de travail au lancement
+  --timeout <sec>         Délai stop (défaut: 20)
+  --force                 Escalade SIGKILL après SIGTERM (dernier recours, identité PID vérifiée)
+
+Commandes:
+  start       Démarre ClaraServ dans une session screen dédiée
+  stop        Arrêt gracieux (stop-file) puis SIGTERM borné si besoin
+  restart     stop puis start (start annulé si stop échoue)
+  status      État session / PID (0=actif, 1=inactif, 2=usage)
+  attach|join Attache uniquement la session ClaraServ nommée
+  logs        Suit le log-file contrôlé, sinon indique où regarder
+  foreground  tclsh au premier plan (sans screen)
+
+Codes: 0 succès ; 1 erreur/prérequis/inactif (status) ; 2 usage
+Aucun secret affiché. Pas de kill -9 sauf --force ou CLARASERV_ALLOW_SIGKILL=1.
+EOF
+}
+
+log() { printf '[claraserv-screen] %s\n' "$*"; }
+vlog() { [[ "$VERBOSE" -eq 1 ]] && log "$*" || true; }
+die() { printf '[claraserv-screen] ERREUR: %s\n' "$*" >&2; exit 1; }
+usage_die() { printf '[claraserv-screen] ERREUR: %s\n' "$*" >&2; usage >&2; exit 2; }
+
+validate_session_name() {
+  local name="$1"
+  [[ -n "$name" ]] || usage_die "nom de session vide"
+  [[ "$name" =~ ^[A-Za-z0-9._-]{1,64}$ ]] || usage_die "session invalide « $name » (A-Za-z0-9._- , max 64)"
+}
+
+apply_instance() {
+  if [[ -n "$INSTANCE" ]]; then
+    validate_session_name "$INSTANCE"
+    if [[ "$RUNTIME_DIR" == "$ROOT/run" ]]; then
+      RUNTIME_DIR="$ROOT/run/$INSTANCE"
+    fi
+    if [[ "$SESSION" == "$SESSION_DEFAULT" ]]; then
+      SESSION="claraserv-$INSTANCE"
+    fi
+    STOP_FILE="$RUNTIME_DIR/claraserv.stop"
+    PID_FILE="$RUNTIME_DIR/claraserv.pid"
+  fi
+}
+
+has_screen() {
+  command -v screen >/dev/null 2>&1
+}
+
+require_screen() {
+  has_screen || die "screen absent — utilisez « foreground », systemd, ou installez screen manuellement"
+}
+
+session_exists() {
+  has_screen || return 1
+  local listing
+  listing="$(screen -ls 2>/dev/null || true)"
+  grep -qE "[0-9]+\.${SESSION}[[:space:]]" <<<"$listing"
+}
+
+read_pid() {
+  if [[ -f "$PID_FILE" ]]; then
+    tr -d '[:space:]' <"$PID_FILE" || true
+  fi
+}
+
+pid_is_claraserv() {
+  local pid="${1:-}"
+  [[ -n "$pid" ]] || return 1
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  [[ -d "/proc/$pid" ]] || return 1
+  tr '\0' ' ' <"/proc/$pid/cmdline" 2>/dev/null | grep -q 'ClaraServ.tcl'
+}
+
+check_conf_perms() {
+  [[ -f "$CONF" ]] || return 0
+  local mode
+  mode="$(stat -c '%a' "$CONF" 2>/dev/null || true)"
+  if [[ -n "$mode" ]] && [[ "$mode" =~ ^[0-9]+$ ]] && (( 10#$mode % 10 != 0 )); then
+    log "AVERTISSEMENT: $CONF est world-readable (mode $mode) — chmod 600 recommandé"
+  fi
+}
+
+preflight_conf() {
+  [[ -f "$ROOT/ClaraServ.tcl" ]] || die "ClaraServ.tcl introuvable dans $ROOT"
+  [[ -d "$WORKDIR" ]] || die "workdir introuvable: $WORKDIR"
+  [[ -f "$CONF" ]] || die "Configuration absente: $CONF (copiez ClaraServ.Example.conf)"
+  command -v "$TCLSH" >/dev/null 2>&1 || die "tclsh introuvable ($TCLSH)"
+  check_conf_perms
+  mkdir -p "$RUNTIME_DIR"
+}
+
+cmd_start() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "DRY-RUN: start session=$SESSION conf=présent runtime=$RUNTIME_DIR workdir=$WORKDIR"
+    [[ -f "$ROOT/ClaraServ.tcl" ]] || die "ClaraServ.tcl introuvable"
+    command -v "$TCLSH" >/dev/null 2>&1 || die "tclsh introuvable"
+    has_screen || log "DRY-RUN: screen absent (start réel échouerait)"
+    return 0
+  fi
+  preflight_conf
+  require_screen
+  if session_exists; then
+    die "session screen « $SESSION » déjà active"
+  fi
+  if [[ -f "$PID_FILE" ]]; then
+    local old
+    old="$(read_pid || true)"
+    if pid_is_claraserv "$old"; then
+      die "PID $old déjà actif (fichier $PID_FILE)"
+    fi
+    rm -f "$PID_FILE"
+  fi
+  rm -f "$STOP_FILE"
+  log "Démarrage session=$SESSION"
+  vlog "tclsh=$TCLSH workdir=$WORKDIR runtime=$RUNTIME_DIR"
+  if [[ -n "$LOG_FILE" ]]; then
+    mkdir -p "$(dirname "$LOG_FILE")"
+    screen -dmS "$SESSION" bash -lc "cd \"$WORKDIR\" && exec \"$TCLSH\" \"$ROOT/ClaraServ.tcl\" >>\"$LOG_FILE\" 2>&1"
+  else
+    screen -dmS "$SESSION" bash -lc "cd \"$WORKDIR\" && exec \"$TCLSH\" \"$ROOT/ClaraServ.tcl\""
+  fi
+  sleep 0.5
+  session_exists || die "échec démarrage screen"
+  log "Démarré."
+}
+
+cmd_stop() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "DRY-RUN: touch $STOP_FILE ; attendre ≤${STOP_TIMEOUT}s ; SIGTERM si besoin"
+    [[ "$FORCE" -eq 1 || "$ALLOW_SIGKILL" == "1" ]] && log "DRY-RUN: --force / SIGKILL autorisé en dernier recours"
+    return 0
+  fi
+  mkdir -p "$RUNTIME_DIR"
+  local pid
+  pid="$(read_pid || true)"
+  : >"$STOP_FILE"
+  local waited=0
+  while (( waited < STOP_TIMEOUT )); do
+    pid="$(read_pid || true)"
+    if [[ -n "$pid" ]] && ! pid_is_claraserv "$pid"; then
+      log "Processus arrêté (stop-file ou sortie)."
+      rm -f "$STOP_FILE" "$PID_FILE"
+      return 0
+    fi
+    if [[ -z "$pid" ]] && ! session_exists; then
+      log "Aucun processus/session — considéré arrêté."
+      rm -f "$STOP_FILE" "$PID_FILE"
+      return 0
+    fi
+    sleep 1
+    waited=$((waited + 1))
+  done
+  pid="$(read_pid || true)"
+  if pid_is_claraserv "$pid"; then
+    log "Timeout ${STOP_TIMEOUT}s — SIGTERM au PID ClaraServ $pid uniquement"
+    kill -TERM "$pid" 2>/dev/null || true
+    sleep 2
+    if pid_is_claraserv "$pid"; then
+      if [[ "$FORCE" -eq 1 || "$ALLOW_SIGKILL" == "1" ]]; then
+        if ! pid_is_claraserv "$pid"; then
+          die "refus SIGKILL : identité ClaraServ non confirmée"
+        fi
+        log "--force : SIGKILL PID $pid (dernier recours)"
+        kill -KILL "$pid" 2>/dev/null || true
+      else
+        log "Processus encore vivant après SIGTERM — pas de SIGKILL (utiliser --force)"
+        rm -f "$STOP_FILE"
+        return 1
+      fi
+    fi
+  elif has_screen && session_exists; then
+    log "Session screen résiduelle « $SESSION » — screen -S $SESSION -X quit"
+    screen -S "$SESSION" -X quit || true
+  fi
+  rm -f "$STOP_FILE" "$PID_FILE"
+  log "Stop terminé."
+  return 0
+}
+
+cmd_restart() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "DRY-RUN: restart = stop + start"
+    cmd_stop
+    cmd_start
+    return 0
+  fi
+  if ! cmd_stop; then
+    die "restart annulé : stop a échoué"
+  fi
+  cmd_start
+}
+
+cmd_status() {
+  local active=0
+  if has_screen; then
+    if session_exists; then
+      log "session screen « $SESSION »: ACTIVE"
+      active=1
+    else
+      log "session screen « $SESSION »: absente"
+    fi
+  else
+    log "screen: ABSENT (statut session indisponible)"
+  fi
+  local pid
+  pid="$(read_pid || true)"
+  if pid_is_claraserv "$pid"; then
+    log "PID ClaraServ: $pid (vivant)"
+    active=1
+  elif [[ -n "$pid" ]]; then
+    log "PID file présent (processus non ClaraServ ou mort)"
+  else
+    log "PID file: absent"
+  fi
+  [[ -f "$CONF" ]] && log "conf: présente" || log "conf: MANQUANTE"
+  log "runtime_dir: $RUNTIME_DIR"
+  [[ -n "$INSTANCE" ]] && log "instance: $INSTANCE"
+  if [[ "$active" -eq 1 ]]; then
+    return 0
+  fi
+  return 1
+}
+
+cmd_attach() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "DRY-RUN: attach session=$SESSION"
+    return 0
+  fi
+  require_screen
+  session_exists || die "aucune session « $SESSION »"
+  exec screen -r "$SESSION"
+}
+
+cmd_logs() {
+  if [[ -n "$LOG_FILE" ]]; then
+    [[ -f "$LOG_FILE" ]] || die "fichier log absent: $LOG_FILE"
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+      log "DRY-RUN: tail -f $LOG_FILE"
+      return 0
+    fi
+    exec tail -n 100 -f "$LOG_FILE"
+  fi
+  cat <<EOF
+Journaux ClaraServ (pas de suivi de chemin arbitraire sans --log-file):
+  - screen/foreground: stderr du processus (attacher la session ou --log-file)
+  - systemd: journalctl -u claraserv -f
+Ne journalisez jamais uplink_password / admin_password.
+EOF
+}
+
+cmd_foreground() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "DRY-RUN: foreground $TCLSH $ROOT/ClaraServ.tcl (workdir=$WORKDIR)"
+    return 0
+  fi
+  preflight_conf
+  log "Foreground: $TCLSH $ROOT/ClaraServ.tcl"
+  cd "$WORKDIR"
+  exec "$TCLSH" "$ROOT/ClaraServ.tcl"
+}
+
+main() {
+  local args=()
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -h|--help) usage; exit 0 ;;
+      --dry-run) DRY_RUN=1; shift ;;
+      --verbose) VERBOSE=1; shift ;;
+      --force) FORCE=1; shift ;;
+      --session)
+        [[ $# -ge 2 ]] || usage_die "--session nécessite un argument"
+        SESSION="$2"
+        shift 2
+        ;;
+      --instance)
+        [[ $# -ge 2 ]] || usage_die "--instance nécessite un argument"
+        INSTANCE="$2"
+        shift 2
+        ;;
+      --conf|--config)
+        [[ $# -ge 2 ]] || usage_die "$1 nécessite un argument"
+        CONF="$2"
+        shift 2
+        ;;
+      --runtime-dir)
+        [[ $# -ge 2 ]] || usage_die "--runtime-dir nécessite un argument"
+        RUNTIME_DIR="$2"
+        STOP_FILE="$RUNTIME_DIR/claraserv.stop"
+        PID_FILE="$RUNTIME_DIR/claraserv.pid"
+        shift 2
+        ;;
+      --log-file)
+        [[ $# -ge 2 ]] || usage_die "--log-file nécessite un argument"
+        LOG_FILE="$2"
+        shift 2
+        ;;
+      --tclsh)
+        [[ $# -ge 2 ]] || usage_die "--tclsh nécessite un argument"
+        TCLSH="$2"
+        shift 2
+        ;;
+      --workdir)
+        [[ $# -ge 2 ]] || usage_die "--workdir nécessite un argument"
+        WORKDIR="$2"
+        shift 2
+        ;;
+      --timeout)
+        [[ $# -ge 2 ]] || usage_die "--timeout nécessite un argument"
+        [[ "$2" =~ ^[0-9]+$ ]] && [[ "$2" -ge 1 ]] || usage_die "timeout invalide"
+        STOP_TIMEOUT="$2"
+        shift 2
+        ;;
+      --*) usage_die "option inconnue: $1" ;;
+      *) args+=("$1"); shift ;;
+    esac
+  done
+  apply_instance
+  validate_session_name "$SESSION"
+  if ((${#args[@]} == 0)); then
+    usage_die "commande manquante"
+  fi
+  local cmd="${args[0]}"
+  local rest=("${args[@]:1}")
+  case "$cmd" in
+    start) cmd_start "${rest[@]}" ;;
+    stop) cmd_stop "${rest[@]}" ;;
+    restart) cmd_restart "${rest[@]}" ;;
+    status) cmd_status ;;
+    attach|join) cmd_attach ;;
+    logs) cmd_logs ;;
+    foreground) cmd_foreground ;;
+    *) usage_die "commande inconnue: $cmd" ;;
+  esac
+}
+
+main "$@"

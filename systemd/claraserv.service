@@ -1,0 +1,41 @@
+# Exemple d’unité systemd pour ClaraServ — NE PAS activer automatiquement.
+# Chemins de production placeholders (/opt/claraserv) — jamais /root/workspaces/...
+#
+# Déploiement manuel : docs/OPERATIONS.md (après GO humain).
+# Aucun secret dans ce fichier. Conf locale : /etc/claraserv/ClaraServ.conf (0600).
+#
+# Arrêt : ExecStop crée le stop-file ; TimeoutStopSec borne l’attente.
+# Sans Tclx, un SIGTERM après timeout n’est pas un trap Tcl gracieux.
+# EOF S2S inattendu → exit 1 → Restart=on-failure.
+
+[Unit]
+Description=ClaraServ IRC animation service (S2S / Tcl autonome)
+Documentation=file:///opt/claraserv/docs/OPERATIONS.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=claraserv
+Group=claraserv
+WorkingDirectory=/opt/claraserv
+Environment=CLARASERV_RUNTIME_DIR=/var/lib/claraserv/run
+# Le runtime Tcl lit config(runtime_dir) / instance_name dans ClaraServ.conf ;
+# aligner ces chemins avec ReadWritePaths ci-dessous.
+ExecStart=/usr/bin/tclsh /opt/claraserv/ClaraServ.tcl
+# Stop-file applicatif (pas de shell pipeline ambiguë).
+ExecStop=/usr/bin/touch /var/lib/claraserv/run/claraserv.stop
+TimeoutStopSec=25
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=0
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/opt/claraserv/db /var/lib/claraserv/run /var/log/claraserv
+
+[Install]
+WantedBy=multi-user.target
