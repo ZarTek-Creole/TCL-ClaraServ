@@ -84,6 +84,15 @@ assertTrue {[catch {::ClaraServ::FCT::Check:Config}]} "Le mot de passe administr
 set ::ClaraServ::config(admin_password) aStrongPassword
 assertEqual "" [::ClaraServ::FCT::Check:Config] "Une configuration minimale valide est acceptée"
 
+set savedHost $::ClaraServ::config(uplink_host)
+set ::ClaraServ::config(uplink_host) IRCD_HOST_OR_LOOPBACK
+assertTrue {[catch {::ClaraServ::FCT::Check:Config}]} "Un placeholder uplink_host est rejeté"
+set ::ClaraServ::config(uplink_host) $savedHost
+set ::ClaraServ::config(serverinfo_id) AB1
+assertTrue {[catch {::ClaraServ::FCT::Check:Config}]} "Un SID de forme invalide est rejeté"
+set ::ClaraServ::config(serverinfo_id) 00C
+assertEqual "" [::ClaraServ::FCT::Check:Config] "Configuration valide après restauration SID"
+
 # Stockage des salons : égalité littérale et réécriture atomique.
 set temporaryDirectory [file normalize [file join $testDirectory tmp-[pid]]]
 file mkdir [file join $temporaryDirectory db]
@@ -146,6 +155,268 @@ assertEqual "!gaufre [format %c 123]" $::TestNetwork::received "IRCServices pré
 assertTrue {[lsearch -exact $::TestNetwork::lines "SERVER test.example.net 1 :Test service"] >= 0} "La description serveur configurée est transmise"
 $ircConnection destroy
 close $server
+
+# Arrêt gracieux hors réseau
+set ::ClaraServ::CONNECT_ID {}
+set ::ClaraServ::BOT_ID {}
+set ::ClaraServ::shutdown 0
+set ::ClaraServ::exitCode 0
+set ::ClaraServ::shuttingDown 0
+::ClaraServ::FCT::Request:Shutdown test-harness 0
+assertEqual "1" $::ClaraServ::shutdown "Request:Shutdown positionne ::ClaraServ::shutdown"
+assertEqual "0" $::ClaraServ::exitCode "Arrêt volontaire exitCode=0"
+assertEqual "1" $::ClaraServ::shuttingDown "shuttingDown armé"
+::ClaraServ::FCT::Request:Shutdown second-call 99
+assertEqual "0" $::ClaraServ::exitCode "Second Request:Shutdown est no-op (idempotent)"
+
+# Stop-file : Poll:StopFile détecte immédiatement un fichier présent
+set stopDirectory [file normalize [file join $testDirectory tmp-stop-[pid]]]
+file mkdir [file join $stopDirectory run]
+set savedDir $::ClaraServ::SCRIPT(dirname)
+set ::ClaraServ::SCRIPT(dirname) $stopDirectory
+set ::ClaraServ::config(runtime_dir) ""
+set ::ClaraServ::stopFile [file join $stopDirectory run claraserv.stop]
+set ::ClaraServ::shutdown 0
+set ::ClaraServ::exitCode 0
+set ::ClaraServ::shuttingDown 0
+set ::ClaraServ::stopFileAfterId {}
+close [open $::ClaraServ::stopFile w]
+::ClaraServ::FCT::Poll:StopFile
+assertEqual "1" $::ClaraServ::shutdown "Le stop-file déclenche Request:Shutdown"
+assertTrue {![file exists $::ClaraServ::stopFile]} "Le stop-file est consommé"
+
+# Resolve:RuntimeDir relatif
+set ::ClaraServ::config(runtime_dir) "var/run-cs"
+set resolved [::ClaraServ::FCT::Resolve:RuntimeDir]
+assertTrue {[string match *var/run-cs $resolved]} "runtime_dir relatif résolu sous la racine script"
+assertEqual [file normalize [file join $stopDirectory var/run-cs]] $resolved "runtime_dir normalisé"
+
+# instance_name isole le runtime
+set ::ClaraServ::config(runtime_dir) [file join $stopDirectory run-inst]
+set ::ClaraServ::config(instance_name) lab-a
+set resolvedInst [::ClaraServ::FCT::Resolve:RuntimeDir]
+assertEqual [file normalize [file join $stopDirectory run-inst lab-a]] $resolvedInst "instance_name sous runtime_dir"
+set ::ClaraServ::config(instance_name) "bad name"
+assertTrue {[catch {::ClaraServ::FCT::Resolve:RuntimeDir}]} "instance_name invalide rejeté"
+set ::ClaraServ::config(instance_name) lab-a
+
+# Logging standalone : aucune primitive hôte bot requise
+assertTrue {[info commands ::putlog] eq ""} "Environnement de test sans commande putlog"
+assertTrue {[info commands ::putserv] eq ""} "Environnement de test sans commande putserv"
+assertTrue {[info commands ::puthelp] eq ""} "Environnement de test sans commande puthelp"
+assertTrue {[info commands ::bind] eq ""} "Environnement de test sans commande bind"
+::ClaraServ::log info "message-test-log-standalone"
+assertTrue {[info commands ::ClaraServ::log] ne ""} "Abstraction ::ClaraServ::log présente"
+assertTrue {[catch {::ClaraServ::log warn "test-warn-standalone"}] == 0} "log standalone fonctionne sous tclsh"
+
+# Resolve:RuntimeDir absolu
+array unset ::ClaraServ::config instance_name
+set absRun [file normalize [file join $stopDirectory abs-run]]
+set ::ClaraServ::config(runtime_dir) $absRun
+set resolvedAbs [::ClaraServ::FCT::Resolve:RuntimeDir]
+assertEqual $absRun $resolvedAbs "runtime_dir absolu conservé normalisé"
+
+# Install:Standalone:Controls consomme un stop résiduel et écrit le PID (hors réseau)
+set ::ClaraServ::config(runtime_dir) [file join $stopDirectory run-ctrl]
+set ::ClaraServ::shutdown 0
+set ::ClaraServ::exitCode 0
+set ::ClaraServ::shuttingDown 0
+file mkdir $::ClaraServ::config(runtime_dir)
+set residual [file join $::ClaraServ::config(runtime_dir) claraserv.stop]
+close [open $residual w]
+::ClaraServ::FCT::Install:Standalone:Controls
+assertTrue {![file exists $residual]} "Install nettoie un stop-file résiduel"
+assertTrue {[file exists $::ClaraServ::pidFile]} "Install écrit le PID file"
+assertTrue {$::ClaraServ::stopFileAfterId ne ""} "Poll after programmé"
+::ClaraServ::FCT::Request:Shutdown cancel-poll-test 0
+assertEqual "" $::ClaraServ::stopFileAfterId "Shutdown annule le poll after"
+catch {file delete -force $::ClaraServ::pidFile}
+
+# EOF contract helper: exitCode non nul
+set ::ClaraServ::shutdown 0
+set ::ClaraServ::exitCode 0
+set ::ClaraServ::shuttingDown 0
+::ClaraServ::FCT::Request:Shutdown eof-unexpected 1
+assertEqual "1" $::ClaraServ::exitCode "EOF inattendu → exitCode=1 pour Restart=on-failure"
+
+# Pré-vwait : si shuttingDown déjà vrai, le bloc standalone doit sauter vwait
+# (contract : ne pas appeler vwait quand shutdown déjà posé — testé ici via garde)
+assertEqual "1" $::ClaraServ::shuttingDown "shuttingDown reste armé pour garde pré-vwait"
+assertTrue {!$::ClaraServ::shuttingDown || $::ClaraServ::shutdown == 1} "Pré-vwait : shutdown cohérent avec shuttingDown"
+
+# Mode normal (source avec disableAutoStart) : aucune auto-connexion
+assertEqual "" $::ClaraServ::CONNECT_ID "disableAutoStart → CONNECT_ID vide (pas d’auto-connect)"
+assertTrue {[info commands ::ClaraServ::FCT::Create:Service] ne ""} "Create:Service existe toujours (prod inchangé)"
+
+# Harness local-process : refus sans marqueurs d’environnement (sous-processus)
+set harnessPath [file join $projectDirectory tests harness_local_process.tcl]
+set refuseCode [catch {
+    exec env -u CLARASERV_TEST_LOCAL_PROCESS -u CLARASERV_TEST_RUNTIME_DIR \
+        tclsh $harnessPath 2>@1
+} refuseOut]
+assertTrue {$refuseCode != 0} "Harness refuse sans CLARASERV_TEST_LOCAL_PROCESS"
+assertTrue {[string match *refus* $refuseOut] || [string match *CLARASERV_TEST_LOCAL_PROCESS* $refuseOut]} \
+    "Message de refus harness explicite"
+
+set refuseCode2 [catch {
+    exec env CLARASERV_TEST_LOCAL_PROCESS=1 \
+        -u CLARASERV_TEST_RUNTIME_DIR \
+        tclsh $harnessPath 2>@1
+} refuseOut2]
+assertTrue {$refuseCode2 != 0} "Harness refuse sans CLARASERV_TEST_RUNTIME_DIR"
+
+# --- UX commandes / rendu IRC / sanitize / longueur ---
+proc escapeIrcControls {s} {
+    string map [list \x03 <C> \x02 <B> \x0f <R> \x1f <U> \x16 <I> \r <CR> \n <LF>] $s
+}
+
+set ::ClaraServ::SCRIPT(dirname) $savedDir
+array unset ::ClaraServ::config runtime_dir
+file delete -force $stopDirectory
+
+# Recharger l’index FR courant (après éventuels ajouts DB).
+set ::ClaraServ::database {}
+namespace eval ::ClaraServ [list source [file join $projectDirectory db database.fr.db]]
+::ClaraServ::FCT::DB:Index
+
+set ::TestBot::messages {}
+set ::ClaraServ::BOT_ID ::TestBot
+set ::ClaraServ::config(uplink_useprivmsg) 1
+set ::ClaraServ::config(log_command) 0
+set ::ClaraServ::config(service_nick) ClaraServ
+
+# Texte sans préfixe ! → aucune réponse
+set ::TestBot::messages {}
+assertEqual "0" [::ClaraServ::FCT::Dispatch:Message Alice #lounge "bonjour tout le monde"] \
+    "Sans préfixe ! : aucune commande"
+assertEqual "0" [llength $::TestBot::messages] "Sans préfixe ! : aucun message émis"
+
+# !cmdss → suggestion unique !cmds (privé à l’auteur)
+# Note: !cms est ambigu (!mms et !cmds, distance 1) → pas de suggestion (règle D2).
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::FCT::Dispatch:Message Alice #lounge "!cmdss"] \
+    "Commande inconnue !cmdss traitée"
+assertEqual "1" [llength $::TestBot::messages] "Une seule réponse pour !cmdss"
+set cmsMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string match "*!cmds*" $cmsMsg]} "!cmdss suggère !cmds"
+assertTrue {[string match "*Voulez-vous dire*" $cmsMsg]} "Formulation suggestion présente"
+assertTrue {[regexp {\x0f$} $cmsMsg]} "Suggestion stylée se termine par reset"
+
+# !cms ambigu → message générique (pas de suggestion)
+set ::TestBot::messages {}
+::ClaraServ::FCT::Dispatch:Message Alice #lounge "!cms"
+set ambMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string match "*!cmds*" $ambMsg]} "!cms ambigu pointe vers !cmds générique"
+assertTrue {![string match "*Voulez-vous dire*" $ambMsg]} "!cms ambigu : pas de suggestion unique"
+
+# Inconnue sans voisin distance 1
+set ::TestBot::messages {}
+::ClaraServ::FCT::Dispatch:Message Alice #lounge "!zzzznotacommand"
+set unkMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string match "*!cmds*" $unkMsg]} "Inconnue sans suggestion pointe vers !cmds"
+assertTrue {![string match "*Voulez-vous dire*" $unkMsg]} "Pas de suggestion ambiguë/absente"
+
+# Sanitize nick
+assertEqual "NickNormal" [::ClaraServ::FCT::Sanitize:Irc:Text "NickNormal"] "Pseudo normal inchangé"
+assertEqual "Evil" [::ClaraServ::FCT::Sanitize:Irc:Text "Ev\x02il"] "Gras retiré du pseudo"
+assertEqual "Evil" [::ClaraServ::FCT::Sanitize:Irc:Text "Ev\x03il"] "Couleur retirée du pseudo"
+assertEqual "Evil" [::ClaraServ::FCT::Sanitize:Irc:Text "Ev\x0fil"] "Reset retiré du pseudo"
+assertEqual "EvilNick" [::ClaraServ::FCT::Sanitize:Irc:Text "Evil\r\nNick"] "CR/LF retirés du pseudo"
+
+set ::TestBot::messages {}
+::ClaraServ::FCT::Dispatch:Message "Sen\x02der" #lounge "!gaufre Tar\x03get"
+set dynMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "Sender" $dynMsg] >= 0} "Sender sanitisé sans gras injecté"
+assertTrue {[string first "Target" $dynMsg] >= 0} "Target sanitisé sans couleur injectée"
+assertTrue {[regexp {\x0f$} $dynMsg]} "Animation stylée se termine par reset"
+
+# Reset sur help / about / cmds
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PUB:HELP Alice #lounge !help {}
+set helpLast [lindex [lindex $::TestBot::messages end] 2]
+assertTrue {[regexp {\x0f$} $helpLast]} "help : dernier message avec reset"
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PRIV:ABOUT Alice #lounge about {}
+set aboutLast [lindex [lindex $::TestBot::messages end] 2]
+assertTrue {[regexp {\x0f$} $aboutLast]} "about : dernier message avec reset"
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PRIV:CMDS Alice #lounge cmds {}
+set cmdsLast [lindex [lindex $::TestBot::messages end] 2]
+assertTrue {[regexp {\x0f$} $cmdsLast]} "cmds : dernier message avec reset"
+assertTrue {![regexp {\x03$} $cmdsLast]} "cmds : ne se termine plus par couleur vide seule"
+
+# Render:Outgoing reset unique
+set rendered [::ClaraServ::FCT::Render:Outgoing "<c07>x<c12>y"]
+assertTrue {[regexp {\x0f$} $rendered]} "Render ajoute reset final"
+assertTrue {![regexp {\x0f\x0f$} $rendered]} "Pas de double reset final"
+assertEqual [escapeIrcControls $rendered] "<C>07x<C>12y<R>" "Représentation échappée attendue"
+
+# Troncature message long + reset
+set ::ClaraServ::ircMessageMaxBytes 40
+set longBody "<c12>[string repeat a 80]<s>"
+set trunc [::ClaraServ::FCT::Render:Outgoing $longBody]
+assertTrue {[string bytelength $trunc] <= 40} "Message long borné à ircMessageMaxBytes"
+assertTrue {[regexp {\x0f$} $trunc]} "Message long tronqué se termine par reset"
+set ::ClaraServ::ircMessageMaxBytes 400
+
+# UTF-8 : ne pas couper un codepoint (é = 2 octets)
+set ::ClaraServ::ircMessageMaxBytes 5
+set utfOut [::ClaraServ::FCT::Truncate:Utf8:Bytes "éééé" 3]
+assertTrue {[string is true -strict [expr {[string bytelength $utfOut] <= 3}]]} "Troncature UTF-8 respecte les octets"
+assertTrue {[string length $utfOut] <= 1} "Pas de demi-caractère UTF-8"
+set ::ClaraServ::ircMessageMaxBytes 400
+
+# !random exclut le contenu sensible listé
+assertTrue {[lsearch -exact $::ClaraServ::randomExcludeCommands !sexy] >= 0} "Liste d’exclusion random définie"
+set pool {}
+foreach c [::ClaraServ::FCT::DB:CMD:LIST] {
+    set cn [::ClaraServ::FCT::Command:Normalise $c]
+    set ex 0
+    foreach b $::ClaraServ::randomExcludeCommands {
+        if {$cn eq [::ClaraServ::FCT::Command:Normalise $b]} { set ex 1; break }
+    }
+    if {!$ex} { lappend pool $c }
+}
+assertTrue {[lsearch -exact $pool !sexy] < 0} "Pool random sans !sexy"
+assertTrue {[llength $pool] < [llength [::ClaraServ::FCT::DB:CMD:LIST]]} "Pool random plus petit que la base"
+
+# Nouvelles commandes FR (échantillon) : niveaux 0/1 + <s> + bold pair
+foreach newCmd {!salut !bienvenue !bravo !courage !chance !sourire !applaudir !bouquet !jus !musique !amitié !bonnejournée !bonnesoirée !bonnenuit !tope !heureux !cool !paix} {
+    set r0 [::ClaraServ::FCT::DB:GET $newCmd 0]
+    set r1 [::ClaraServ::FCT::DB:GET $newCmd 1]
+    assertTrue {$r0 ne "-1"} "Nouvelle commande $newCmd niveau 0"
+    assertTrue {$r1 ne "-1"} "Nouvelle commande $newCmd niveau 1"
+    assertTrue {[string match "*<s>" $r0] || [string match "*<s>*" $r0]} "$newCmd/0 contient reset tag"
+    assertTrue {[regexp {<s>\s*$} $r0]} "$newCmd/0 finit par <s>"
+    assertTrue {[regexp {<s>\s*$} $r1]} "$newCmd/1 finit par <s>"
+    set b0 [regexp -all {<b>|</b>} $r0]
+    set b1 [regexp -all {<b>|</b>} $r1]
+    assertTrue {($b0 % 2) == 0} "$newCmd/0 gras apparié"
+    assertTrue {($b1 % 2) == 0} "$newCmd/1 gras apparié"
+}
+
+# Validateur DB : fixture invalide détectée
+set validator [file join $projectDirectory tools validate-animations-db.tcl]
+assertTrue {[file isfile $validator]} "Validateur DB présent"
+set badDir [file join $testDirectory tmp-bad-db-[pid]]
+file mkdir $badDir
+set badDb [file join $badDir bad.db]
+set bf [open $badDb w]
+puts $bf "variable database \{"
+puts $bf "\t\{\{!bad\} \{0\} \{<c07>sans reset et <b>gras impair\}\}"
+puts $bf "\}"
+close $bf
+set valOut ""
+set valCode [catch {exec tclsh $validator $badDb 2>@1} valOut]
+assertTrue {$valCode != 0} "Validateur échoue sur fixture invalide"
+assertTrue {[string match "*FAIL*" $valOut] || [string match "*fail*" [string tolower $valOut]]} \
+    "Validateur signale FAIL sur fixture"
+file delete -force $badDir
+
+# CONNECT_ID toujours vide (pas de réseau dans ces tests)
+assertEqual "" $::ClaraServ::CONNECT_ID "Toujours pas d’auto-connect après tests UX"
 
 if {$failures > 0} {
     puts stderr "\n$failures échec(s) de test."

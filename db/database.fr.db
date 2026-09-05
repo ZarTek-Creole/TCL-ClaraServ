@@ -268,4 +268,58 @@ variable database {
 	
 	{{!merci}		{0}		{<c07>%sender%<c12> ce dit un tout grand merci à lui-même✌}}
 	{{!merci}		{1}		{<c07>%sender%<c12> est content et dit un grand merci à <c12>%pseudo%! <c04><b> ≧✯◡✯≦✌}}
+
+	{{!salut}		{0}		{<c07>%sender%<c12> salue tout le monde avec le sourire.<s>}}
+	{{!salut}		{1}		{<c07>%sender%<c12> dit salut à <c06>%pseudo%<c12> !<s>}}
+
+	{{!bienvenue}		{0}		{<c07>%sender%<c12> se souhaite la bienvenue… et c’est un peu étrange.<s>}}
+	{{!bienvenue}		{1}		{<c07>%sender%<c12> souhaite la bienvenue à <c06>%pseudo%<c12> !<s>}}
+
+	{{!bravo}		{0}		{<c07>%sender%<c12> s’applaudit : <c04>bravo<c12> !<s>}}
+	{{!bravo}		{1}		{<c07>%sender%<c12> lance un grand <c04>bravo<c12> à <c06>%pseudo%<c12> !<s>}}
+
+	{{!courage}		{0}		{<c07>%sender%<c12> se remonte le moral : <c04>courage<c12> !<s>}}
+	{{!courage}		{1}		{<c07>%sender%<c12> envoie du <c04>courage<c12> à <c06>%pseudo%<c12>.<s>}}
+
+	{{!chance}		{0}		{<c07>%sender%<c12> croise les doigts pour avoir de la <c04>chance<c12>.<s>}}
+	{{!chance}		{1}		{<c07>%sender%<c12> souhaite bonne <c04>chance<c12> à <c06>%pseudo%<c12> !<s>}}
+
+	{{!sourire}		{0}		{<c07>%sender%<c12> affiche un large sourire.<s>}}
+	{{!sourire}		{1}		{<c07>%sender%<c12> arrache un sourire à <c06>%pseudo%<c12>.<s>}}
+
+	{{!applaudir}		{0}		{<c07>%sender%<c12> applaudit avec enthousiasme. <c04>*clap clap*<c12><s>}}
+	{{!applaudir}		{1}		{<c07>%sender%<c12> applaudit <c06>%pseudo%<c12> : <c04>*clap clap*<c12><s>}}
+
+	{{!bouquet}		{0}		{<c07>%sender%<c12> s’offre un petit bouquet de fleurs.<s>}}
+	{{!bouquet}		{1}		{<c07>%sender%<c12> tend un joli bouquet à <c06>%pseudo%<c12>.<s>}}
+
+	{{!jus}		{0}		{<c07>%sender%<c12> se verse un verre de jus bien frais.<s>}}
+	{{!jus}		{1}		{<c07>%sender%<c12> offre un jus fruité à <c06>%pseudo%<c12>.<s>}}
+
+	{{!musique}		{0}		{<c07>%sender%<c12> se met un air entraînant dans la tête.<s>}}
+	{{!musique}		{1}		{<c07>%sender%<c12> partage un moment musique avec <c06>%pseudo%<c12>.<s>}}
+
+	{{!amitié}		{0}		{<c07>%sender%<c12> célèbre l’amitié… même en solo.<s>}}
+	{{!amitié}		{1}		{<c07>%sender%<c12> tend la main de l’amitié à <c06>%pseudo%<c12>.<s>}}
+
+	{{!bonnejournée}	{0}		{<c07>%sender%<c12> se souhaite une <c04>bonne journée<c12>.<s>}}
+	{{!bonnejournée}	{1}		{<c07>%sender%<c12> souhaite une <c04>bonne journée<c12> à <c06>%pseudo%<c12> !<s>}}
+
+	{{!bonnesoirée}	{0}		{<c07>%sender%<c12> se souhaite une <c04>bonne soirée<c12>.<s>}}
+	{{!bonnesoirée}	{1}		{<c07>%sender%<c12> souhaite une <c04>bonne soirée<c12> à <c06>%pseudo%<c12> !<s>}}
+
+	{{!bonnenuit}		{0}		{<c07>%sender%<c12> bâille et se souhaite une <c04>bonne nuit<c12>.<s>}}
+	{{!bonnenuit}		{1}		{<c07>%sender%<c12> souhaite une <c04>bonne nuit<c12> à <c06>%pseudo%<c12>.<s>}}
+
+	{{!tope}		{0}		{<c07>%sender%<c12> tope dans ses propres mains. <c04>toc !<c12><s>}}
+	{{!tope}		{1}		{<c07>%sender%<c12> tope dans la main de <c06>%pseudo%<c12> !<s>}}
+
+	{{!heureux}		{0}		{<c07>%sender%<c12> rayonne de bonne humeur.<s>}}
+	{{!heureux}		{1}		{<c07>%sender%<c12> partage sa bonne humeur avec <c06>%pseudo%<c12>.<s>}}
+
+	{{!cool}		{0}		{<c07>%sender%<c12> reste <c04>cool<c12> comme jamais.<s>}}
+	{{!cool}		{1}		{<c07>%sender%<c12> trouve que <c06>%pseudo%<c12> est vraiment <c04>cool<c12>.<s>}}
+
+	{{!paix}		{0}		{<c07>%sender%<c12> respire un instant de paix.<s>}}
+	{{!paix}		{1}		{<c07>%sender%<c12> envoie une vague de paix à <c06>%pseudo%<c12>.<s>}}
 }
