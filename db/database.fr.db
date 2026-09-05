@@ -322,4 +322,97 @@ variable database {
 
 	{{!paix}		{0}		{<c07>%sender%<c12> respire un instant de paix.<s>}}
 	{{!paix}		{1}		{<c07>%sender%<c12> envoie une vague de paix à <c06>%pseudo%<c12>.<s>}}
+
+	{{!bonapp}		{0}		{<c07>%sender%<c12> souhaite un bon appétit à la cantonade. <c04>🍽️<s>}}
+	{{!bonapp}		{1}		{<c07>%sender%<c12> souhaite un bon appétit à <c06>%pseudo%<c12> ! <c04>🍽️<s>}}
+
+	{{!lasagne}		{0}		{<c07>%sender%<c12> se sert une généreuse part de lasagne. <c04>🍝<s>}}
+	{{!lasagne}		{1}		{<c07>%sender%<c12> partage une lasagne avec <c06>%pseudo%<c12>. <c04>🍝<s>}}
+
+	{{!mug}			{0}		{<c07>%sender%<c12> réchauffe ses mains autour d’un mug. <c04>☕<s>}}
+	{{!mug}			{1}		{<c07>%sender%<c12> tend un mug fumant à <c06>%pseudo%<c12>. <c04>☕<s>}}
+
+	{{!tapoter}		{0}		{<c07>%sender%<c12> se tapote l’épaule, content. <c04>👋<s>}}
+	{{!tapoter}		{1}		{<c07>%sender%<c12> tapote l’épaule de <c06>%pseudo%<c12>. <c04>👋<s>}}
+
+	{{!clin}		{0}		{<c07>%sender%<c12> fait un clin d’œil au vide. <c04>😉<s>}}
+	{{!clin}		{1}		{<c07>%sender%<c12> fait un clin d’œil complice à <c06>%pseudo%<c12>. <c04>😉<s>}}
+
+	{{!chatouille}	{0}		{<c07>%sender%<c12> se chatouille et rit tout seul. <c04>😂<s>}}
+	{{!chatouille}	{1}		{<c07>%sender%<c12> chatouille <c06>%pseudo%<c12> sans pitié. <c04>😂<s>}}
+
+	{{!cadeau}		{0}		{<c07>%sender%<c12> s’offre un petit cadeau. <c04>🎁<s>}}
+	{{!cadeau}		{1}		{<c07>%sender%<c12> offre un cadeau à <c06>%pseudo%<c12>. <c04>🎁<s>}}
+
+	{{!boire}		{0}		{<c07>%sender%<c12> lève un verre en solo. <c04>🍹<s>}}
+	{{!boire}		{1}		{<c07>%sender%<c12> trinque avec <c06>%pseudo%<c12>. <c04>🍹<s>}}
+
+	{{!manger}		{0}		{<c07>%sender%<c12> savoure un bon repas. <c04>🍽️<s>}}
+	{{!manger}		{1}		{<c07>%sender%<c12> partage un repas avec <c06>%pseudo%<c12>. <c04>🍽️<s>}}
+
+	{{!serrer}		{0}		{<c07>%sender%<c12> se serre dans ses bras. <c04>🤗<s>}}
+	{{!serrer}		{1}		{<c07>%sender%<c12> serre <c06>%pseudo%<c12> dans ses bras. <c04>🤗<s>}}
+
+	{{!soupçon}		{0}		{<c07>%sender%<c12> lève un sourcil suspicieux. <c04>🤨<s>}}
+	{{!soupçon}		{1}		{<c07>%sender%<c12> jette un regard suspicieux à <c06>%pseudo%<c12>. <c04>🤨<s>}}
+
+	{{!encourage}	{0}		{<c07>%sender%<c12> se motive tout seul. Allez ! <c04>💪<s>}}
+	{{!encourage}	{1}		{<c07>%sender%<c12> encourage <c06>%pseudo%<c12> de toutes ses forces. <c04>💪<s>}}
+
+	{{!complice}	{0}		{<c07>%sender%<c12> sourit d’un air complice… à personne. <c04>🤭<s>}}
+	{{!complice}	{1}		{<c07>%sender%<c12> échange un regard complice avec <c06>%pseudo%<c12>. <c04>🤭<s>}}
+
+	{{!salutations}	{0}		{<c07>%sender%<c12> salue la salle entière. <c04>👋<s>}}
+	{{!salutations}	{1}		{<c07>%sender%<c12> adresse ses salutations à <c06>%pseudo%<c12>. <c04>👋<s>}}
+
+	{{!réconfort}	{0}		{<c07>%sender%<c12> se murmure des mots doux. <c04>🩹<s>}}
+	{{!réconfort}	{1}		{<c07>%sender%<c12> réconforte <c06>%pseudo%<c12> avec douceur. <c04>🩹<s>}}
+
+	{{!fête}		{0}		{<c07>%sender%<c12> lance la fête… même seul. <c04>🎉<s>}}
+	{{!fête}			{1}		{<c07>%sender%<c12> fête ça avec <c06>%pseudo%<c12> ! <c04>🎉<s>}}
+
+	{{!silence}		{0}		{<c07>%sender%<c12> impose une minute de silence. <c04>🤫<s>}}
+	{{!silence}		{1}		{<c07>%sender%<c12> demande le silence à <c06>%pseudo%<c12>. <c04>🤫<s>}}
+
+	{{!écoute}		{0}		{<c07>%sender%<c12> tend l’oreille au calme. <c04>👂<s>}}
+	{{!écoute}		{1}		{<c07>%sender%<c12> écoute vraiment <c06>%pseudo%<c12>. <c04>👂<s>}}
+
+	{{!regard}		{0}		{<c07>%sender%<c12> fixe l’horizon. <c04>👀<s>}}
+	{{!regard}		{1}		{<c07>%sender%<c12> croise le regard de <c06>%pseudo%<c12>. <c04>👀<s>}}
+
+	{{!soupire}		{0}		{<c07>%sender%<c12> pousse un long soupir. <c04>😮‍💨<s>}}
+	{{!soupire}		{1}		{<c07>%sender%<c12> soupire en direction de <c06>%pseudo%<c12>. <c04>😮‍💨<s>}}
+
+	{{!rire}		{0}		{<c07>%sender%<c12> éclate de rire. <c04>😄<s>}}
+	{{!rire}		{1}		{<c07>%sender%<c12> fait rire <c06>%pseudo%<c12>. <c04>😄<s>}}
+
+	{{!étonne}		{0}		{<c07>%sender%<c12> reste bouche bée. <c04>😮<s>}}
+	{{!étonne}		{1}		{<c07>%sender%<c12> est étonné(e) par <c06>%pseudo%<c12>. <c04>😮<s>}}
+
+	{{!ovation}		{0}		{<c07>%sender%<c12> se dit bravo intérieurement. <c04>✨<s>}}
+	{{!ovation}		{1}		{<c07>%sender%<c12> lance une ovation à <c06>%pseudo%<c12>. <c04>✨<s>}}
+
+	{{!prospérité}	{0}		{<c07>%sender%<c12> souhaite la prospérité… à soi. <c04>🍀<s>}}
+	{{!prospérité}	{1}		{<c07>%sender%<c12> souhaite prospérité à <c06>%pseudo%<c12>. <c04>🍀<s>}}
+
+	{{!goûter}		{0}		{<c07>%sender%<c12> prépare un goûter gourmand. <c04>🍪<s>}}
+	{{!goûter}		{1}		{<c07>%sender%<c12> invite <c06>%pseudo%<c12> au goûter. <c04>🍪<s>}}
+
+	{{!soupe}		{0}		{<c07>%sender%<c12> déguste une soupe réconfortante. <c04>🥣<s>}}
+	{{!soupe}		{1}		{<c07>%sender%<c12> sert une soupe à <c06>%pseudo%<c12>. <c04>🥣<s>}}
+
+	{{!entremets}	{0}		{<c07>%sender%<c12> se réserve un dessert. <c04>🍮<s>}}
+	{{!entremets}	{1}		{<c07>%sender%<c12> partage un dessert avec <c06>%pseudo%<c12>. <c04>🍮<s>}}
+
+	{{!invitation}	{0}		{<c07>%sender%<c12> s’invite à sa propre table. <c04>📨<s>}}
+	{{!invitation}	{1}		{<c07>%sender%<c12> invite poliment <c06>%pseudo%<c12>. <c04>📨<s>}}
+
+	{{!partage}		{0}		{<c07>%sender%<c12> apprend à partager… avec soi. <c04>🤝<s>}}
+	{{!partage}		{1}		{<c07>%sender%<c12> partage un moment avec <c06>%pseudo%<c12>. <c04>🤝<s>}}
+
+	{{!toast}		{0}		{<c07>%sender%<c12> lève son verre au plafond. <c04>🥂<s>}}
+	{{!toast}		{1}		{<c07>%sender%<c12> porte un toast à <c06>%pseudo%<c12>. <c04>🥂<s>}}
+
+	{{!farce}		{0}		{<c07>%sender%<c12> prépare une blague… pour plus tard. <c04>🃏<s>}}
+	{{!farce}		{1}		{<c07>%sender%<c12> entraîne <c06>%pseudo%<c12> dans une farce joyeuse. <c04>🃏<s>}}
 }

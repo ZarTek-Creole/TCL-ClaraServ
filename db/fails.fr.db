@@ -1,0 +1,36 @@
+# Fails ClaraServ (FR) — utilisés seulement si failrate > 0
+# Parser non-exécutable. Textes originaux.
+
+!kiss 0
+<c07>%sender%<c12> rate son baiser et embrasse un mur. <s>
+<c07>%sender%<c12> glisse avant d’atteindre ses propres lèvres. <s>
+
+!kiss 1
+<c07>%sender%<c12> glisse et termine par terre devant <c06>%pseudo%<c12>. <s>
+Un courant d’air dévie le baiser de <c07>%sender%<c12> loin de <c06>%pseudo%<c12>. <s>
+<c06>%pseudo%<c12> esquive le baiser de <c07>%sender%<c12> par réflexe. <s>
+
+!calin 0
+<c07>%sender%<c12> se cogne le coude en voulant se câliner. <s>
+
+!calin 1
+Le câlin de <c07>%sender%<c12> est trop enthousiaste : <c06>%pseudo%<c12> demande de l’air. <s>
+<c06>%pseudo%<c12> se faufile hors du câlin de <c07>%sender%<c12>. <s>
+
+!biere 0
+La bière de <c07>%sender%<c12> mousse… partout sauf dans le verre. <s>
+
+!biere 1
+<c07>%sender%<c12> renverse la bière avant d’atteindre <c06>%pseudo%<c12>. <s>
+
+!pizza 0
+La part de <c07>%sender%<c12> tombe face fromage contre le sol. <s>
+
+!pizza 1
+<c07>%sender%<c12> et <c06>%pseudo%<c12> se disputent la dernière part… personne ne l’a. <s>
+
+!rose 0
+Les pétales de la rose de <c07>%sender%<c12> s’envolent tous d’un coup. <s>
+
+!rose 1
+La rose de <c07>%sender%<c12> perd ses pétales avant <c06>%pseudo%<c12>. <s>

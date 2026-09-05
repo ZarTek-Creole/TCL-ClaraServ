@@ -10,14 +10,26 @@ Ce fichier suit les changements fonctionnels et de maintenance de ClaraServ.
 | Legacy | Suppression du fichier de configuration hôte legacy de la branche de travail (l’historique Git peut encore le contenir — rotation des secrets recommandée ; voir `docs/SECURITY.md`). |
 | Lifecycle | Contrôles standalone : stop-file, PID, poll, codes de sortie EOF/volontaire, trap Tclx optionnel. |
 | Exploitation | Script `bin/claraserv-screen` (start/stop/restart/status/attach/join/logs/foreground) et exemples `systemd/`. |
-| Configuration | Placeholders labo renforcés ; `runtime_dir` / `instance_name` ; préflight structurel. |
+| Configuration | Placeholders labo renforcés ; `runtime_dir` / `instance_name` ; préflight structurel ; optionnel `failrate` / `rate_limit_cooldown`. |
 | Qualité | Makefile minimal, healthcheck, tests hors réseau, harness process local. |
 | Documentation | Consolidation vers README + ARCHITECTURE / OPERATIONS / SECURITY / UNREALIRCD / CLEANUP_MANIFEST. |
 | UX commandes | Réponse privée pour `!*` inconnu ; suggestion déterministe (distance 1, unique). |
 | Rendu IRC | Reset final centralisé ; sanitize des pseudos ; plafond message 400 octets (DÉDUIT). |
 | Random | Exclusion d’une liste de commandes sensibles historiques. |
-| Animations FR | Ajout de 18 commandes (niveaux 0+1, `<s>`, sans marque). |
-| Qualité DB | Validateur `tools/validate-animations-db.tcl` intégré à `make check`. |
+| Animations FR | Ajout de commandes (niveaux 0+1, `<s>`, sans marque) + vague v1.3. |
+| Qualité DB | Validateur `tools/validate-animations-db.tcl` intégré à `make check` (aliases/variants/fails). |
+| **v1.3 enrichissement** | Alias (`db/aliases.fr.db`), variantes, fails optionnels (`failrate` défaut 0), `%keyword%`, cible multi-mots, `reload` admin PRIV, anti-flood 2s, ~30 nouvelles canoniques (réécriture originale, licence jokes non importée verbatim). |
+
+## 1.3.0 — 2026-09-05
+
+| Domaine | Évolution |
+|---|---|
+| Alias | Résolution `!alias` → canonique ; `!pelle` non aliasé vers `!kiss`. |
+| Variantes / fail | Fichiers `variants.fr.db` / `fails.fr.db` ; fusion avec texte historique. |
+| Placeholders | `%keyword%` = forme tapée normalisée sans `!`. |
+| Cible | Reste de ligne multi-mots + sanitation IRC. |
+| Admin | `reload <password>` recharge les DB animations (pas la conf). |
+| Anti-flood | Cooldown par salon+nick (défaut 2 s) sur animations. |
 
 ## 1.2.0 — 2026-08-28
 

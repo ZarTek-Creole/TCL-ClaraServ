@@ -278,12 +278,20 @@ file delete -force $stopDirectory
 set ::ClaraServ::database {}
 namespace eval ::ClaraServ [list source [file join $projectDirectory db database.fr.db]]
 ::ClaraServ::FCT::DB:Index
+::ClaraServ::FCT::DB:Load:Enrichment:Files
+set ::ClaraServ::rateLimitCooldown 0
+array unset ::ClaraServ::rateLimit
+set ::ClaraServ::failRate 0
+set ::ClaraServ::randForceIndex -1
+set ::ClaraServ::randForceFail {}
 
 set ::TestBot::messages {}
 set ::ClaraServ::BOT_ID ::TestBot
 set ::ClaraServ::config(uplink_useprivmsg) 1
 set ::ClaraServ::config(log_command) 0
 set ::ClaraServ::config(service_nick) ClaraServ
+set ::ClaraServ::config(admin_password) test-admin-pass-for-unit
+set ::ClaraServ::config(FILE_DB) database.fr.db
 
 # Texte sans préfixe ! → aucune réponse
 set ::TestBot::messages {}
@@ -417,6 +425,69 @@ file delete -force $badDir
 
 # CONNECT_ID toujours vide (pas de réseau dans ces tests)
 assertEqual "" $::ClaraServ::CONNECT_ID "Toujours pas d’auto-connect après tests UX"
+
+# --- v1.3 alias / multi-mots / variants / fail / flood / reload ---
+assertEqual "!kiss" [::ClaraServ::FCT::DB:ResolveAlias !bisous] "Alias !bisous → !kiss"
+assertEqual "!kiss" [::ClaraServ::FCT::DB:ResolveAlias !BISOUS] "Alias normalisation casse"
+assertEqual "!pelle" [::ClaraServ::FCT::DB:ResolveAlias !pelle] "!pelle reste canonique"
+assertEqual "!zzzz" [::ClaraServ::FCT::DB:ResolveAlias !zzzz] "Alias inexistant inchangé"
+
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::FCT::Dispatch:Message Alice #lounge "!bisous Bob"] "Alias !bisous exécuté"
+set aliasMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "Alice" $aliasMsg] >= 0} "Alias : sender présent"
+assertTrue {[string first "Bob" $aliasMsg] >= 0} "Alias : cible présente"
+
+assertEqual "Ami" [::ClaraServ::FCT::Parse:Target "Ami"] "ParseTarget mono"
+assertEqual "Jean Pierre" [::ClaraServ::FCT::Parse:Target "Jean Pierre"] "ParseTarget multi"
+assertEqual "" [::ClaraServ::FCT::Parse:Target "   "] "ParseTarget espaces"
+assertEqual "rouge" [::ClaraServ::FCT::Parse:Target "\x03rouge"] "ParseTarget strip couleur"
+assertEqual "Ami Pierre" [::ClaraServ::FCT::Parse:Target "Ami\nPierre"] "ParseTarget CR/LF→espace"
+
+set ::TestBot::messages {}
+::ClaraServ::FCT::Dispatch:Message Alice #lounge "!kiss Jean Pierre"
+set multiMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "Jean Pierre" $multiMsg] >= 0} "Cible multi-mots dans la réponse"
+
+set vars [::ClaraServ::FCT::DB:GetVariants !kiss 0]
+assertTrue {[llength $vars] >= 1} "Variantes !kiss/0 non vides"
+set ::ClaraServ::randForceIndex 0
+assertEqual [lindex $vars 0] [::ClaraServ::FCT::DB:ChooseVariant $vars] "ChooseVariant index forcé"
+set ::ClaraServ::randForceIndex -1
+
+set ::ClaraServ::failRate 0
+assertEqual "0" [::ClaraServ::FCT::DB:ShouldFail !kiss 0] "failrate=0 → pas de fail"
+set ::ClaraServ::failRate 50
+set ::ClaraServ::randForceFail 0
+assertEqual "0" [::ClaraServ::FCT::DB:ShouldFail !kiss 0] "fail forcé 0"
+set ::ClaraServ::randForceFail 1
+assertEqual "1" [::ClaraServ::FCT::DB:ShouldFail !kiss 0] "fail forcé 1"
+set ::ClaraServ::randForceFail {}
+set ::ClaraServ::failRate 0
+
+set ::ClaraServ::rateLimitCooldown 2
+array unset ::ClaraServ::rateLimit
+assertEqual "1" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood 1er OK"
+assertEqual "0" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood 2e limité"
+assertEqual "1" [::ClaraServ::FCT::RateLimit:Allowed #t Alice 1] "flood bypass"
+set ::ClaraServ::rateLimitCooldown 0
+array unset ::ClaraServ::rateLimit
+
+assertTrue {[::ClaraServ::FCT::DB:GET !bonapp 0] ne "-1"} "Nouvelle cmd !bonapp"
+assertTrue {[::ClaraServ::FCT::DB:GET !clin 1] ne "-1"} "Nouvelle cmd !clin"
+assertTrue {[::ClaraServ::FCT::DB:GET !lasagne 0] ne "-1"} "Nouvelle cmd !lasagne"
+
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PRIV:RELOAD Alice - reload [list test-admin-pass-for-unit]] \
+    "reload admin OK"
+assertTrue {[string match "*Reload*" [lindex [lindex $::TestBot::messages 0] 2]]} "reload message succès"
+
+set ::TestBot::messages {}
+assertEqual "0" [::ClaraServ::IRC:CMD:PRIV:RELOAD Alice - reload [list mauvais]] "reload mauvais mdp"
+assertTrue {[string match "*refus*" [string tolower [lindex [lindex $::TestBot::messages 0] 2]]]} "reload refus"
+
+set renderedKw [::ClaraServ::FCT::Render:Template "kw=%keyword% s=%sender%" Alice Bob kiss #chan]
+assertEqual "kw=kiss s=Alice" $renderedKw "RenderTemplate %keyword%"
 
 if {$failures > 0} {
     puts stderr "\n$failures échec(s) de test."

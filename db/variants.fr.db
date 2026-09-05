@@ -1,0 +1,128 @@
+# Variantes ClaraServ (FR) — parser non-exécutable
+# En-tête : !commande niveau
+# Puis une variante par ligne (textes originaux, ZCT, <s>)
+
+!kiss 0
+<c07>%sender%<c12> envoie un baiser dans le vide. <c04>♥<s>
+<c07>%sender%<c12> s’embrasse le bout des doigts. <c04>♥<s>
+Un baiser solitaire pour <c07>%sender%<c12>. <c04>♥<s>
+
+!kiss 1
+<c07>%sender%<c12> offre un doux baiser à <c06>%pseudo%<c12>. <c04>♥<s>
+<c07>%sender%<c12> dépose un baiser sur la main de <c06>%pseudo%<c12>. <c04>♥<s>
+<c06>%pseudo%<c12> reçoit un baiser chaleureux de <c07>%sender%<c12>. <c04>♥<s>
+Le souffle de <c07>%sender%<c12> effleure <c06>%pseudo%<c12>. <c04>♥<s>
+
+!calin 0
+<c07>%sender%<c12> se serre dans ses propres bras. <c04>⊂(◉‿◉)つ<s>
+Un câlin pour personne : <c07>%sender%<c12> attend. <c04>⊂(◉‿◉)つ<s>
+
+!calin 1
+<c07>%sender%<c12> enveloppe <c06>%pseudo%<c12> d’un gros câlin. <c04>⊂(◉‿◉)つ<s>
+<c06>%pseudo%<c12> reçoit un câlin réconfortant de <c07>%sender%<c12>. <c04>⊂(◉‿◉)つ<s>
+<c07>%sender%<c12> serre <c06>%pseudo%<c12> tout contre soi. <c04>⊂(◉‿◉)つ<s>
+
+!biere 0
+<c07>%sender%<c12> lève une bière bien fraîche. Santé ! <c04>🍺<s>
+Une mousse pour <c07>%sender%<c12>, rien que pour soi. <c04>🍺<s>
+
+!biere 1
+<c07>%sender%<c12> tend une bière à <c06>%pseudo%<c12>. Santé ! <c04>🍺<s>
+<c07>%sender%<c12> trinque joyeusement avec <c06>%pseudo%<c12>. <c04>🍺<s>
+Une pinte partagée : <c07>%sender%<c12> → <c06>%pseudo%<c12>. <c04>🍺<s>
+
+!applaudir 0
+<c07>%sender%<c12> s’applaudit tout seul. Bravo quand même. <c04>👏<s>
+Une ovation personnelle pour <c07>%sender%<c12>. <c04>👏<s>
+
+!applaudir 1
+<c07>%sender%<c12> applaudit chaleureusement <c06>%pseudo%<c12>. <c04>👏<s>
+Standing ovation de <c07>%sender%<c12> pour <c06>%pseudo%<c12> ! <c04>👏<s>
+
+!cafe 0
+<c07>%sender%<c12> sirote un café bien serré. <c04>☕<s>
+Pause café solo pour <c07>%sender%<c12>. <c04>☕<s>
+
+!cafe 1
+<c07>%sender%<c12> offre un café fumant à <c06>%pseudo%<c12>. <c04>☕<s>
+<c07>%sender%<c12> partage une pause café avec <c06>%pseudo%<c12>. <c04>☕<s>
+
+!chocolat 0
+<c07>%sender%<c12> croque un carré de chocolat. <c04>🍫<s>
+Gourmandise discrète : <c07>%sender%<c12> et le cacao. <c04>🍫<s>
+
+!chocolat 1
+<c07>%sender%<c12> glisse du chocolat à <c06>%pseudo%<c12>. <c04>🍫<s>
+Douceur partagée : <c07>%sender%<c12> → <c06>%pseudo%<c12>. <c04>🍫<s>
+
+!the 0
+<c07>%sender%<c12> laisse infuser une tasse de thé. <c04>🍵<s>
+Thé tiède, esprit calme : <c07>%sender%<c12>. <c04>🍵<s>
+
+!the 1
+<c07>%sender%<c12> sert du thé à <c06>%pseudo%<c12>. <c04>🍵<s>
+Une tasse pour deux : <c07>%sender%<c12> et <c06>%pseudo%<c12>. <c04>🍵<s>
+
+!pouet 0
+<c07>%sender%<c12> laisse échapper un petit pouet discret. <c04>*pouet*<s>
+Effervescence soudaine autour de <c07>%sender%<c12>. <c04>*pouet*<s>
+
+!pouet 1
+<c07>%sender%<c12> vise <c06>%pseudo%<c12> d’un pouet stratégique. <c04>*pouet*<s>
+Alerte gaz : <c07>%sender%<c12> → <c06>%pseudo%<c12>. <c04>*pouet*<s>
+
+!pizza 0
+<c07>%sender%<c12> dévore une part de pizza. <c04>🍕<s>
+Soirée pizza solo pour <c07>%sender%<c12>. <c04>🍕<s>
+
+!pizza 1
+<c07>%sender%<c12> partage une pizza avec <c06>%pseudo%<c12>. <c04>🍕<s>
+Une part croustillante pour <c06>%pseudo%<c12>, offerte par <c07>%sender%<c12>. <c04>🍕<s>
+
+!rose 0
+<c07>%sender%<c12> sent une rose imaginaire. <c04>🌹<s>
+Une rose pour soi : <c07>%sender%<c12>. <c04>🌹<s>
+
+!rose 1
+<c07>%sender%<c12> tend une rose à <c06>%pseudo%<c12>. <c04>🌹<s>
+Un pétale pour <c06>%pseudo%<c12>, de la part de <c07>%sender%<c12>. <c04>🌹<s>
+
+!embrasse 0
+<c07>%sender%<c12> embrasse le vent. <c04>♥<s>
+Un baiser dans l’air : <c07>%sender%<c12>. <c04>♥<s>
+
+!embrasse 1
+<c07>%sender%<c12> embrasse tendrement <c06>%pseudo%<c12>. <c04>♥<s>
+<c06>%pseudo%<c12> est couvert(e) de bisous par <c07>%sender%<c12>. <c04>♥<s>
+
+!tendresse 0
+<c07>%sender%<c12> s’offre un moment de tendresse. <c04>💞<s>
+Douceur intérieure pour <c07>%sender%<c12>. <c04>💞<s>
+
+!tendresse 1
+<c07>%sender%<c12> entoure <c06>%pseudo%<c12> de tendresse. <c04>💞<s>
+Un geste tendre : <c07>%sender%<c12> → <c06>%pseudo%<c12>. <c04>💞<s>
+
+!mord 0
+<c07>%sender%<c12> croque dans le vide. Aïe. <c04>😈<s>
+Petite morsure solitaire : <c07>%sender%<c12>. <c04>😈<s>
+
+!mord 1
+<c07>%sender%<c12> mordille gentiment <c06>%pseudo%<c12>. <c04>😈<s>
+<c06>%pseudo%<c12> reçoit une mini-morsure de <c07>%sender%<c12>. <c04>😈<s>
+
+!dodo 0
+<c07>%sender%<c12> bâille et cherche un oreiller. <c04>😴<s>
+Mode sommeil activé pour <c07>%sender%<c12>. <c04>😴<s>
+
+!dodo 1
+<c07>%sender%<c12> souhaite de beaux rêves à <c06>%pseudo%<c12>. <c04>😴<s>
+<c07>%sender%<c12> berce <c06>%pseudo%<c12> vers le dodo. <c04>😴<s>
+
+!massage 0
+<c07>%sender%<c12> se détend les épaules. <c04>💆<s>
+Auto-massage express : <c07>%sender%<c12>. <c04>💆<s>
+
+!massage 1
+<c07>%sender%<c12> offre un massage relaxant à <c06>%pseudo%<c12>. <c04>💆<s>
+Les tensions de <c06>%pseudo%<c12> fondent grâce à <c07>%sender%<c12>. <c04>💆<s>

@@ -1,0 +1,38 @@
+# Aliases ClaraServ (FR) — format ligne : !alias !canonique
+# Parser non-exécutable (pas de source Tcl).
+# Pas d’alias marques. Pas d’alias vers sensibles. !pelle reste canonique (pas d’alias vers !kiss).
+
+!bisous !kiss
+!applause !applaudir
+!cacao !chocolat
+!prout !pouet
+!hug !câlin
+!highfive !tope
+!wink !clin
+!gift !cadeau
+!tickle !chatouille
+!pat !tapoter
+!drink !boire
+!eat !manger
+!coffee !café
+!tea !thé
+!beer !bière
+!clap !applaudir
+!cuddle !câlin
+!snack !manger
+!cheers !boire
+!yawn !dodo
+!nap !dodo
+!bloom !fleur
+!flower !fleur
+!heart !coeur
+!smile !sourire
+!wave !salut
+!dance !danse
+!sing !chante
+!pop !popcorn
+!nibble !mord
+!brunch !manger
+!cuddleup !serrer
+!squeeze !serrer
+!present !cadeau

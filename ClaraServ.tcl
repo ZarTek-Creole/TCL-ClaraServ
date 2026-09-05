@@ -30,10 +30,25 @@ namespace eval ::ClaraServ {
     # Commandes exclues de !random (contenu sensible historique) — liste code, pas de format DB.
     variable randomExcludeCommands [list !sexy !string !fesses !fessée !fouet]
 
+    # Enrichissement vNext — fichiers données (parser non-exécutable, pas source).
+    variable aliasesDict [dict create]
+    variable variantsDict [dict create]
+    variable failsDict [dict create]
+    # failrate : pourcentage 0–100 ; 0 = désactivé (défaut).
+    variable failRate 0
+    # Anti-flood salon+sender (secondes) ; 0 = désactivé.
+    variable rateLimitCooldown 2
+    variable rateLimit
+    array set rateLimit {}
+    # Hooks tests : index forcé pour ChooseVariant ; -1 = aléatoire.
+    variable randForceIndex -1
+    # Hooks tests : "" = aléatoire ; 0/1 force ShouldFail.
+    variable randForceFail {}
+
     set scriptDirectory [file dirname [file normalize [info script]]]
     array set SCRIPT [list \
         name        "ClaraServ Service" \
-        version     "1.2.0" \
+        version     "1.3.0" \
         author      "ZarTek Creole" \
         url         "https://github.com/ZarTek-Creole/TCL-ClaraServ" \
         needZct     "0.1.0" \
@@ -51,7 +66,7 @@ namespace eval ::ClaraServ {
         service_chanmodes service_usermodes admin_password \
         log_command db_lang \
     ]
-    set config(optionalKeys) [list serverinfo_id service_chanmodes service_usermodes runtime_dir instance_name]
+    set config(optionalKeys) [list serverinfo_id service_chanmodes service_usermodes runtime_dir instance_name failrate rate_limit_cooldown]
 }
 
 namespace eval ::ClaraServ::FCT {}
@@ -158,6 +173,15 @@ proc ::ClaraServ::FCT::Sanitize:Irc:Text {text} {
     # Supprime C0 + DEL (dont \x02 \x03 \x0f \x16 \x1f, CR, LF) ; conserve le reste UTF-8.
     regsub -all {[\x00-\x1f\x7f]} $text {} text
     return $text
+}
+
+# Cible multi-mots : trim, CR/LF→espace, séquences couleur IRC, puis C0/DEL.
+proc ::ClaraServ::FCT::Parse:Target {raw} {
+    regsub -all {[\r\n]+} $raw { } raw
+    set raw [string trim $raw]
+    regsub -all {\x03[0-9]{0,2}(,[0-9]{0,2})?} $raw {} raw
+    regsub -all {[\x00-\x1f\x7f]} $raw {} raw
+    return [string trim $raw]
 }
 
 # Distance d’édition exactement 1 (substitution, insertion ou suppression).
@@ -389,6 +413,300 @@ proc ::ClaraServ::FCT::DB:CMD:LIST {} {
     return $commandNames
 }
 
+# Lit un fichier données en ignorant les commentaires # et lignes vides (pas de source/eval).
+proc ::ClaraServ::FCT::DB:Read:Data:Lines {path} {
+    set fh [open $path r]
+    try {
+        fconfigure $fh -encoding utf-8
+        set lines {}
+        while {[gets $fh line] >= 0} {
+            set trimmed [string trim $line]
+            if {$trimmed eq "" || [string match "#*" $trimmed]} {
+                continue
+            }
+            lappend lines $trimmed
+        }
+        return $lines
+    } finally {
+        close $fh
+    }
+}
+
+# Charge aliases : une ligne « !alias !canonique » par entrée.
+proc ::ClaraServ::FCT::DB:LoadAliases {path} {
+    variable ::ClaraServ::aliasesDict
+    variable ::ClaraServ::commandResponses
+    variable ::ClaraServ::randomExcludeCommands
+
+    set newDict [dict create]
+    set brandDeny [list !heineken !leffe !stella !despe !1664 !guinness !coca !banania]
+    foreach line [::ClaraServ::FCT::DB:Read:Data:Lines $path] {
+        set parts [regexp -all -inline {\S+} $line]
+        if {[llength $parts] != 2} {
+            return -code error "Alias invalide (attendu « !alias !canonique ») : $line"
+        }
+        set aliasName [::ClaraServ::FCT::Command:Normalise [lindex $parts 0]]
+        set targetName [::ClaraServ::FCT::Command:Normalise [lindex $parts 1]]
+        if {![string match "\!*" $aliasName] || ![string match "\!*" $targetName]} {
+            return -code error "Alias invalide (préfixe ! requis) : $line"
+        }
+        if {$aliasName in $brandDeny || $targetName in $brandDeny} {
+            return -code error "Alias marque refusé : $line"
+        }
+        foreach blocked $randomExcludeCommands {
+            if {$targetName eq [::ClaraServ::FCT::Command:Normalise $blocked]} {
+                return -code error "Alias vers commande sensible refusé : $line"
+            }
+        }
+        if {![dict exists $commandResponses $targetName]} {
+            return -code error "Alias vers commande inexistante : $line"
+        }
+        if {[dict exists $commandResponses $aliasName]} {
+            return -code error "Alias en collision avec une commande canonique : $aliasName"
+        }
+        if {[dict exists $newDict $aliasName]} {
+            return -code error "Alias dupliqué : $aliasName"
+        }
+        dict set newDict $aliasName $targetName
+    }
+    # Pas d’alias → alias (cible doit être canonique, déjà vérifié via commandResponses).
+    foreach {aliasName targetName} $newDict {
+        if {[dict exists $newDict $targetName]} {
+            return -code error "Alias vers un autre alias refusé : $aliasName → $targetName"
+        }
+    }
+    set aliasesDict $newDict
+    return [dict size $aliasesDict]
+}
+
+# Charge variants/fails : en-tête « !cmd 0|1 » puis lignes de texte jusqu’au prochain en-tête.
+proc ::ClaraServ::FCT::DB:Load:Text:Sections {path} {
+    set result [dict create]
+    set currentKey {}
+    set bucket {}
+    foreach line [::ClaraServ::FCT::DB:Read:Data:Lines $path] {
+        if {[regexp {^(![^\s]+)\s+([01])$} $line -> cmd level]} {
+            if {$currentKey ne "" && [llength $bucket] > 0} {
+                dict set result $currentKey $bucket
+            }
+            set norm [::ClaraServ::FCT::Command:Normalise $cmd]
+            set currentKey [list $norm $level]
+            set bucket {}
+            continue
+        }
+        if {$currentKey eq ""} {
+            return -code error "Texte hors section (manque en-tête !cmd niveau) : $line"
+        }
+        lappend bucket $line
+    }
+    if {$currentKey ne "" && [llength $bucket] > 0} {
+        dict set result $currentKey $bucket
+    }
+    return $result
+}
+
+proc ::ClaraServ::FCT::DB:LoadVariants {path} {
+    variable ::ClaraServ::variantsDict
+    set variantsDict [::ClaraServ::FCT::DB:Load:Text:Sections $path]
+    return [dict size $variantsDict]
+}
+
+proc ::ClaraServ::FCT::DB:LoadFails {path} {
+    variable ::ClaraServ::failsDict
+    set failsDict [::ClaraServ::FCT::DB:Load:Text:Sections $path]
+    return [dict size $failsDict]
+}
+
+proc ::ClaraServ::FCT::DB:ResolveAlias {command} {
+    variable ::ClaraServ::aliasesDict
+    set normalised [::ClaraServ::FCT::Command:Normalise $command]
+    if {[dict exists $aliasesDict $normalised]} {
+        return [dict get $aliasesDict $normalised]
+    }
+    return $normalised
+}
+
+proc ::ClaraServ::FCT::DB:GetVariants {command level} {
+    variable ::ClaraServ::variantsDict
+    set normalised [::ClaraServ::FCT::Command:Normalise $command]
+    set key [list $normalised $level]
+    set historical [::ClaraServ::FCT::DB:GET $normalised $level]
+    set extras {}
+    if {[dict exists $variantsDict $key]} {
+        set extras [dict get $variantsDict $key]
+    }
+    if {$historical eq "-1"} {
+        return $extras
+    }
+    if {[llength $extras] == 0} {
+        return [list $historical]
+    }
+    if {$historical ni $extras} {
+        return [concat [list $historical] $extras]
+    }
+    return $extras
+}
+
+proc ::ClaraServ::FCT::DB:GetFails {command level} {
+    variable ::ClaraServ::failsDict
+    set normalised [::ClaraServ::FCT::Command:Normalise $command]
+    set key [list $normalised $level]
+    if {[dict exists $failsDict $key]} {
+        return [dict get $failsDict $key]
+    }
+    return {}
+}
+
+proc ::ClaraServ::FCT::DB:ChooseVariant {variants} {
+    variable ::ClaraServ::randForceIndex
+    set n [llength $variants]
+    if {$n == 0} {
+        return ""
+    }
+    if {$n == 1} {
+        return [lindex $variants 0]
+    }
+    if {[string is integer -strict $randForceIndex] && $randForceIndex >= 0} {
+        return [lindex $variants [expr {$randForceIndex % $n}]]
+    }
+    return [lindex $variants [expr {int(rand() * $n)}]]
+}
+
+proc ::ClaraServ::FCT::DB:ShouldFail {command level} {
+    variable ::ClaraServ::failRate
+    variable ::ClaraServ::randForceFail
+    if {![string is integer -strict $failRate] || $failRate <= 0} {
+        return 0
+    }
+    if {[llength [::ClaraServ::FCT::DB:GetFails $command $level]] == 0} {
+        return 0
+    }
+    if {$randForceFail ne ""} {
+        return [expr {$randForceFail ? 1 : 0}]
+    }
+    set capped $failRate
+    if {$capped > 100} {
+        set capped 100
+    }
+    return [expr {int(rand() * 100) < $capped}]
+}
+
+proc ::ClaraServ::FCT::Render:Template {template sender pseudo keyword destination} {
+    set response [::ZCT::TXT::REPLACE_SUBSTITUTE $template $destination]
+    return [string map [list \
+        %pseudo% $pseudo \
+        %sender% $sender \
+        %keyword% $keyword \
+        %destination% $destination \
+    ] $response]
+}
+
+proc ::ClaraServ::FCT::RateLimit:Cleanup {now} {
+    variable ::ClaraServ::rateLimit
+    foreach key [array names rateLimit] {
+        if {($now - $rateLimit($key)) > 60} {
+            unset rateLimit($key)
+        }
+    }
+}
+
+# Retourne 1 si autorisé, 0 si limité. bypass=1 ignore le cooldown (tests / admin).
+proc ::ClaraServ::FCT::RateLimit:Allowed {salon sender {bypass 0}} {
+    variable ::ClaraServ::rateLimitCooldown
+    variable ::ClaraServ::rateLimit
+
+    if {$bypass || ![string is integer -strict $rateLimitCooldown] || $rateLimitCooldown <= 0} {
+        return 1
+    }
+    set now [clock seconds]
+    ::ClaraServ::FCT::RateLimit:Cleanup $now
+    set key [list $salon $sender]
+    if {[info exists rateLimit($key)]} {
+        if {($now - $rateLimit($key)) < $rateLimitCooldown} {
+            return 0
+        }
+    }
+    set rateLimit($key) $now
+    return 1
+}
+
+proc ::ClaraServ::FCT::DB:Load:Enrichment:Files {} {
+    set aliasesPath [file join [::ClaraServ::FCT::Get:ScriptDir db] aliases.fr.db]
+    set variantsPath [file join [::ClaraServ::FCT::Get:ScriptDir db] variants.fr.db]
+    set failsPath [file join [::ClaraServ::FCT::Get:ScriptDir db] fails.fr.db]
+
+    variable ::ClaraServ::aliasesDict
+    variable ::ClaraServ::variantsDict
+    variable ::ClaraServ::failsDict
+    set aliasesDict [dict create]
+    set variantsDict [dict create]
+    set failsDict [dict create]
+
+    if {[file exists $aliasesPath]} {
+        ::ClaraServ::FCT::DB:LoadAliases $aliasesPath
+    }
+    if {[file exists $variantsPath]} {
+        ::ClaraServ::FCT::DB:LoadVariants $variantsPath
+    }
+    if {[file exists $failsPath]} {
+        ::ClaraServ::FCT::DB:LoadFails $failsPath
+    }
+}
+
+proc ::ClaraServ::FCT::DB:Apply:Runtime:Config {} {
+    variable ::ClaraServ::config
+    variable ::ClaraServ::failRate
+    variable ::ClaraServ::rateLimitCooldown
+
+    if {[info exists config(failrate)] && [string is integer -strict $config(failrate)]} {
+        set failRate $config(failrate)
+    }
+    if {[info exists config(rate_limit_cooldown)] && [string is integer -strict $config(rate_limit_cooldown)]} {
+        set rateLimitCooldown $config(rate_limit_cooldown)
+    }
+}
+
+# Recharge database.<lang>.db + aliases/variants/fails (pas ClaraServ.conf).
+proc ::ClaraServ::FCT::DB:Reload:Animations {} {
+    variable ::ClaraServ::config
+    variable ::ClaraServ::database
+    variable ::ClaraServ::commandResponses
+    variable ::ClaraServ::commandLabels
+    variable ::ClaraServ::commandNames
+    variable ::ClaraServ::aliasesDict
+    variable ::ClaraServ::variantsDict
+    variable ::ClaraServ::failsDict
+
+    set snapDb $database
+    set snapResp $commandResponses
+    set snapLabels $commandLabels
+    set snapNames $commandNames
+    set snapAliases $aliasesDict
+    set snapVariants $variantsDict
+    set snapFails $failsDict
+
+    if {[catch {
+        set animationDatabase [file join [::ClaraServ::FCT::Get:ScriptDir db] $config(FILE_DB)]
+        if {![file exists $animationDatabase]} {
+            return -code error "Base d’animations introuvable : $animationDatabase"
+        }
+        set database {}
+        namespace eval ::ClaraServ [list source $animationDatabase]
+        ::ClaraServ::FCT::DB:Index
+        ::ClaraServ::FCT::DB:Load:Enrichment:Files
+    } err]} {
+        set database $snapDb
+        set commandResponses $snapResp
+        set commandLabels $snapLabels
+        set commandNames $snapNames
+        set aliasesDict $snapAliases
+        set variantsDict $snapVariants
+        set failsDict $snapFails
+        return -code error "Reload animations échoué (état précédent conservé) : $err"
+    }
+    return 1
+}
+
 proc ::ClaraServ::FCT::DB:DATA:EXIST {databaseName data} {
     set databaseFile [file join [::ClaraServ::FCT::Get:ScriptDir db] "${databaseName}.db"]
     if {![file exists $databaseFile]} {
@@ -552,7 +870,7 @@ proc ::ClaraServ::FCT::Dispatch:Message {sender destination message} {
         return [::ClaraServ::FCT::Dispatch:Command $procedure $sender $destination $command $data]
     }
 
-    if {[::ClaraServ::FCT::DB:GET $command 0] ne "-1"} {
+    if {[::ClaraServ::FCT::DB:GET [::ClaraServ::FCT::DB:ResolveAlias $command] 0] ne "-1"} {
         return [::ClaraServ::FCT::Dispatch:Command ::ClaraServ::IRC:CMD:PUB:DYNAMIC $sender $destination $command $data]
     }
     return [::ClaraServ::FCT::Reply:Unknown:Public $sender $command]
@@ -571,6 +889,7 @@ proc ::ClaraServ::INIT {} {
         return -code error "Chargement de $configFile impossible : $errorMessage"
     }
     ::ClaraServ::FCT::Check:Config
+    ::ClaraServ::FCT::DB:Apply:Runtime:Config
 
     set config(FILE_DB) [format "database.%s.db" [string tolower $config(db_lang)]]
     ::ClaraServ::FCT::DB:INIT [concat $config(dbList) [list $config(FILE_DB)]]
@@ -583,6 +902,7 @@ proc ::ClaraServ::INIT {} {
         return -code error "Chargement de $animationDatabase impossible : $errorMessage"
     }
     ::ClaraServ::FCT::DB:Index
+    ::ClaraServ::FCT::DB:Load:Enrichment:Files
 
     ::ClaraServ::log info [format "%s v%s chargé (par %s)." $SCRIPT(name) $SCRIPT(version) $SCRIPT(author)]
 }
@@ -763,9 +1083,14 @@ proc ::ClaraServ::FCT::Create:Service {} {
 proc ::ClaraServ::IRC:CMD:PUB:RANDOM {sender destination command data} {
     variable ::ClaraServ::randomExcludeCommands
 
+    if {![::ClaraServ::FCT::RateLimit:Allowed $destination $sender]} {
+        return 0
+    }
+
     set commands {}
     foreach candidate [::ClaraServ::FCT::DB:CMD:LIST] {
-        set normalised [::ClaraServ::FCT::Command:Normalise $candidate]
+        set resolved [::ClaraServ::FCT::DB:ResolveAlias $candidate]
+        set normalised [::ClaraServ::FCT::Command:Normalise $resolved]
         set excluded 0
         foreach blocked $randomExcludeCommands {
             if {$normalised eq [::ClaraServ::FCT::Command:Normalise $blocked]} {
@@ -786,28 +1111,47 @@ proc ::ClaraServ::IRC:CMD:PUB:RANDOM {sender destination command data} {
     return [::ClaraServ::IRC:CMD:PUB:DYNAMIC $sender $destination $randomCommand $data]
 }
 
-proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC {sender destination command pseudo} {
-    set sender [::ClaraServ::FCT::Sanitize:Irc:Text $sender]
-    if {[llength $pseudo] == 0} {
-        set response [::ClaraServ::FCT::DB:GET $command 0]
-        set pseudo ""
-    } else {
-        set response [::ClaraServ::FCT::DB:GET $command 1]
-        set pseudo [::ClaraServ::FCT::Sanitize:Irc:Text [lindex $pseudo 0]]
-    }
-
-    if {$response eq "-1"} {
+proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC {sender destination command data} {
+    if {![::ClaraServ::FCT::RateLimit:Allowed $destination $sender]} {
         return 0
     }
 
-    set response [::ZCT::TXT::REPLACE_SUBSTITUTE $response $destination]
-    set response [string map [list \
-        %pseudo% $pseudo \
-        %sender% $sender \
-        %destination% $destination \
-    ] $response]
+    set typedCommand [::ClaraServ::FCT::Command:Normalise $command]
+    set keyword [string range $typedCommand 1 end]
+    set resolved [::ClaraServ::FCT::DB:ResolveAlias $typedCommand]
+    set sender [::ClaraServ::FCT::Sanitize:Irc:Text $sender]
+
+    if {[llength $data] == 0} {
+        set level 0
+        set pseudo ""
+    } else {
+        set level 1
+        set pseudo [::ClaraServ::FCT::Parse:Target [join $data " "]]
+        if {$pseudo eq ""} {
+            set level 0
+        }
+    }
+
+    set variants [::ClaraServ::FCT::DB:GetVariants $resolved $level]
+    if {[llength $variants] == 0} {
+        return 0
+    }
+
+    if {[::ClaraServ::FCT::DB:ShouldFail $resolved $level]} {
+        set fails [::ClaraServ::FCT::DB:GetFails $resolved $level]
+        if {[llength $fails] > 0} {
+            set variants $fails
+        }
+    }
+
+    set response [::ClaraServ::FCT::DB:ChooseVariant $variants]
+    if {$response eq ""} {
+        return 0
+    }
+
+    set response [::ClaraServ::FCT::Render:Template $response $sender $pseudo $keyword $destination]
     ::ClaraServ::FCT::SENT:PRIVMSG $destination $response
-    ::ClaraServ::FCT::Log:Command $command $sender
+    ::ClaraServ::FCT::Log:Command $typedCommand $sender
     return 1
 }
 
@@ -818,12 +1162,21 @@ proc ::ClaraServ::IRC:CMD:PUB:CMDS {sender destination command data} {
 }
 
 proc ::ClaraServ::IRC:CMD:PRIV:CMDS {sender destination command data} {
+    variable ::ClaraServ::aliasesDict
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Liste des commandes d’animations<c04> :."
     ::ClaraServ::FCT::CMD:SHOW:LIST $sender
+    if {[dict size $aliasesDict] > 0} {
+        set aliasBits {}
+        foreach {aliasName targetName} $aliasesDict {
+            lappend aliasBits [format "%s→%s" $aliasName $targetName]
+        }
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
+            [format "<c04>.: <c12>Alias<c04> : <c06>%s<s>" [join [lsort -dictionary $aliasBits] " <c12>|<c06> "]]
+    }
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Autres commandes<c04> :."
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!help <c12>-<c04> Affiche l’aide"
-    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!<s><<c06>commande<s>> \[<c06>pseudonyme<s>\] <c12>-<c04> Exécute une animation"
-    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!random <s>\[<c06>pseudonyme<s>\] <c12>-<c04> Choisit une animation aléatoire"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!<s><<c06>commande<s>> \[<c06>cible multi-mots<s>\] <c12>-<c04> Exécute une animation"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!random <s>\[<c06>cible<s>\] <c12>-<c04> Choisit une animation aléatoire"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c12>!about <c12>-<c04> Affiche les informations sur %s" ${::ClaraServ::config(service_nick)}]
     ::ClaraServ::FCT::Log:Command $command $sender
     return 1
@@ -866,7 +1219,33 @@ proc ::ClaraServ::IRC:CMD:PRIV:HELP {sender destination command data} {
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>about <c07>-<c06> À propos de %s" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>join <s><<c06>#salon<s>> <<c06>mot_de_passe_admin<s>> <c07>-<c06> Ajoute %s au salon" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>part <s><<c06>#salon<s>> <<c06>mot_de_passe_admin<s>> <c07>-<c06> Retire %s du salon" $config(service_nick)]
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>reload <s><<c06>mot_de_passe_admin<s>> <c07>-<c06> Recharge les bases d’animations"
     ::ClaraServ::FCT::Log:Command $command $sender
+    return 1
+}
+
+proc ::ClaraServ::IRC:CMD:PRIV:RELOAD {sender destination command data} {
+    variable ::ClaraServ::config
+
+    set password [lindex $data 0]
+    if {$password eq ""} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
+            [format "Syntaxe : /msg %s reload <mot_de_passe_admin>" $config(service_nick)]
+        return 0
+    }
+    if {![string equal $password $config(admin_password)]} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Accès refusé."
+        ::ClaraServ::FCT::Log:Command "reload refusé" $sender
+        return 0
+    }
+    if {[catch {::ClaraServ::FCT::DB:Reload:Animations} err]} {
+        ::ClaraServ::log error "reload admin : $err"
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Reload échoué (état précédent conservé)."
+        ::ClaraServ::FCT::Log:Command "reload échec" $sender
+        return 0
+    }
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Reload des animations terminé."
+    ::ClaraServ::FCT::Log:Command "reload ok" $sender
     return 1
 }
 

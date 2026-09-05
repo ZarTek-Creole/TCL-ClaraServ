@@ -4,10 +4,12 @@
 
 ## Capacités
 
-- Catalogue d’animations FR (EN = exemple), commandes privées et publiques
+- Catalogue d’animations FR (~140 cmds ; EN = exemple), commandes privées et publiques
+- Alias (`db/aliases.fr.db`), variantes / fails optionnels, cible multi-mots, `%keyword%`
 - Aide `!cmds` / `!help` ; suggestion si faute de frappe proche (distance 1)
 - Rendu IRC avec reset final ; pseudos nettoyés des contrôles
-- Persistance des salons dans `db/salon.db`
+- Persistance des salons dans `db/salon.db` ; `reload` admin (DB animations)
+- Anti-flood configurable sur les animations
 - Runtime `tclsh` autonome + modules sous `modules/`
 - Arrêt propre par stop-file (exit 0) ; EOF S2S → exit non nul
 - Exploitation optionnelle via GNU Screen ou systemd
