@@ -1,88 +1,111 @@
-# Architecture de ClaraServ
+# Architecture ClaraServ
 
-![Schéma de l’architecture cible](architecture.png)
+ClaraServ est un **service IRC d’animation** en Tcl 8.6+. Il se connecte à l’IRCd comme **serveur de services (S2S)** via IRCServices, crée un pseudoclient, et répond aux commandes privées ou publiques (`!gaufre`, etc.). Ce n’est **pas** un bot client IRC classique (pas de NICK/USER utilisateur).
 
-ClaraServ est un **service d’animation IRC** qui se connecte à l’IRCD en tant que serveur de services, crée un pseudoclient et répond aux commandes privées ou publiques. Son objectif reste volontairement simple : apporter des animations configurables, sûres et faciles à maintenir. La version 1.2.0 isole les responsabilités en trois couches : la logique métier dans `ClaraServ.tcl`, les transformations de texte dans ZCT et le transport IRC dans IRCServices.
+**Runtime supporté :** `tclsh ClaraServ.tcl` + modules vendored sous `modules/`.
 
-> **Décision d’architecture :** Eggdrop ne doit plus être une dépendance d’exécution de ClaraServ. Il peut rester un hôte facultatif pour les installations qui l’utilisent déjà, mais le mode recommandé est l’exécution directe par `tclsh` sous supervision de `systemd`.
+## Couches
 
-## Pourquoi Tcl autonome est adapté
-
-Eggdrop apporte des commandes supplémentaires pour le cycle de vie d’un bot IRC, la partyline, la gestion d’utilisateurs et les files d’envoi ; sa documentation distingue explicitement ces commandes de Tcl standard. Par exemple, `putserv` et `puthelp` placent les messages dans des files d’envoi contrôlées par Eggdrop, tandis que `putlog` écrit dans le journal et la partyline [1]. ClaraServ n’utilisait toutefois pas ces mécanismes pour établir sa liaison serveur ou pour traiter les messages : la connexion, le socket et les événements sont déjà assurés par IRCServices.
-
-Tcl 8.6 fournit nativement `socket` pour ouvrir des connexions TCP et `fileevent` pour recevoir des données sans bloquer la boucle événementielle [2] [3]. IRCServices s’appuie désormais sur ces primitives de façon non bloquante. Le script principal reste compatible avec Eggdrop si celui-ci le charge, mais l’exécution directe par `tclsh ClaraServ.tcl` démarre sa propre attente événementielle.
-
-| Critère | Exécution sous Eggdrop | Exécution autonome Tcl | Choix pour ClaraServ |
-|---|---|---|---|
-| Dépendances | Eggdrop, ses modules et son cycle de vie | Tcl 8.6+, TclTLS uniquement si TLS | **Tcl autonome** |
-| Connexion serveur IRC | Abstractions Eggdrop possibles, non utilisées ici | Socket et événements gérés par IRCServices | **Tcl autonome** |
-| Supervision | Partyline / fonctions d’administration Eggdrop | `systemd`, journald, redémarrage automatique | **Tcl autonome** |
-| Authentification / base d’utilisateurs Eggdrop | Disponible | À reconstruire si nécessaire | Eggdrop seulement si ces fonctions sont requises |
-| Compatibilité historique | Native | Maintenue via chargement optionnel | Les deux pendant la transition |
-
-Le bénéfice principal est une réduction nette du couplage : le processus qui fournit l’animation est le même processus qui gère sa connexion IRC. En contrepartie, l’exploitation doit remplacer la partyline Eggdrop par des outils standard du système, et les futures fonctions qui s’appuieraient sur les comptes/flags Eggdrop devront avoir leur propre modèle d’autorisation.
-
-## Responsabilités des composants
-
-| Composant | Responsabilité | Ne doit pas contenir |
+| Composant | Rôle | Ne doit pas contenir |
 |---|---|---|
-| `ClaraServ.tcl` | Configuration, index des animations, commandes, persistance des salons et orchestration | Parsing brut du protocole IRC ou détails TLS |
-| `modules/TCL-PKG-IRCServices/ircservices.tcl` | Socket, protocole de liaison, dispatch des événements, création du pseudoclient | Règles métier propres à ClaraServ |
-| `modules/TCL-ZCT/ZCT.tcl` | Couleurs IRC, substitutions textuelles et petites utilitaires | Réécriture de commandes globales de l’hôte |
-| `db/database.*.db` | Catalogue déclaratif des animations | Code ou configuration secrète |
-| `db/salon.db` | Liste des salons persistants | Mot de passe d’administration |
+| `ClaraServ.tcl` | Conf, index animations, commandes, salons, orchestration, lifecycle | Parsing brut IRC / détails TLS |
+| `modules/TCL-PKG-IRCServices/` | Socket, liaison S2S, événements, pseudoclient | Règles métier ClaraServ |
+| `modules/TCL-ZCT/` | Couleurs IRC, substitutions texte | Cycle de vie processus |
+| `db/database.*.db` | Catalogue d’animations | Secrets |
+| `db/salon.db` | Salons persistants (runtime, non versionné) | Mot de passe admin |
+| `bin/claraserv-screen` | Supervision Screen | Secrets / conf réelle |
+| `systemd/` | Exemple d’unité | Secrets |
 
-## Règles de robustesse mises en œuvre
+## Dépendances réelles
 
-La réception IRC est en mode non bloquant. Conformément au comportement documenté de `fileevent`, le gestionnaire vérifie l’état EOF après une tentative de lecture, évitant les réexécutions continues lorsque le pair ferme la connexion [3]. Un message IRC est traité comme une **chaîne** et découpé avec une expression régulière, jamais comme une liste Tcl. Ainsi, une accolade non appariée dans une commande utilisateur ne peut plus provoquer `unmatched open brace in list`.
+| Dépendance | Statut |
+|---|---|
+| Tcl 8.6+ | Obligatoire |
+| TclTLS (`package require tls`) | Seulement si `uplink_ssl 1` |
+| ZCT / IRCServices | Vendored sous `modules/` (source relatif + `package require`) |
+| GNU Screen / systemd | Optionnels (supervision), hors runtime Tcl |
+| Tclx | Optionnel (trap SIGTERM/SIGINT) ; absente → stop-file |
 
-Les animations sont indexées une fois au démarrage dans un `dict`, au lieu d’effectuer une recherche linéaire dans la base pour chaque message. Le catalogue est également validé : chaque animation doit posséder une commande commençant par `!`, une réponse de niveau `0` ou `1`, et aucune entrée ne peut être dupliquée. La gestion des salons utilise une comparaison littérale insensible à la casse, une validation de nom de canal et une réécriture temporaire suivie d’un renommage atomique.
+### Provenance des modules vendored
 
-## Migration recommandée
+- **ZCT** — ZarTeK-Creole Tools ; licence dans `modules/TCL-ZCT/LICENSE`.
+- **IRCServices** — package de liaison services ; licence dans `modules/TCL-PKG-IRCServices/LICENSE` ; dialecte orienté UnrealIRCd/TS6.
 
-La migration peut être effectuée sans interrompre toutes les installations : testez d’abord le nouveau binaire sur un IRCD de préproduction, gardez Eggdrop pour l’instance existante, puis basculez l’un après l’autre les services après validation du lien serveur et des commandes. La compatibilité exacte dépend du protocole « server-to-server » de chaque IRCD ; les messages `PROTOCTL`, `SID`, `UID` et `SJOIN` actuellement produits sont orientés UnrealIRCd/TS6 et ne doivent pas être supposés universels.
+Ne pas synchroniser automatiquement depuis l’amont sans décision explicite. Ne pas modifier `ZCT.tcl` / `ircservices.tcl` sans tests dédiés.
 
-```ini
-# /etc/systemd/system/claraserv.service
-[Unit]
-Description=ClaraServ IRC animation service
-After=network-online.target
-Wants=network-online.target
+## Chargement
 
-[Service]
-Type=simple
-User=claraserv
-WorkingDirectory=/opt/claraserv
-ExecStart=/usr/bin/tclsh /opt/claraserv/ClaraServ.tcl
-Restart=on-failure
-RestartSec=5
-NoNewPrivileges=yes
-PrivateTmp=yes
-ProtectSystem=strict
-ReadWritePaths=/opt/claraserv/db
+1. Résolution de la racine script (`SCRIPT(dirname)`).
+2. `source` de `modules/TCL-ZCT/ZCT.tcl` puis `package require ZCT`.
+3. `source` de `modules/TCL-PKG-IRCServices/ircservices.tcl` puis `package require IRCServices`.
+4. Si `::ClaraServ::disableAutoStart` est vrai → pas d’INIT réseau (tests / harness).
+5. Sinon : `INIT` (conf + DB) → `Create:Service` → contrôles standalone → `vwait ::ClaraServ::shutdown`.
 
-[Install]
-WantedBy=multi-user.target
-```
+Les versions `needZct` / `needIrcs` dans `ClaraServ.tcl` doivent rester alignées avec `pkgIndex.tcl` et `package provide` (`make check`).
 
-Après avoir créé `/opt/claraserv/ClaraServ.conf` avec des permissions `0600`, activez le service avec :
+## Configuration
 
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now claraserv.service
-sudo journalctl -u claraserv -f
-```
+| Fichier | Versionné | Rôle |
+|---|---|---|
+| `ClaraServ.Example.conf` | oui | Modèle avec placeholders |
+| `ClaraServ.conf` | non (gitignore) | Conf locale réelle, `chmod 600` |
 
-## Évolutions recommandées
+Clés principales : uplink (host/port/ssl/password), `serverinfo_*`, identité service, salons, `admin_password`, `runtime_dir` / `instance_name` optionnels. Validation : `::ClaraServ::FCT::Check:Config`.
 
-Les prochaines itérations doivent conserver la séparation actuelle. Une première amélioration utile serait une interface `Storage` permettant d’utiliser soit les fichiers actuels, soit SQLite dans une version ultérieure, sans modifier les commandes. Une seconde serait une couche `Auth` indépendante de l’IP ou d’un mot de passe transmis en message privé : compte IRC identifié, liste ACL de masques hôte, ou compte administrateur local avec empreinte de mot de passe.
+## Données `db/`
 
-Les commandes d’animation peuvent ensuite évoluer sans compromettre l’esprit du projet : `!search <mot>` pour rechercher une animation, `!alias <nom> <commande>` pour les synonymes administrés, `!stats` pour un classement local optionnel, et `!lang <fr|en>` pour un choix de catalogue par salon. Ces ajouts doivent être optionnels, accompagnés de tests et d’un mécanisme anti-inondation par utilisateur/salon.
+- `database.fr.db` / `database.en.db` : catalogue sourcé au démarrage, indexé en `dict` (commande `!…`, niveau 0|1, pas de doublons). EN = exemple non prêt prod.
+- `salon.db` : créé/mis à jour à l’exécution ; égalité de canal littérale insensible à la casse ; écriture atomique (tmp + rename).
+- Rendu sortant : `Render:Outgoing` (ZCT apply + reset `\x0f` si style + plafond octets). Détail UX : [COMMANDS_AND_ANIMATIONS.md](COMMANDS_AND_ANIMATIONS.md).
+- Validation statique : `tools/validate-animations-db.tcl` (via `make check`).
 
-## Références
+## Logs
 
-[1] [Eggdrop — Tcl Commands](https://docs.eggheads.org/using/tcl-commands.html)
+`::ClaraServ::log` écrit sur **stderr** (`[LEVEL] message`). Sous systemd, stderr → journald. Aucune valeur secrète ne doit y figurer. `uplink_debug=1` peut journaliser le trafic send (dont `PASS`) — interdit hors labo court.
 
-[2] [Tcl 8.6 — socket](https://www.tcl-lang.org/man/tcl8.6/TclCmd/socket.htm)
+## Lifecycle standalone
 
-[3] [Tcl 8.6 — fileevent](https://www.tcl-lang.org/man/tcl8.6/TclCmd/fileevent.htm)
+1. `Install:Standalone:Controls` : crée `runtime_dir`, nettoie stop-file résiduel, écrit PID, poll 500 ms, trap Tclx optionnel.
+2. `vwait ::ClaraServ::shutdown` (sauf si déjà en shutdown).
+3. Nettoyage PID ; `exit $exitCode`.
+
+`Request:Shutdown` est idempotent : QUIT/disconnect best-effort, pose `shutdown=1`. **Pas** de reconnexion in-process.
+
+### Codes d’arrêt
+
+| Situation | Code |
+|---|---|
+| Stop-file / arrêt volontaire | `0` |
+| Erreur conf / init | non zéro (typ. `1`) |
+| EOF S2S inattendu | `1` (pour `Restart=on-failure`) |
+| SIGTERM sans Tclx | non intercepté (OS) |
+| SIGTERM avec Tclx | `0` si trap OK (**NOT_TESTED** si Tclx absent) |
+
+## Architecture S2S (résumé)
+
+Ordre typique TS6 via IRCServices : `PASS` → `PROTOCTL` → `SERVER` → `EOS`, puis UID / SJOIN / MODE. PING→PONG automatique. Dialecte orienté **UnrealIRCd** ; ne pas assumer InspIRCd sans labo. Détails : [UNREALIRCD.md](UNREALIRCD.md).
+
+## Robustesse
+
+- Socket non bloquant ; `fileevent` ; messages IRC = texte découpé par regexp (`Message:Words`), jamais comme liste Tcl.
+- TLS côté IRCServices : `tls::socket -require 0 -request 0` (pas de validation CA client aujourd’hui).
+
+## Non supporté / limites
+
+- Client IRC classique.
+- Reconnexion in-process après EOF (le superviseur redémarre).
+- Validation certificat peer TLS côté ClaraServ.
+- IRCd autre qu’Unreal sans validation labo.
+- Connexion IRCd réelle hors validation humaine explicite.
+
+## Supervision
+
+- Foreground : `tclsh ClaraServ.tcl`
+- Screen : `bin/claraserv-screen` ([OPERATIONS.md](OPERATIONS.md))
+- systemd : exemple `systemd/claraserv.service` (non installé par le dépôt)
+
+## Règles de compatibilité
+
+- Cible Tcl **8.6+** (pas d’exigence Tcl 9 sans décision).
+- Ne pas changer le protocole S2S sans preuve (tests ou labo autorisé).
+- Ne pas transformer ClaraServ en bot client.

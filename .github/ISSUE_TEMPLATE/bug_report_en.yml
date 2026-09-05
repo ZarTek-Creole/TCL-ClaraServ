@@ -61,9 +61,9 @@ body:
     id: deployment
     attributes:
       label: Runtime mode
+      description: Supported mode is standalone Tcl (tclsh ClaraServ.tcl).
       options:
-        - Standalone Tcl
-        - Under Eggdrop
+        - Standalone Tcl (tclsh)
         - Other / I do not know
     validations:
       required: true

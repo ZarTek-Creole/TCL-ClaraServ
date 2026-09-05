@@ -61,9 +61,9 @@ body:
     id: deployment
     attributes:
       label: Mode d’exécution
+      description: Le mode supporté est Tcl autonome (tclsh ClaraServ.tcl).
       options:
-        - Tcl autonome
-        - Sous Eggdrop
+        - Tcl autonome (tclsh)
         - Autre / je ne sais pas
     validations:
       required: true
