@@ -415,4 +415,103 @@ variable database {
 
 	{{!farce}		{0}		{<c07>%sender%<c12> is preparing a joke… for later. <c04>🃏<s>}}
 	{{!farce}		{1}		{<c07>%sender%<c12> pulls <c06>%pseudo%<c12> into a joyful prank. <c04>🃏<s>}}
+
+	{{!aie}		{0}		{<c07>%sender%<c12> aieuuuuuuuuux !!!!!!!!! sa fait mal les coups de fusil<s>}}
+	{{!aie}		{1}		{<c04>%pseudo%<c12> aieuuuuuuuuux !!!!!!!!! sa fait mal les coups de fusil<s>}}
+	{{!amour}		{0}		{<c07>%sender%<c12> tu es l'amour de ma vie<s>}}
+	{{!amour}		{1}		{<c04>%pseudo%<c12> tu es l'amour de ma vie<s>}}
+	{{!annonce}		{0}		{<c07>%sender%<c12> sur le Salon #BDSM nous vous rappelons que le salon et interdit au moins de 21 ans les PHOTOS, COULEURS CC et ANNONCES SONT INTERDITES SUR LE SALON<s>}}
+	{{!annonce}		{1}		{<c04>%pseudo%<c12> sur le Salon #BDSM nous vous rappelons que le salon et interdit au moins de 21 ans les PHOTOS, COULEURS CC et ANNONCES SONT INTERDITES SUR LE SALON<s>}}
+	{{!bombes}		{0}		{<c07>%sender%<c12> met 100000 enooooooooooooooooooooooormes bombes nucleaire dans le pantalon de <c07>%sender%<c12> et BAOUUUUUUUUUMMMMMM !!!!!!!!!!!!!!!!!!!!!!!!!!! <c07>%sender%<c12> sa fait du bien 100000 enooooooooooooooooooooooormes bombes nucleaire dans le pantalon n'es ce pas <c07>%sender%<c12><s>}}
+	{{!bombes}		{1}		{<c07>%sender%<c12> met 100000 enooooooooooooooooooooooormes bombes nucleaire dans le pantalon de <c04>%pseudo%<c12> et BAOUUUUUUUUUMMMMMM !!!!!!!!!!!!!!!!!!!!!!!!!!! <c04>%pseudo%<c12> sa fait du bien 100000 enooooooooooooooooooooooormes bombes nucleaire dans le pantalon n'es ce pas <c04>%pseudo%<c12><s>}}
+	{{!bonjour}		{0}		{<c07>%sender%<c12> Bonjour /bonsoir tous, ceux qui arrivent ! sur le salon et bienvenue ! <c07>%sender%<c12><s>}}
+	{{!bonjour}		{1}		{<c07>%sender%<c12> Bonjour /bonsoir tous, ceux qui arrivent ! sur le salon et bienvenue ! <c04>%pseudo%<c12><s>}}
+	{{!boom}		{0}		{<c07>%sender%<c12> place une bombe sur <c07>%sender%<c12> attention le compte a rebour a commencer 5...4.....3....2....1...booooooommmmmmmmmmm se fait ejecter dans un univers inconnue!!<s>}}
+	{{!boom}		{1}		{<c07>%sender%<c12> place une bombe sur <c04>%pseudo%<c12> attention le compte a rebour a commencer 5...4.....3....2....1...booooooommmmmmmmmmm se fait ejecter dans un univers inconnue!!<s>}}
+	{{!bouchon}		{0}		{<c07>%sender%<c12> Tu pousses le bouchon un peu trop loin<s>}}
+	{{!bouchon}		{1}		{<c04>%pseudo%<c12> Tu pousses le bouchon un peu trop loin<s>}}
+	{{!boum}		{0}		{<c12>aie il y avais une bombe nucleaire dans le pantalon de <c07>%sender%<c12> et BAOUUUUUUUUUMMMMMM !!!!!!!!!!!!!!!!!!!!!!!!!!!<s>}}
+	{{!boum}		{1}		{<c12>aie il y avais une bombe nucleaire dans le pantalon de <c04>%pseudo%<c12> et BAOUUUUUUUUUMMMMMM !!!!!!!!!!!!!!!!!!!!!!!!!!!<s>}}
+	{{!bulldozer}		{0}		{<c07>%sender%<c12> prend son enorme bulldozer de 4000000 tonnes écrase <c07>%sender%<c12> avec son enorme bulldozer de 4000000 Tonnes, et fait des allers retours avec son enorme bulldozer de 4000000 Tonnes sur <c07>%sender%<c12> pour bien lui broyer tous les os... *CrrrOuiiKK*<s>}}
+	{{!bulldozer}		{1}		{<c07>%sender%<c12> prend son enorme bulldozer de 4000000 tonnes écrase <c04>%pseudo%<c12> avec son enorme bulldozer de 4000000 Tonnes, et fait des allers retours avec son enorme bulldozer de 4000000 Tonnes sur <c04>%pseudo%<c12> pour bien lui broyer tous les os... *CrrrOuiiKK*<s>}}
+	{{!chat}		{0}		{<c07>%sender%<c12> arrete de faire miaou !!! miaou !!! miaou !!! miaou !!! quand tu parle on te comprend pas<s>}}
+	{{!chat}		{1}		{<c04>%pseudo%<c12> arrete de faire miaou !!! miaou !!! miaou !!! miaou !!! quand tu parle on te comprend pas<s>}}
+	{{!clones}		{0}		{<c07>%sender%<c12> nous vous rappellons sur le salon #bdsm QUE LES CLONES SONT INTERDIT<s>}}
+	{{!clones}		{1}		{<c04>%pseudo%<c12> nous vous rappellons sur le salon #bdsm QUE LES CLONES SONT INTERDIT<s>}}
+	{{!coin}		{0}		{<c07>%sender%<c12> arrete de faire coin coin coin quand tu parle on te comprend pas<s>}}
+	{{!coin}		{1}		{<c04>%pseudo%<c12> arrete de faire coin coin coin quand tu parle on te comprend pas<s>}}
+	{{!concasseur}		{0}		{<c07>%sender%<c12> passe <c07>%sender%<c12> dans le concasseur pour bien lui broyer tous les os... et la cervelle sa fait un joli *CrrrOuiiKK* !!!!!<s>}}
+	{{!concasseur}		{1}		{<c07>%sender%<c12> passe <c04>%pseudo%<c12> dans le concasseur pour bien lui broyer tous les os... et la cervelle sa fait un joli *CrrrOuiiKK* !!!!!<s>}}
+	{{!cot}		{0}		{<c07>%sender%<c12> arrete de faire cot !!! cot !!! cot !!! cot !!! quand tu parle on te comprend pas <c07>%sender%<c12> cot !!! cot !!!! cot !!!! GRRRRR !!!!!! arrette on te comprend toujours pas<s>}}
+	{{!cot}		{1}		{<c04>%pseudo%<c12> arrete de faire cot !!! cot !!! cot !!! cot !!! quand tu parle on te comprend pas <c04>%pseudo%<c12> cot !!! cot !!!! cot !!!! GRRRRR !!!!!! arrette on te comprend toujours pas<s>}}
+	{{!dors}		{0}		{<c12>je sens que l'on va entendre ronfler aussi fort que 10000000 Starship au decollage <c07>%sender%<c12> ronfle pas aussi fort tu va reveillier toute la tour de 100000 etages telement que tu ronfle fort<s>}}
+	{{!dors}		{1}		{<c12>je sens que l'on va entendre ronfler aussi fort que 10000000 Starship au decollage <c04>%pseudo%<c12> ronfle pas aussi fort tu va reveillier toute la tour de 100000 etages telement que tu ronfle fort<s>}}
+	{{!escabeau}		{0}		{<c07>%sender%<c12> Promis je pousserais pas l'escabeau pendant que tu installe le miroir... Même si c'est tentantA0:')<s>}}
+	{{!escabeau}		{1}		{<c04>%pseudo%<c12> Promis je pousserais pas l'escabeau pendant que tu installe le miroir... Même si c'est tentantA0:')<s>}}
+	{{!femme}		{0}		{<c07>%sender%<c12> Celui qui ne comprend pas ton silence n'arrivera jamais à comprendre tes mots .<s>}}
+	{{!femme}		{1}		{<c07>%sender%<c12> Celui qui ne comprend pas ton silence n'arrivera jamais à comprendre tes mots .<s>}}
+	{{!frigo}		{0}		{<c07>%sender%<c12> comment met ont un elephant dans un frigo <c07>%sender%<c12> pour mettre un elephant dans un frigo tu ouvre la porte tu met l elephant dedant et tu ferme la porte<s>}}
+	{{!frigo}		{1}		{<c04>%pseudo%<c12> comment met ont un elephant dans un frigo <c04>%pseudo%<c12> pour mettre un elephant dans un frigo tu ouvre la porte tu met l elephant dedant et tu ferme la porte<s>}}
+	{{!gogole}		{0}		{<c07>%sender%<c12> ALERTE AUX GOGOLES !!!!!!!!!!! ALERTE AUX GOGOLES !!!!!!!!!!!<s>}}
+	{{!gogole}		{1}		{<c04>%pseudo%<c12> ALERTE AUX GOGOLES !!!!!!!!!!! ALERTE AUX GOGOLES !!!!!!!!!!!<s>}}
+	{{!grenades}		{0}		{<c07>%sender%<c12> met une grenade dans le pantalon de <c07>%sender%<c12> ! et BAOUUUUUUUUUMMMMMM !!!!!! sa fait du bien une grenade dans le pantalon ! n'est ce pas <c07>%sender%<c12><s>}}
+	{{!grenades}		{1}		{<c07>%sender%<c12> met une grenade dans le pantalon de <c04>%pseudo%<c12> ! et BAOUUUUUUUUUMMMMMM !!!!!! sa fait du bien une grenade dans le pantalon ! n'est ce pas <c04>%pseudo%<c12><s>}}
+	{{!grincer}		{0}		{<c07>%sender%<c12> lance !grincer.<s>}}
+	{{!grincer}		{1}		{<c07>%sender%<c12> lance !grincer vers <c04>%pseudo%<c12>.<s>}}
+	{{!lettres}		{0}		{<c07>%sender%<c12> L'abus de lettres c'est mefaste pour le clavier !<s>}}
+	{{!lettres}		{1}		{<c04>%pseudo%<c12> L'abus de lettres c'est mefaste pour le clavier !<s>}}
+	{{!manivelle}		{0}		{<c07>%sender%<c12> Attention les retours de manivelle sa fait tres mal<s>}}
+	{{!manivelle}		{1}		{<c04>%pseudo%<c12> Attention les retours de manivelle sa fait tres mal<s>}}
+	{{!menteuse}		{0}		{<c07>%sender%<c12> hou !!!!!!!! la menteuse elle est amoureuse<s>}}
+	{{!menteuse}		{1}		{<c04>%pseudo%<c12> hou !!!!!!!! la menteuse elle est amoureuse<s>}}
+	{{!meules}		{0}		{<c07>%sender%<c12> lance !meules.<s>}}
+	{{!meules}		{1}		{<c07>%sender%<c12> lance !meules vers <c04>%pseudo%<c12>.<s>}}
+	{{!miaou}		{0}		{<c07>%sender%<c12> miaou miaou miaou miaou miaou miaou miaou miaou miaou<s>}}
+	{{!miaou}		{1}		{<c04>%pseudo%<c12> miaou miaou miaou miaou miaou miaou miaou miaou miaou<s>}}
+	{{!missile}		{0}		{<c07>%sender%<c12> sort son missile nucleaire a tete chercheuse et vise la tete de <c07>%sender%<c12><s>}}
+	{{!missile}		{1}		{<c04>%pseudo%<c12> arrete de faire miaou !!! miaou !!! miaou !!! miaou !!! quand tu parle on te comprend pas<s>}}
+	{{!moi}		{0}		{<c07>%sender%<c12> va aller faire les 10000000 de Starship au decollage !<s>}}
+	{{!moi}		{1}		{<c07>%sender%<c12> va aller faire les 10000000 de Starship au decollage !<s>}}
+	{{!moustique}		{0}		{<c07>%sender%<c12> attention les moustiques sa fait BIZZ !!!! BIZZ !!!! pique !!!!! pique !!!!! et sa gratte beaucoup<s>}}
+	{{!moustique}		{1}		{<c04>%pseudo%<c12> attention les moustiques sa fait BIZZ !!!! BIZZ !!!! pique !!!!! pique !!!!! et sa gratte beaucoup<s>}}
+	{{!pan}		{0}		{<c07>%sender%<c12> fait panpan !!!! a <c07>%sender%<c12> voila tu as eu la grosse fessée car tu as fait des betises<s>}}
+	{{!pan}		{1}		{<c07>%sender%<c12> fait panpan !!!! a <c04>%pseudo%<c12> voila tu as eu la grosse fessée car tu as fait des betises<s>}}
+	{{!pantalon}		{0}		{<c07>%sender%<c12> tire !!!! tire !!!! tire!!!! tire!!!! tire !!!! encore !!!! encore !!!! sur l elastique du pantalon de <c07>%sender%<c12> <c07>%sender%<c12> a pas le temps de relacher l'elastique du pantalon de <c07>%sender%<c12> que l'elastique du pantalon de <c07>%sender%<c12> fait CRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACK !!!!!!! et se retrouve avec le pantalon au chevilles<s>}}
+	{{!pantalon}		{1}		{<c07>%sender%<c12> tire !!!! tire !!!! tire!!!! tire!!!! tire !!!! encore !!!! encore !!!! sur l elastique du pantalon de <c04>%pseudo%<c12> <c07>%sender%<c12> a pas le temps de relacher l'elastique du pantalon de <c04>%pseudo%<c12> que l'elastique du pantalon de <c04>%pseudo%<c12> fait CRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACK !!!!!!! et se retrouve avec le pantalon au chevilles<s>}}
+	{{!parapluie}		{0}		{<c07>%sender%<c12> ouvre pas ton parapluie tu risque de t'envoler<s>}}
+	{{!parapluie}		{1}		{<c04>%pseudo%<c12> ouvre pas ton parapluie tu risque de t'envoler<s>}}
+	{{!pelleteuse}		{0}		{<c07>%sender%<c12> prend son enorme pelleteuse a chenilles et donne un enooooooooooooooooooooome coup de godet a <c07>%sender%<c12><s>}}
+	{{!pelleteuse}		{1}		{<c07>%sender%<c12> prend son enorme pelleteuse a chenilles et donne un enooooooooooooooooooooome coup de godet a <c04>%pseudo%<c12><s>}}
+	{{!poisson}		{0}		{<c12>sa sent le poisson d'en face le poisson pas frais <c07>%sender%<c12> comment ça il est pas frais le poisson ! viens me le dire ici si mon poisson est pas frais et mon poing il est pas frais lui<s>}}
+	{{!poisson}		{1}		{<c12>sa sent le poisson d'en face le poisson pas frais <c04>%pseudo%<c12> comment ça il est pas frais le poisson ! viens me le dire ici si mon poisson est pas frais et mon poing il est pas frais lui<s>}}
+	{{!pont}		{0}		{<c12>Ha !! Si j'connaissais l'con qu'à fait sauter l'pont !!!!! oups !!!!! pardon <c07>%sender%<c12> !!!!:<s>}}
+	{{!pont}		{1}		{<c12>Ha !! Si j'connaissais l'con qu'à fait sauter l'pont !!!!! oups !!!!! pardon <c04>%pseudo%<c12> !!!!:<s>}}
+	{{!poulet}		{0}		{<c07>%sender%<c12> cot !!! cot !!! cot !!! v'la les poulets rotis (les flics)<s>}}
+	{{!poulet}		{1}		{<c04>%pseudo%<c12> cot !!! cot !!! cot !!! v'la les poulets rotis (les flics)<s>}}
+	{{!priere}		{0}		{<c07>%sender%<c12> au nom du pere de la mitraillette et du canon !;)<s>}}
+	{{!priere}		{1}		{<c04>%pseudo%<c12> au nom du pere de la mitraillette et du canon !;)<s>}}
+	{{!reveil}		{0}		{<c07>%sender%<c12> c'est pour sa que l'on a entendu 10000000 de Starship au decollage !<s>}}
+	{{!reveil}		{1}		{<c04>%pseudo%<c12> c'est pour sa que l'on a entendu 10000000 de Starship au decollage !<s>}}
+	{{!ronfle}		{0}		{<c07>%sender%<c12> c'est pour sa que l'on a entendu ronfler aussi fort que 10000000 Starship au decollage !<s>}}
+	{{!ronfle}		{1}		{<c04>%pseudo%<c12> c'est pour sa que l'on a entendu ronfler aussi fort que 10000000 Starship au decollage !<s>}}
+	{{!rouler}		{0}		{<c07>%sender%<c12> va rouler sous la table telment que c'est une arsouille<s>}}
+	{{!rouler}		{1}		{<c04>%pseudo%<c12> va rouler sous la table telment que c'est une arsouille<s>}}
+	{{!serveur}		{0}		{<c07>%sender%<c12> lance !serveur.<s>}}
+	{{!serveur}		{1}		{<c07>%sender%<c12> lance !serveur vers <c04>%pseudo%<c12>.<s>}}
+	{{!tampax}		{0}		{<c07>%sender%<c12> lance !tampax.<s>}}
+	{{!tampax}		{1}		{<c07>%sender%<c12> lance !tampax vers <c04>%pseudo%<c12>.<s>}}
+	{{!tartes}		{0}		{<c07>%sender%<c12> prend le plus d'élan possible et lance une enooooooooooooooooorme tarte a la creme à la figure de <c07>%sender%<c12> splatch !!!!!!!!!!!!!!!!!!!! sa y est j'ai entarté <c07>%sender%<c12><s>}}
+	{{!tartes}		{1}		{<c07>%sender%<c12> prend le plus d'élan possible et lance une enooooooooooooooooorme tarte a la creme à la figure de <c04>%pseudo%<c12> splatch !!!!!!!!!!!!!!!!!!!! sa y est j'ai entarté <c04>%pseudo%<c12><s>}}
+	{{!tondeuse}		{0}		{<c07>%sender%<c12> se prendre une tondeuse c'est encore mieux que des rateaux en pleine figure<s>}}
+	{{!tondeuse}		{1}		{<c04>%pseudo%<c12> se prendre une tondeuse c'est encore mieux que des rateaux en pleine figure<s>}}
+	{{!torpille}		{0}		{<c07>%sender%<c12> va lancer une prouttotorpille attention sa va puer<s>}}
+	{{!torpille}		{1}		{<c04>%pseudo%<c12> va lancer une prouttotorpille attention sa va puer<s>}}
+	{{!truites}		{0}		{<c07>%sender%<c12> donne des enooooooooooooooooooooooormes coups de truite a <c07>%sender%<c12><s>}}
+	{{!truites}		{1}		{<c07>%sender%<c12> donne des enooooooooooooooooooooooormes coups de truite a <c04>%pseudo%<c12><s>}}
+	{{!tut}		{0}		{<c07>%sender%<c12> tut !!! tut !!! pouet!!! pouet!!!<s>}}
+	{{!tut}		{1}		{<c04>%pseudo%<c12> tut !!! tut !!! pouet!!! pouet!!!<s>}}
+	{{!vaisselle}		{0}		{<c07>%sender%<c12> lance !vaisselle.<s>}}
+	{{!vaisselle}		{1}		{<c07>%sender%<c12> lance !vaisselle vers <c04>%pseudo%<c12>.<s>}}
+	{{!zizicoptere}		{0}		{<c07>%sender%<c12> lance !zizicoptere.<s>}}
+	{{!zizicoptere}		{1}		{<c07>%sender%<c12> lance !zizicoptere vers <c04>%pseudo%<c12>.<s>}}
 }

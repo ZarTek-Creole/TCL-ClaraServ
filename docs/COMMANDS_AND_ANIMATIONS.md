@@ -55,9 +55,22 @@ Les formes sans accent (`!cafe`, `!biere`, `!calin`, `!the`, …) correspondent 
 | `db/variants.fr.db` | Variantes supplémentaires (fusionnées avec le texte historique) |
 | `db/fails.fr.db` | Textes d’échec |
 
-- Tirage aléatoire parmi les variantes disponibles.
+- Tirage aléatoire parmi les variantes **autorisées** sur le salon.
+- Préfixe de tag optionnel sur une ligne de variante : `[adult] …`, `[vulgar] …`, `[adult vulgar] …`.
+- Gates : `content_adult_global` / `content_vulgar_global` (conf) + flags salon (`db/salon_flags.db`).
+- Si aucune variante ne passe le filtre : notice privée « contenu désactivé… » (pas de silence opaque).
 - `failrate` (conf optionnelle, défaut **0**) : pourcentage 0–100 ; si `> 0` et qu’il existe des fails, chance d’utiliser un texte d’échec.
 - Anti-flood : cooldown configurable `rate_limit_cooldown` (défaut **2** s) par salon+expéditeur sur les animations (`!random` / dynamiques) — silence si limité.
+
+## Contenu adult / vulgar
+
+| Niveau | Contrôle |
+|---|---|
+| Global | `set config(content_adult_global)` / `content_vulgar_global` (défaut `0`) |
+| Salon | `chanflag #salon adult\|vulgar on\|off` ; lecture `chanflags #salon` |
+| Auth | Mot de passe admin **ou** `@` du salon (si `MODE +o` déjà vu) |
+
+Un flag salon `on` est refusé tant que le global est `off`.
 
 ## Commandes système
 
@@ -69,6 +82,7 @@ Les formes sans accent (`!cafe`, `!biere`, `!calin`, `!the`, …) correspondent 
 | `!about` / `about` | PUB+PRIV / PRIV | Version |
 | `!random` | PUB | Tire au sort (voir sensible) |
 | `join` / `part` / `reload` | PRIV admin | Salons / recharge DB animations |
+| `chanflag` / `chanflags` | PRIV admin ou `@` | Gates contenu par salon |
 
 ## Animations FR / EN
 
