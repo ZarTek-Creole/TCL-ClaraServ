@@ -53,7 +53,7 @@ namespace eval ::ClaraServ {
     set scriptDirectory [file dirname [file normalize [info script]]]
     array set SCRIPT [list \
         name        "ClaraServ Service" \
-        version     "1.3.2" \
+        version     "1.3.3" \
         author      "ZarTek Creole" \
         url         "https://github.com/ZarTek-Creole/TCL-ClaraServ" \
         needZct     "0.1.0" \
@@ -233,7 +233,8 @@ proc ::ClaraServ::FCT::Nickmap:Remove:Uid {uid} {
     }
 }
 
-# Préfère un nick affichable ; laisse l’identifiant tel quel si inconnu.
+# Préfère un nick affichable. Ne convertit jamais un nick → UID
+# (UID_CONVERT IRCServices est bidirectionnel).
 proc ::ClaraServ::FCT::Nickmap:Resolve {token} {
     variable ::ClaraServ::nickByUid
     variable ::ClaraServ::CONNECT_ID
@@ -241,14 +242,17 @@ proc ::ClaraServ::FCT::Nickmap:Resolve {token} {
     if {$token eq ""} {
         return $token
     }
+    if {![::ClaraServ::FCT::Looks:Like:Uid $token]} {
+        return $token
+    }
     set key [string toupper $token]
     if {[info exists nickByUid($key)]} {
         return $nickByUid($key)
     }
-    # Secours : table IRCServices si exposée sur l’objet connexion.
     if {$CONNECT_ID ne "" && [info commands ${CONNECT_ID}::UID_CONVERT] ne ""} {
         set converted [${CONNECT_ID}::UID_CONVERT $token]
-        if {$converted ne "" && $converted ne $token} {
+        if {$converted ne "" && $converted ne $token \
+                && ![::ClaraServ::FCT::Looks:Like:Uid $converted]} {
             return $converted
         }
     }
@@ -949,9 +953,9 @@ proc ::ClaraServ::FCT::Dispatch:Command {procedure sender destination command da
 }
 
 proc ::ClaraServ::FCT::Dispatch:Message {sender destination message} {
-    # Affichage / placeholders : nick si connu ; rate-limit : identifiant brut (UID stable).
+    # $sender = identifiant routage (souvent UID TS6). Tout texte visible
+    # doit passer par Display:Nick (jamais $sender brut dans une annonce salon).
     set senderId $sender
-    set sender [::ClaraServ::FCT::Display:Nick $senderId]
 
     set words [::ClaraServ::FCT::Message:Words $message]
     if {[llength $words] == 0} {
@@ -1181,7 +1185,21 @@ proc ::ClaraServ::FCT::Create:Service {} {
     }
 
     $BOT_ID registerevent PRIVMSG {
-        ::ClaraServ::FCT::Dispatch:Message [who2] [target] [msg]
+        # who2 = UID_CONVERT(who) : bidirectionnel — apprendre UID↔nick puis router.
+        set w [who]
+        set w2 [who2]
+        if {[::ClaraServ::FCT::Looks:Like:Uid $w] && $w2 ne "" \
+                && ![::ClaraServ::FCT::Looks:Like:Uid $w2]} {
+            ::ClaraServ::FCT::Nickmap:Set $w $w2
+        } elseif {[::ClaraServ::FCT::Looks:Like:Uid $w2] && $w ne "" \
+                && ![::ClaraServ::FCT::Looks:Like:Uid $w]} {
+            ::ClaraServ::FCT::Nickmap:Set $w2 $w
+        }
+        set senderId $w2
+        if {$senderId eq ""} {
+            set senderId $w
+        }
+        ::ClaraServ::FCT::Dispatch:Message $senderId [target] [msg]
     }
 
     # Suivi UID↔nick (corrige l’affichage quand who2 reste un UID TS6).
@@ -1323,8 +1341,9 @@ proc ::ClaraServ::IRC:CMD:PRIV:ALIAS {sender destination command data} {
 }
 
 proc ::ClaraServ::IRC:CMD:PUB:ABOUT {sender destination command data} {
+    set shown [::ClaraServ::FCT::Display:Nick $sender]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
-        [format "<c04>.: <c12>Informations de %s envoyées en privé à %s<c04> :." ${::ClaraServ::config(service_nick)} $sender]
+        [format "<c04>.: <c12>Informations de %s envoyées en privé à %s<c04> :." ${::ClaraServ::config(service_nick)} $shown]
     return [::ClaraServ::IRC:CMD:PRIV:ABOUT $sender $destination $command $data]
 }
 
@@ -1340,8 +1359,9 @@ proc ::ClaraServ::IRC:CMD:PRIV:ABOUT {sender destination command data} {
 }
 
 proc ::ClaraServ::IRC:CMD:PUB:HELP {sender destination command data} {
+    set shown [::ClaraServ::FCT::Display:Nick $sender]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
-        [format "<c04>.: <c12>Aide envoyée en privé à %s<c04> :." $sender]
+        [format "<c04>.: <c12>Aide envoyée en privé à %s<c04> :." $shown]
     return [::ClaraServ::IRC:CMD:PRIV:HELP $sender $destination $command $data]
 }
 

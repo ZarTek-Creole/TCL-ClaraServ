@@ -8,6 +8,14 @@
 | Qualité | Un seul `tools/healthcheck.tcl` (plus de `.sh`) ; validateur sans WARN style historique. |
 | Animations | `database.en.db` : traduction complète depuis `database.fr.db` (278 entrées). |
 
+## 1.3.3 — 2026-09-06
+
+| Domaine | Évolution |
+|---|---|
+| Correctif | Annonces salon `!help` / `!about` : plus d’UID TS6 à la place du nick. |
+| Correctif | `Nickmap:Resolve` n’accepte plus nick→UID (UID_CONVERT bidirectionnel). |
+| Runtime | Apprentissage UID↔nick aussi sur PRIVMSG (`who`/`who2`). |
+
 ## 1.3.2 — 2026-09-06
 
 | Domaine | Évolution |

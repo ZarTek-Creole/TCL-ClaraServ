@@ -527,6 +527,28 @@ set ::TestBot::messages {}
 ::ClaraServ::IRC:CMD:PUB:CMDS 001NWME3E #lounge !cmds {}
 set announce [lindex [lindex $::TestBot::messages 0] 2]
 assertTrue {[string first "me" $announce] >= 0} "!cmds annonce le nick pas l’UID"
+assertTrue {[string first "001NWME3E" $announce] < 0} "!cmds n’affiche pas l’UID"
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PUB:HELP 001NWME3E #lounge !help {}
+set helpAnnounce [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "me" $helpAnnounce] >= 0} "!help annonce le nick pas l’UID"
+assertTrue {[string first "001NWME3E" $helpAnnounce] < 0} "!help n’affiche pas l’UID"
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PUB:ABOUT 001NWME3E #lounge !about {}
+set aboutAnnounce [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "me" $aboutAnnounce] >= 0} "!about annonce le nick pas l’UID"
+assertTrue {[string first "001NWME3E" $aboutAnnounce] < 0} "!about n’affiche pas l’UID"
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PUB:ALIAS 001NWME3E #lounge !alias {}
+set aliasAnnounce [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "me" $aliasAnnounce] >= 0} "!alias annonce le nick pas l’UID"
+assertTrue {[string first "001NWME3E" $aliasAnnounce] < 0} "!alias n’affiche pas l’UID"
+
+# Display:Nick ne doit jamais transformer un nick en UID
+assertEqual "alice" [::ClaraServ::FCT::Display:Nick alice] "Nick plain inchangé"
 
 set ::TestBot::messages {}
 ::ClaraServ::IRC:CMD:PRIV:ALIAS Alice - alias {}
