@@ -60,7 +60,7 @@ namespace eval ::ClaraServ {
     set scriptDirectory [file dirname [file normalize [info script]]]
     array set SCRIPT [list \
         name        "ClaraServ Service" \
-        version     "1.4.0" \
+        version     "1.4.1" \
         author      "ZarTek Creole" \
         url         "https://github.com/ZarTek-Creole/TCL-ClaraServ" \
         needZct     "0.1.0" \

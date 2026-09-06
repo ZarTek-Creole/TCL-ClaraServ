@@ -655,6 +655,12 @@ assertEqual "!anni" [::ClaraServ::FCT::DB:ResolveAlias !anniv] "Alias !anniv →
 assertEqual "!pouet" [::ClaraServ::FCT::DB:ResolveAlias !proutt] "Alias !proutt → !pouet"
 assertTrue {[::ClaraServ::FCT::DB:GET !serveur 0] ne "-1"} "Nouvelle cmd !serveur"
 assertTrue {[::ClaraServ::FCT::DB:GET !tampax 1] ne "-1"} "Nouvelle cmd !tampax"
+set missile1 [::ClaraServ::FCT::DB:GET !missile 1]
+assertTrue {$missile1 ne "-1"} "!missile niveau 1 présent"
+assertTrue {[string first "miaou" [string tolower $missile1]] < 0} "!missile/1 n’est pas le texte miaou"
+assertTrue {[string first "missile" [string tolower $missile1]] >= 0} "!missile/1 contient missile"
+set mord1 [::ClaraServ::FCT::DB:GET !mord 1]
+assertTrue {[string first "fesses" [string tolower $mord1]] < 0} "!mord historique sans fesses (adult en variante)"
 
 catch {file delete -force $::ClaraServ::salonFlagsPathOverride}
 set ::ClaraServ::salonFlagsPathOverride ""
