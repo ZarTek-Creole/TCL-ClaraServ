@@ -89,8 +89,8 @@ variable database {
 	{{!clope}		{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to a well-earned 🚬 ciggy 🚬 break (smoking is bad)}}
 	{{!clope}		{1}		{<c07>%sender%<c12> offers a 🚬 cigarette 🚬 (<u><c01,07>)¯¯¯¯</c>)<c01> ¯<c12> )<c01,00>¯¯¯¯¯¯¯<u><b>))</c> <c04,00>)<c15>~~\017 <c12> to <c04>%pseudo%<c12> (smoking is bad)}}
 
-	{{!mord}		{0}		{<c12>It seems <c07>%sender%<c12> is biting themself, sado maso?}}
-	{{!mord}		{1}		{<c07>%sender%<c12> grabs <c04>%pseudo%<c12> and bites their butt hmm that taste of <c13><b><3 <3 <3}}
+	{{!mord}		{0}		{<c12>It seems <c07>%sender%<c12> is biting themself — ouch!}}
+	{{!mord}		{1}		{<c07>%sender%<c12> gently nips <c04>%pseudo%<c12>. <c13><b><3 <3 <3}}
 
 	{{!tendresse}	{0}		{<c07>%sender%<c12> gives themself a little 💖 tenderness 💖, since nobody else does <c13>(♥‿♥)}}
 	{{!tendresse}	{1}		{<c07>%sender%<c12> takes<c04> %pseudo%<c12> in their arms, and gives them a super hug <3 That's 💖 love 💖 <c13>♥(Ɔ ˘⌣˘)˘⌣˘ C)♥}}
@@ -469,7 +469,7 @@ variable database {
 	{{!miaou}		{0}		{<c07>%sender%<c12> miaou miaou miaou miaou miaou miaou miaou miaou miaou<s>}}
 	{{!miaou}		{1}		{<c04>%pseudo%<c12> miaou miaou miaou miaou miaou miaou miaou miaou miaou<s>}}
 	{{!missile}		{0}		{<c07>%sender%<c12> sort son missile nucleaire a tete chercheuse et vise la tete de <c07>%sender%<c12><s>}}
-	{{!missile}		{1}		{<c04>%pseudo%<c12> arrete de faire miaou !!! miaou !!! miaou !!! miaou !!! quand tu parle on te comprend pas<s>}}
+	{{!missile}		{1}		{<c07>%sender%<c12> sort son missile nucleaire a tete chercheuse et vise la tete de <c04>%pseudo%<c12><s>}}
 	{{!moi}		{0}		{<c07>%sender%<c12> va aller faire les 10000000 de Starship au decollage !<s>}}
 	{{!moi}		{1}		{<c07>%sender%<c12> va aller faire les 10000000 de Starship au decollage !<s>}}
 	{{!moustique}		{0}		{<c07>%sender%<c12> attention les moustiques sa fait BIZZ !!!! BIZZ !!!! pique !!!!! pique !!!!! et sa gratte beaucoup<s>}}

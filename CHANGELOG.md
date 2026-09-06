@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## 1.4.1 — 2026-09-06
+
+| Domaine | Évolution |
+|---|---|
+| Correctif | `!missile` niveau 1 : texte miaou (corruption import) → missile correct. |
+| Contenu | `!mord` historique adouci (sans « fesses ») ; harvest adult reste en variante `[adult]`. |
+
 ## 1.4.0 — 2026-09-06
 
 | Domaine | Évolution |
