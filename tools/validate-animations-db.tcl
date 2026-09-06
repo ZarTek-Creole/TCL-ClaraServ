@@ -99,18 +99,8 @@ proc validate_db_file {path} {
         set blen [string bytelength $text]
         if {$blen > 450} {
             v_fail "$label: texte trop long ($blen octets, seuil 450)"
-        } elseif {$blen > 350} {
-            v_warn "$label: texte long ($blen octets)"
         }
-        set bTags [regexp -all {<b>|</b>} $text]
-        if {($bTags % 2) == 1} {
-            v_warn "$label: nombre impair de balises gras (<b>)</b>) — neutralisé à l’envoi par reset"
-        }
-        set hasStyle [regexp {<(c|/c|b|/b|u|/u|i|/i|s)[^>]*>} $text]
-        if {$hasStyle && ![regexp {<s>\s*$} $text]} {
-            v_warn "$label: style sans <s> final — le moteur ajoute un reset à l’envoi"
-        }
-        # Nouvelles exigences strictes seulement signalées ; anciennes = WARN
+        # Style historique (<b> impair, pas de <s> final) : OK — reset à l’envoi.
         if {[regexp {[\x00-\x08\x0b\x0c\x0e-\x1f]} $text]} {
             v_fail "$label: caractère de contrôle brut dans le texte source"
         }
@@ -253,10 +243,6 @@ proc validate_sections_file {path label} {
         incr texts
         if {[regexp {[\x00-\x08\x0b\x0c\x0e-\x1f]} $line]} {
             v_fail "$label: contrôle brut dans « $line »"
-        }
-        set hasStyle [regexp {<(c|/c|b|/b|u|/u|i|/i|s)[^>]*>} $line]
-        if {$hasStyle && ![regexp {<s>\s*$} $line]} {
-            v_warn "$label: style sans <s> final ($current)"
         }
         if {[string bytelength $line] > 450} {
             v_fail "$label: texte trop long ($current)"

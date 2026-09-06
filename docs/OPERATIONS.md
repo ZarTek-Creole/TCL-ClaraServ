@@ -5,7 +5,7 @@
 - Tcl 8.6+
 - TclTLS si `uplink_ssl 1`
 - Modules vendored inclus dans le dépôt
-- GNU Screen (optionnel) pour `bin/claraserv-screen start|attach`
+- GNU Screen (optionnel) pour `bin/claraserv-screen`
 - systemd (optionnel) pour la production
 
 ## Installation
@@ -18,210 +18,102 @@ chmod 600 ClaraServ.conf
 # Éditer ClaraServ.conf : remplacer tous les placeholders ; ne jamais committer
 ```
 
-Vérifications hors réseau :
-
 ```bash
 make check
 make test
-make test-local-process
 ```
 
-Préflight structurel de la conf locale (aucune valeur affichée) :
+## Modes
 
-```bash
-make preflight-config
-```
-
-## Modes supportés
-
-| Mode | Commande | Notes |
-|---|---|---|
-| Foreground | `tclsh ClaraServ.tcl` | Dev / diagnostic |
-| screen | `bin/claraserv-screen …` | Ops/dev ; binaire `screen` requis pour start/attach |
-| systemd | `systemd/claraserv.service` | Exemple versionné, **non** activé par le dépôt |
-
-ClaraServ est un **service S2S** autonome en Tcl, pas un bot client.
+| Mode | Commande |
+|---|---|
+| Foreground | `tclsh ClaraServ.tcl` |
+| screen | `bin/claraserv-screen …` |
+| systemd | exemple `systemd/claraserv.service` (**non** activé par le dépôt) |
 
 ## Chemins runtime
 
 | Élément | Défaut | Configurable |
 |---|---|---|
-| Conf | `ClaraServ.conf` | `CLARASERV_CONF` / `--config` (lanceur) |
-| Runtime dir | `<racine>/run` | `config(runtime_dir)` ; `CLARASERV_RUNTIME_DIR` / `--runtime-dir` |
-| Instance | (vide) | `config(instance_name)` ou `--instance` → `run/<instance>/` |
-| PID | `$runtime_dir/claraserv.pid` | via runtime dir |
-| Stop file | `$runtime_dir/claraserv.stop` | via runtime dir |
+| Conf | `ClaraServ.conf` | locale uniquement (gitignore) |
+| Runtime dir | `<racine>/run` | `config(runtime_dir)` / `CLARASERV_RUNTIME_DIR` |
+| Instance | (vide) | `config(instance_name)` → `run/<instance>/` |
+| PID / stop | `$runtime_dir/claraserv.pid` / `.stop` | via runtime dir |
 
-Le contenu de `run/` n’est pas versionné (`run/.gitkeep` conserve le répertoire). Ne pas utiliser `/tmp` comme runtime de production.
-
-**Multi-instances :** `instance_name` (`[A-Za-z0-9._-]{1,64}`) ou des `runtime_dir` distincts. Sans isolation, deux processus partagent le même stop-file.
+Le répertoire `run/` est créé au démarrage (non versionné). Ne pas utiliser `/tmp` en production.
 
 ## Foreground
 
 ```bash
-cd /opt/claraserv
 tclsh ClaraServ.tcl
+touch run/claraserv.stop   # arrêt propre → exit 0
 ```
-
-Arrêt propre :
-
-```bash
-touch run/claraserv.stop
-# ou : touch run/<instance>/claraserv.stop
-```
-
-Exit attendu : `0`. Un stop-file résiduel au prochain démarrage est consommé/supprimé au boot.
 
 ## Codes de sortie
 
-| Situation | Code | Effet systemd typique |
+| Situation | Code | systemd (`Restart=on-failure`) |
 |---|---|---|
-| Stop-file / arrêt volontaire | `0` | pas de restart (`Restart=on-failure`) |
+| Stop-file / arrêt volontaire | `0` | pas de restart |
 | Erreur conf / init | non zéro | restart possible |
 | EOF S2S inattendu | `1` | restart attendu |
-| SIGTERM sans Tclx | non garanti | après `TimeoutStopSec` : arrêt OS |
-| Crash Tcl | non zéro | restart |
 
-Sans Tclx, SIGTERM n’est pas un trap Tcl gracieux. Tclx n’est jamais obligatoire : l’arrêt recommandé reste le **stop-file**.
+Sans Tclx, SIGTERM n’est pas un trap Tcl : préférer le **stop-file**.
 
-## Script `bin/claraserv-screen`
+## `bin/claraserv-screen`
 
 ```bash
 bin/claraserv-screen --help
 bin/claraserv-screen --dry-run status
-bin/claraserv-screen start
-bin/claraserv-screen stop
-bin/claraserv-screen restart
-bin/claraserv-screen status
-bin/claraserv-screen attach    # alias : join
-bin/claraserv-screen logs
-bin/claraserv-screen foreground
+bin/claraserv-screen start|stop|restart|status|attach|logs|foreground
 bin/claraserv-screen --instance lab start
 ```
 
-Garanties : `set -Eeuo pipefail`, pas d’`eval`, validation des arguments, protection double instance, arrêt gracieux (stop-file) puis timeout, SIGKILL seulement avec `--force` ou `CLARASERV_ALLOW_SIGKILL=1`, `--dry-run` sans effet de bord. `status` : 0 actif, 1 inactif, 2 usage/environnement.
-
-Validation locale (sans session réelle) : `make verify-screen`.
-
-**Sessions screen réelles : NOT_TESTED** par les cibles Make du dépôt. Cursor ne lance pas Screen.
-
 ## systemd (exemple)
 
-Fichiers : `systemd/claraserv.service`, `systemd/claraserv.env.example` (optionnel, sans secret).
+Fichiers : `systemd/claraserv.service`, `systemd/claraserv.env.example` (sans secret).
 
-Points clés de l’unité :
+- `Type=simple`, user non-root, chemins `/opt/claraserv`, runtime `/var/lib/claraserv/run`
+- `ExecStop` = `touch …/claraserv.stop` ; `TimeoutStopSec=25` ; `Restart=on-failure`
+- Validation syntaxe : `make verify-systemd` (si `systemd-analyze` présent)
 
-- `Type=simple`, utilisateur non-root `claraserv`
-- chemins placeholders `/opt/claraserv`, runtime `/var/lib/claraserv/run`
-- `ExecStart` absolu sans shell ; `ExecStop` = `touch …/claraserv.stop` ; `TimeoutStopSec=25`
-- `Restart=on-failure`, `RestartSec=5`
-- hardening : `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=full`, `ProtectHome`, `ReadWritePaths`
-- aucun secret dans l’unit versionnée
-
-Validation syntaxe : `make verify-systemd` (`systemd-analyze verify` si présent).
-
-### Déploiement manuel (documentation uniquement — ne pas exécuter sans validation humaine)
-
-```bash
-sudo install -d -m 0755 /opt/claraserv
-sudo install -d -m 0750 /etc/claraserv
-sudo install -d -m 0750 /var/lib/claraserv/run
-sudo useradd --system --home-dir /var/lib/claraserv --shell /usr/sbin/nologin claraserv || true
-# Copier sources + ClaraServ.conf 0600
-sudo install -m 0644 systemd/claraserv.service /etc/systemd/system/claraserv.service
-# Personnaliser chemins / utilisateur, puis :
-# sudo systemctl daemon-reload && sudo systemctl enable --now claraserv.service
-# sudo journalctl -u claraserv.service -f
-```
-
-Aligner `config(runtime_dir)` / `instance_name` avec le chemin du stop-file de l’unit.
-
-**Activation systemd réelle : NOT_TESTED** / interdite sans confirmation humaine. Cursor n’installe ni ne démarre d’unité.
+Ne pas `enable`/`start` sans validation humaine. Aligner `config(runtime_dir)` avec l’unit.
 
 ## Logs
 
-- Foreground / screen : stderr (niveaux ClaraServ).
-- systemd : journald (`journalctl -u claraserv`).
-- Ne jamais activer `uplink_debug` en production (fuite possible de `PASS`). Voir [SECURITY.md](SECURITY.md).
+Foreground/screen → stderr ; systemd → journald. Jamais `uplink_debug=1` en production ([SECURITY.md](SECURITY.md)).
 
-## Test process local (hors IRCd)
+## Salon public vs `service_chanmodes`
 
-```bash
-make test-local-process
-```
+Appliqué sur `service_channel` à l’EOS **si non vide**.
 
-Harness `tests/harness_local_process.tcl` : `disableAutoStart`, runtime temporaire, stop-file réel. **Ne valide pas** S2S ni un IRCd réel.
+| Valeur | Usage |
+|---|---|
+| `""` (défaut Example) | Recommandé pour salon d’accueil / animations public |
+| `+nt` | Acceptable sur salon public |
+| `+Osnt` | **+O = IRCops only** — logs/services uniquement, **jamais** un accueil public |
+
+Avec `+O`, Kiwi / users non-oper reçoivent `520 (IRCops only)`.
 
 ## Erreurs courantes
 
 | Symptôme | Piste |
 |---|---|
-| Conf manquante / invalide | Copier Example, clés requises, pas de MDP exemple |
-| Auth S2S refusée | Cohérence password / nom / SID / port / TLS avec l’IRCd |
-| « wrong version number » TLS | Port plain vs TLS, `uplink_ssl` |
-| Process reste après stop | Vérifier le bon `runtime_dir` / instance ; attendre le poll 500 ms |
-| Restart en boucle | EOF S2S (exit 1) ou conf invalide — corriger avant de relancer |
+| Conf manquante / invalide | Example → conf, pas de placeholder / MDP d’exemple |
+| Auth S2S refusée | password / nom / SID / port / TLS |
+| wrong version number TLS | port plain vs TLS, `uplink_ssl` |
+| Process reste après stop | mauvais `runtime_dir` / instance |
+| Restart en boucle | EOF S2S (exit 1) ou conf invalide |
 
-Liaison UnrealIRCd : [UNREALIRCD.md](UNREALIRCD.md).
-
-## Salon public vs `service_chanmodes`
-
-`config(service_chanmodes)` est appliqué sur `service_channel` **à l’EOS** (si non vide).
-
-| Valeur | Effet typique Unreal | Usage |
-|---|---|---|
-| `""` (défaut Example) | Aucun MODE forcé | **Recommandé** si `service_channel` = salon d’accueil / animations public |
-| `+nt` | topic lock + no external msgs | Acceptable sur salon public |
-| `+Osnt` | **+O = IRCops only** | Salon de **logs / services** uniquement — **jamais** un `#accueil` public |
-
-Avec `+O`, KiwiIRC et les users non-oper reçoivent `520 … (IRCops only)`.  
-Préflight : `make preflight-config` émet un **WARN** si `+O` est présent.
-
-## Upgrade AmiZone (exemple réel)
-
-Chemins typiques : code `/home/zartek/ClaraServ`, unit **`irc_claraserv`**, Unreal `/home/unrealircd/unrealircd`.
-
-```bash
-# 1) Backup conf (ne jamais committer)
-install -d -m 0700 /home/zartek/.claraserv
-cp -a /home/zartek/ClaraServ/ClaraServ.conf /home/zartek/.claraserv/ClaraServ.conf.bak.$(date +%Y%m%d%H%M%S)
-
-# 2) Mettre à jour le code (git pull ff-only ou rsync) SANS écraser ClaraServ.conf
-sudo -u zartek bash -lc 'cd /home/zartek/ClaraServ && git fetch origin && git checkout develop && git pull --ff-only origin develop'
-# restaurer ClaraServ.conf si besoin
-
-# 3) Validations hors réseau
-sudo -u zartek bash -lc 'cd /home/zartek/ClaraServ && make check && make test && make preflight-config'
-
-# 4) Restart
-systemctl restart irc_claraserv
-systemctl --no-pager status irc_claraserv
-journalctl -u irc_claraserv -n 30 --no-pager   # redact secrets
-
-# 5) Vérifier S2S (servers >= 2) puis smoke IRC sur le salon d’accueil
-```
-
-Après correction de `service_chanmodes` (retrait de `+O`) : restart ClaraServ, puis s’assurer que le salon n’est plus `+O` (`MODE #salon -O` une fois si le mode restait sticky).
-
-Journald : `journalctl -u irc_claraserv` (pas seulement `claraserv`).
+S2S Unreal : [UNREALIRCD.md](UNREALIRCD.md).
 
 ## Rollback
 
-1. Arrêter : `bin/claraserv-screen stop` ou stop-file / `systemctl stop` si activé.
-2. Restaurer commit et/ou `ClaraServ.conf` précédente.
-3. Si conf IRCd modifiée : restaurer + `configtest` + rehash admin.
-4. Rotation du mot de passe de lien si exposé.
+1. Stop-file / `bin/claraserv-screen stop` / `systemctl stop`
+2. Restaurer commit et/ou `ClaraServ.conf`
+3. Si conf IRCd modifiée : restaurer + `configtest` + rehash
+4. Rotation du mot de passe de lien si exposé
 
-## Procédures non exécutées par Cursor
+## Limites
 
-- Installation de paquets, Screen, Tclx
-- `systemctl enable/start`, copie vers `/etc/systemd/system`
-- Connexion IRCd / rehash UnrealIRCd
-- Commit / push / purge d’historique Git
-
-## Limites non testées ici
-
-- Session GNU Screen réelle
-- Installation / activation systemd réelle
-- Liaison S2S sur IRCd réel
-- Trap SIGTERM via Tclx (si package absent)
+- Session Screen réelle, activation systemd réelle, S2S sur IRCd réel : hors `make` (labo / ops)
+- Trap SIGTERM via Tclx : seulement si le package est installé

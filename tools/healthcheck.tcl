@@ -1,23 +1,22 @@
 #!/usr/bin/env tclsh
-# Healthcheck statique ClaraServ — aucun réseau, aucun Eggdrop requis.
-# Ne source PAS ClaraServ.tcl en mode auto-start.
+# Healthcheck produit ClaraServ — un seul point d’entrée, hors réseau.
+# Enchaîne : bash -n scripts · validate-animations-db · contrôles Tcl.
+# Ne source PAS ClaraServ.tcl sans disableAutoStart.
 
 proc usage {} {
     puts {Usage: tclsh tools/healthcheck.tcl [--help]
 
-Contrôles:
-  - présence fichiers essentiels
-  - syntaxe Tcl (info complete) sans exécution réseau
-  - structure des bases d'animations
-  - détection références Eggdrop (informatif)
-  - présence ClaraServ.conf (sans lire les secrets)
+Contrôles (sans connexion IRC) :
+  - bash -n (et shellcheck si présent) sur bin/claraserv-screen
+  - tools/validate-animations-db.tcl
+  - présence / syntaxe / packages / chargement disableAutoStart
 
-Codes: 0=OK (warnings OK), 1=échecs, 2=usage}
+Codes: 0=OK (WARN autorisés), 1=FAIL, 2=usage}
 }
 
 if {[llength $argv] > 0 && [lindex $argv 0] in {-h --help}} {
     usage
-    exit 0
+    exit 2
 }
 
 set scriptDir [file dirname [file normalize [info script]]]
@@ -30,7 +29,7 @@ proc hc_pass {msg} { puts "[format %-6s PASS] $msg"; incr ::HC_PASS }
 proc hc_warn {msg} { puts "[format %-6s WARN] $msg"; incr ::HC_WARN }
 proc hc_fail {msg} { puts "[format %-6s FAIL] $msg"; incr ::HC_FAIL }
 
-puts "ClaraServ healthcheck (statique)"
+puts "ClaraServ healthcheck"
 puts "Racine: $root"
 puts "Tcl: [info patchlevel]"
 puts "------------------------------------------------------------"
@@ -41,6 +40,40 @@ if {[package vcompare [info patchlevel] 8.6] >= 0} {
 } else {
     hc_fail "Tcl < 8.6 ([info patchlevel])"
 }
+
+# --- Shell : bash -n (+ shellcheck optionnel) ---
+set screenSh [file join $root bin claraserv-screen]
+if {[file isfile $screenSh]} {
+    if {[catch {exec bash -n $screenSh} err]} {
+        hc_fail "bash -n bin/claraserv-screen: $err"
+    } else {
+        hc_pass "bash -n bin/claraserv-screen"
+    }
+    if {[llength [auto_execok shellcheck]]} {
+        if {[catch {exec shellcheck -x $screenSh} scErr]} {
+            hc_warn "shellcheck bin/claraserv-screen: $scErr"
+        } else {
+            hc_pass "shellcheck bin/claraserv-screen"
+        }
+    }
+} else {
+    hc_fail "manquant bin/claraserv-screen"
+}
+
+# --- Validateur DB (contenu) ---
+puts ""
+puts "--- validate-animations-db.tcl ---"
+set valScript [file join $scriptDir validate-animations-db.tcl]
+if {![file isfile $valScript]} {
+    hc_fail "manquant tools/validate-animations-db.tcl"
+} elseif {[catch {exec tclsh $valScript} valOut]} {
+    puts $valOut
+    hc_fail "validate-animations-db.tcl a échoué"
+} else {
+    if {$valOut ne ""} { puts $valOut }
+    hc_pass "validate-animations-db.tcl OK"
+}
+puts ""
 
 # --- Fichiers essentiels ---
 set required {
@@ -65,13 +98,9 @@ set conf [file join $root ClaraServ.conf]
 if {[file isfile $conf]} {
     hc_warn "ClaraServ.conf présent (permissions/valeurs non affichées)"
     if {[catch {file attributes $conf -permissions} perm] == 0} {
-        # octal string may vary; only warn if world-readable when detectable
-        if {[string match *4 $perm] || [string match *5 $perm] || [string match *6 $perm] || [string match *7 $perm]} {
-            # crude: if others bit set in last digit
-            set last [string index $perm end]
-            if {$last in {4 5 6 7}} {
-                hc_warn "ClaraServ.conf potentiellement lisible par others (mode $perm)"
-            }
+        set last [string index $perm end]
+        if {$last in {4 5 6 7}} {
+            hc_warn "ClaraServ.conf potentiellement lisible par others (mode $perm)"
         }
     }
 } else {
@@ -104,75 +133,25 @@ foreach {rel label} {
     }
 }
 
-# --- Bases d'animations ---
-proc validate_animation_db {path label} {
-    set ns ::HC_DB_[clock clicks]
-    namespace eval $ns {}
-    if {[catch {namespace eval $ns [list source $path]} err]} {
-        hc_fail "chargement $label: $err"
-        namespace delete $ns
-        return
-    }
-    if {![info exists ${ns}::database]} {
-        hc_fail "$label: variable database absente"
-        namespace delete $ns
-        return
-    }
-    set database [set ${ns}::database]
-    set count 0
-    set errors 0
-    set seen [dict create]
-    foreach entry $database {
-        incr count
-        if {[llength $entry] != 3} {
-            incr errors
-            continue
-        }
-        set cmdWrap [lindex $entry 0]
-        set level [lindex $entry 1]
-        if {[llength $cmdWrap] != 1} {
-            incr errors
-            continue
-        }
-        set cmd [lindex $cmdWrap 0]
-        if {![string match {!*} $cmd]} {
-            incr errors
-            continue
-        }
-        if {$level ni {0 1}} {
-            incr errors
-            continue
-        }
-        set key [string tolower $cmd]:$level
-        if {[dict exists $seen $key]} {
-            incr errors
-            continue
-        }
-        dict set seen $key 1
-    }
-    namespace delete $ns
-    if {$errors > 0} {
-        hc_fail "$label: $errors entrée(s) invalide(s) sur $count"
-    } elseif {$count == 0} {
-        hc_fail "$label: catalogue vide"
+foreach rel {
+    db/aliases.fr.db
+    db/variants.fr.db
+    db/fails.fr.db
+} {
+    set path [file join $root $rel]
+    if {[file isfile $path]} {
+        hc_pass "présent $rel"
     } else {
-        hc_pass "$label: $count entrées valides"
-        if {$count < 10} {
-            hc_warn "$label: catalogue très petit ($count)"
-        }
+        hc_warn "absent (optionnel): $rel"
     }
 }
 
-validate_animation_db [file join $root db database.fr.db] database.fr.db
-validate_animation_db [file join $root db database.en.db] database.en.db
-
-# --- Primitives hôte bot absentes de ClaraServ.tcl (runtime pur tclsh) ---
+# --- Primitives hôte bot absentes ---
 set clara [file join $root ClaraServ.tcl]
 if {[file isfile $clara]} {
     set fh [open $clara r]
     set src [read $fh]
     close $fh
-    # Ignorer les commentaires de ligne.
     set codeOnly [regsub -all -line {#.*$} $src {}]
     set hits {}
     foreach pat {putlog binds unbind} {
@@ -187,8 +166,7 @@ if {[file isfile $clara]} {
     }
 }
 
-# --- Résolution packages modules (sans réseau, sans INIT) ---
-# Lot 0 : cohérence pkgIndex ↔ package provide ↔ needZct/needIrcs ClaraServ.
+# --- Versions packages ---
 proc read_pkgindex_version {pkgIndexPath packageName} {
     set fh [open $pkgIndexPath r]
     set data [read $fh]
@@ -236,7 +214,6 @@ set zctIdx [file join $root modules TCL-ZCT pkgIndex.tcl]
 set ircTcl [file join $root modules TCL-PKG-IRCServices ircservices.tcl]
 set ircIdx [file join $root modules TCL-PKG-IRCServices pkgIndex.tcl]
 set claraPath [file join $root ClaraServ.tcl]
-
 set needZct [read_claraserv_need $claraPath needZct]
 set needIrcs [read_claraserv_need $claraPath needIrcs]
 
@@ -258,11 +235,8 @@ if {[file isfile $ircTcl] && [file isfile $ircIdx] && [file isfile $claraPath]} 
     hc_fail "IRCServices: fichiers manquants pour contrôle de version"
 }
 
-# Preuve : package require via pkgIndex local (sans auto_path global projet)
 interp create ::HC_IDX
 if {[catch {
-    ::HC_IDX eval [list set dir [file normalize $zctIdx]]
-    # dir must be the package directory containing pkgIndex
     ::HC_IDX eval [list set dir [file dirname [file normalize $zctIdx]]]
     ::HC_IDX eval {source [file join $dir pkgIndex.tcl]}
     ::HC_IDX eval [list package require ZCT $needZct]
@@ -270,23 +244,19 @@ if {[catch {
 } idxErr]} {
     hc_fail "require ZCT $needZct via pkgIndex local: $idxErr"
 } else {
-    hc_pass "require ZCT via pkgIndex local → $::HC_IDX_ZCT (sans auto_path projet)"
+    hc_pass "require ZCT via pkgIndex local → $::HC_IDX_ZCT"
 }
 interp delete ::HC_IDX
 
-# Chargement réel comme ClaraServ (disableAutoStart) — aucun socket uplink
-set loadNs ::HC_LOAD_[clock clicks]
 if {[catch {
-    namespace eval $loadNs {
-        namespace eval ::ClaraServ { variable disableAutoStart 1 }
-        source [file join $::root ClaraServ.tcl]
-        set ::HC_ZCT_PRESENT [package present ZCT]
-        set ::HC_IRC_PRESENT [package present IRCServices]
-        set ::HC_CS_PRESENT [package present ClaraServ]
-        set ::HC_AUTO_MODULES [lsearch -glob $::auto_path *modules*]
-        set ::HC_NEED_ZCT $::ClaraServ::SCRIPT(needZct)
-        set ::HC_NEED_IRCS $::ClaraServ::SCRIPT(needIrcs)
-    }
+    namespace eval ::ClaraServ { variable disableAutoStart 1 }
+    source [file join $root ClaraServ.tcl]
+    set ::HC_ZCT_PRESENT [package present ZCT]
+    set ::HC_IRC_PRESENT [package present IRCServices]
+    set ::HC_CS_PRESENT [package present ClaraServ]
+    set ::HC_AUTO_MODULES [lsearch -glob $::auto_path *modules*]
+    set ::HC_NEED_ZCT $::ClaraServ::SCRIPT(needZct)
+    set ::HC_NEED_IRCS $::ClaraServ::SCRIPT(needIrcs)
 } loadErr]} {
     hc_fail "chargement ClaraServ (disableAutoStart) : $loadErr"
 } else {
@@ -297,26 +267,20 @@ if {[catch {
         hc_fail "runtime ZCT=$::HC_ZCT_PRESENT/need=$::HC_NEED_ZCT IRC=$::HC_IRC_PRESENT/need=$::HC_NEED_IRCS"
     }
     if {$::HC_AUTO_MODULES < 0} {
-        hc_pass "auto_path ne contient pas modules/ (source relatif confirmé)"
+        hc_pass "auto_path ne contient pas modules/"
     } else {
         hc_warn "auto_path contient une entrée modules/ (index $::HC_AUTO_MODULES)"
     }
 }
 
-# setup.tcl / outils amont ne sont pas requis au runtime
 if {[file isfile [file join $root modules TCL-PKG-IRCServices setup.tcl]]} {
-    hc_warn "setup.tcl présent mais non requis au runtime ClaraServ"
+    hc_warn "setup.tcl présent mais non requis au runtime"
 } else {
-    hc_pass "setup.tcl absent (attendu après nettoyage modules)"
+    hc_pass "setup.tcl absent"
 }
 
-# --- Note stratégie stubs ---
-hc_pass "stratégie: ne pas source ClaraServ.tcl sans disableAutoStart (évite connect uplink)"
-hc_pass "pkgIndex = métadonnées de cohérence ; runtime reste source relatif"
-
-# --- Préflight labo S2S (statique, hors réseau) ---
-hc_warn "TLS uplink: IRCServices utilise tls::socket -require 0 -request 0 (pas de validation CA client)"
-hc_warn "Ne jamais activer uplink_debug=1 hors labo court : le trafic send (PASS) peut être journalisé"
+hc_warn "TLS uplink: tls::socket -require 0 -request 0 (pas de validation CA client)"
+hc_warn "Ne jamais activer uplink_debug=1 hors labo court"
 if {[file isfile [file join $root docs UNREALIRCD.md]]} {
     hc_pass "Doc S2S Unreal: docs/UNREALIRCD.md"
 } else {
@@ -329,3 +293,4 @@ if {$::HC_FAIL > 0} {
     exit 1
 }
 exit 0
+}

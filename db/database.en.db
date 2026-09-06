@@ -1,7 +1,418 @@
 variable database {
-    {{!example1} {0} {<c07>%sender%<c12> Example1 ? <c04><b> (• ◡•)}}
-    {{!example1} {1} {<c07>%sender%<c12> Example1 for <c04>%pseudo%<c12> ? <c04><b> (• ◡•)}}
+	{{!gaufre}		{0}		{<c07>%sender%<c12> is about to demolish a 🧇 waffle 🧇<c12> chocolate? whipped cream? jam? <c04><b> (• ◡•)}}
+	{{!gaufre}		{1}		{<c07>%sender%<c12> offers <c04>%pseudo%<c12> a 🧇 waffle 🧇 ! <c04><b> (• ◡•)}}
+	
+	{{!rhum}		{0}		{<c12>It's so hooooooot, <c07>%sender%<c12> pours a little glass of rum <c04>ah ah ah ah... rum, women and song for god's sake !!!}}
+	{{!rhum}		{1}		{<c07>%sender%<c12> buys a glass of rum for <c04>%pseudo%<c12>, cheers mate :p it burns huh ^^}}
 
-    {{!example2} {0} {<c07>%sender%<c12> Example2 !!! <c04><b> (• ◡•)}}
-    {{!example2} {1} {<c07>%sender%<c12> Example2 for <c04>%pseudo%<c12> !!! <c04><b> (• ◡•)}}
+	{{!chocolat}	{0}		{<c12>Such a sweet tooth, <c07>%sender%<c12> allows themself 1 square of chocolate 🍫 ... then 2 ... then 3 ... At this rate, in<c04> 10 minutes <c12> the whole pack will be gone!}}
+	{{!chocolat}	{1}		{<c12>This is for you! Yes yes, <c07>%sender%<c12> wants to spoil you and offers these few squares of chocolate 🍫. Given with a full heart for<c04> %pseudo%}}
+
+	{{!danse}		{0}		{<c12>Looks like <c07>%sender%<c12> has a crazy urge to dance 💃 !! <b> <c04>ƪ(˘⌣˘)┐ ƪ(˘⌣˘)ʃ ┌(˘⌣˘)ʃ}}
+	{{!danse}		{1}		{<c07>%sender%<c12> has a body that won't stop moving and would love to invite <c04>%pseudo%<c12> to dance 💃, held close together<b><c04> ヘ( ^o^)ノ＼(^_^ )}}
+
+	{{!fleur}		{0}		{<c12>It seems <c07>%sender%<c12> is giving flowers 🌹🌻🌺🌷 to <c04>themself! <c04>✿ <c03>❀ <c07>❁}}
+	{{!fleur}		{1}		{<c07>%sender%<c12> offers lovely 🌹 🌻🌺🌷 <c04>@<c03>-,<c03>-'<c03>--,<c03>-<c07>@</c><c03>-,-'---<c06> @<c03>-,-'--,--<c12> to<c04> %pseudo%}}
+
+	{{!coeur}		{0}		{<c12>It seems <c07>%sender%<c12> loves <c04>hearts 💖 💗  💝 <c06> \♥<c13>\(\¯\`\♥\´\¯\)<c06> \♥}}
+	{{!coeur}		{1}		{💘<c13>❤<c06> ❤ <c07>❤<c02> ❤ <c04><b> %pseudo% <b><c02> ❤ <c07>❤<c06> ❤<c13>💘}}
+
+	{{!mouton}		{0}		{<c12>It seems <c07>%sender%<c12> is a sheep 🐑 ^^ <c04>baaaaaaaaaaaaaaaaaaaaa}}
+	{{!mouton}		{1}		{<c07>%sender%<c12> suddenly wants to play sheep 🐑 for<c04> %pseudo%<c12> 🐏. baaaaaaaaaaaaaaaaaaaaa}}
+
+	{{!rateau}		{0}		{<c12>It seems <c07>%sender%<c12> just got the rejection of the year! <b><c04> (✖╭╮✖)}}
+	{{!rateau}		{1}		{<c07>%sender%<c12> says: When you take a rake to the face, it's a shovel they use to scrape you up<c04> %pseudo% <b> <c04>(Q'-')=O (✖╭╮✖)}}
+
+	{{!chante}		{0}		{<c07>%sender%<c12> ♫♪sings♫♪ at the top of their lungs <c04>lalalalalalalala.<c12> Next year it's The Voice DIRECT signup! 🎵 🎶 👨‍🎤}}
+	{{!chante}		{1}		{<c07>%sender%<c12> grabs the mic and climbs on their desk to ♫♪sing♫♪ with<c04> %pseudo%. <c12> We're gonna blow the speakers yeeeeeeeee <c04>♫♪.ılılıll|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|llılılı.♫♪ 🎵 🎶 👨‍🎤}}
+
+	{{!cochon}		{0}		{<c12>spider pig, spider pig, can walk up on the ceiling 🐖, can heeee spin a web🐽, of course he can't, he's a pig 🐷. Watch out!! spider pig <c13>^(°@°)^ <c12> is here !!!!!!!}}
+	{{!cochon}		{1}		{<c07>%sender%<c12> says <c04>%pseudo%<c12> is a pig 🐖 <c13>^(°@°)^ <c12> 🐽. Go on, roll in the mud and go eat some acorns :x}}
+
+	{{!thé}			{0}		{<c12>Coooooool ! <c07>%sender%<c12> heads to the kitchen to make <c04>some tea <b>🍵<c05> [\_\_]\D\\}}
+	{{!thé}			{1}		{<c07>%sender%<c12> offers a lovely hot cup of Tea 🍵 to <c04>%pseudo%<c12> >> A slice of lemon, milk, sugar? <b><c05> [\_\_]\D\\}}
+
+	{{!seau}		{0}		{<c07> %sender% <c04>dumps a bucket of cold water 🪣 over their head.<c12> Too hot <c07>%sender%<c12> ?}}
+	{{!seau}		{1}		{<c07>%sender%<c12> chucks a bucket of cold water 🪣 on<c04> %pseudo%. <c12> That should calm you down I think ;)}}
+
+	{{!waff}		{0}		{<c07>%sender%<c12> is a little poodle 🐕‍🦺, a plush toy 🐶 for old folks :D}}
+	{{!waff}		{1}		{<c07>Waff <c12> is dying of laughter imagining <c04>%pseudo%<c12> going after furniture like a needy poodle 🐶 xD the image is ugly but hilarious :D}}
+
+	{{!eau}			{0}		{<c07> %sender% <c04>dumps a bucket 🪣 of cold water 🚰 over their head.<c12> Too hot <c07>%sender%<c12> ?}}
+	{{!eau}			{1}		{<c07>%sender%<c12> chucks a bucket 🪣 of cold water 🚰 on<c04> %pseudo%. <c12> That should calm you down I think ;)}}
+
+	{{!jump}		{0}		{<b><c02,00>< <c07,00>0o<c03,00>0/ <c04,00>Jump <c01> o <c06,00>Jump <c01> o <c10,00>Jump <c01> o <c03,00>Jump <c01> o <c14,00>Jump <c01> o <c07,00>Jump <c01> o <c05,00>0<c10,00>0o <c04,00>0>}}
+	{{!jump}		{1}		{<b><c02,00>< <c07,00>0o<c03,00>0/ <c04,00>Jump <c01> o <c06,00>Jump <c01> o <c10,00>Jump<c01>  %pseudo% <c03,00>Jump <c01> o <c14,00>Jump <c01> o <c07,00>Jump <c01> o <c05,00>0<c10,00>0o <c04,00>0>}}
+
+	{{!truite}		{0}		{<c07> %sender% <c04>smacks their own face with a trout <c12> >(////°>}}
+	{{!truite}		{1}		{<c07>%sender%<c12> lands big hits of <c01> >(////°> <c12> on<c04> %pseudo%}}
+
+	{{!dzoss}		{0}		{<c12>It seems <c07>%sender%<c12> is D-Zossing <c04>themself !}}
+	{{!dzoss}		{1}		{<c07>%sender%<c12> violently throws themself at <c04>%pseudo%<c12> to D-Zoss them.}}
+
+	{{!apéro}		{0}		{<c07> %sender% <c04>declares it's time to pull the bottles from the bar for aperitif! Who's on peanuts and chips duty? :p}}
+	{{!apéro}		{1}		{<c07>%sender%<c12> asks <c04>%pseudo%<c12> what they want to drink because it's aperitif time! Let's go for a little pastis, Sky cola or a fruit juice! <c07>\(* ˘⌣˘)◞<c01> d[\_]\ <c12> Cheers!<c01>  [\_]b <c04>\ヽ(•‿• )}}
+
+	{{!dodo}		{0}		{<c07>%sender%<c12> is off for a big fat nap 😴 <c04>(-.-)Zzz...<c12> and wishes everyone a good night. Sweet dreams friends 🛌🛌🛌<c04><b> ヽ(´ー`)人(´∇｀)人(`Д´)ノ}}
+	{{!dodo}		{1}		{<c07>%sender%<c12> would love to be tucked in by <c04>%pseudo%<c12> because it's 😴 bedtime ^^ ! Good night 🛌🛌🛌 <3}}
+
+	{{!piscine}		{0}		{<c07> %sender% <c04>doesn't look available... <c12> Can't make it I've got poooooool pool pool pool can't make it I've got pooooooooool 🏊🏊}}
+	{{!piscine}		{1}		{<c07>%sender%<c12> reminds <c04>%pseudo%<c12> they're not available, they're going to the poooooooooool !!! 🏊🏊}}
+
+	{{!saute}		{0}		{<c03>W <c04><b>e <c06> J<c05> <b>u<c13>m <c07><b><b>P<c10><b>,<c14> <c01> <b>J <c04><b>u<c02> <b>M<c13>p<c14><b>,<c05> <c06> <b>j <c07>U <c03><b>m<c10>P<c13><b>,<c01> ... h<b>O<b>p h<b>O<b>p h<b>O<b>p <c12> are we lighting up<b><c04> %chan <b><c01> or what?}}
+	{{!saute}		{1}		{<c07><b>%sender% <c06> J<c05> <b>u<c13>m <c07><b><b>P<c10><b>,<c14> <c01> <b>J <c04><b>u<c02> <b>M<c13>p<c14><b>,<c05> <c06> <b>j <c07>U <c03><b>m<c10>P<c13><b>! <c04><b>%pseudo%}}
+
+	{{!bouge}		{0}		{<c01> On the C<b>h<b><c12> a<b><c13>a<b><c01> t <b>R<b>a<b>d<b>i<b>O<b>o <c01> we've got the <b> <c04>M<b><c01>ove <c04><b>M<c01><b>ove fever, nobody sits down! <c06> <b>J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P}}
+	{{!bouge}		{1}		{<c06> <b>J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c01> Get up and dance<c04> %pseudo%<c01>, it's<c04> %sender% <c01> asking you <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P <c06> J <c07>u<c13>m <c03>P <c04>J<c12> u<c10>m<c14>P}}
+
+	{{!mojito}		{0}		{<c07>%sender%<c12> is buying a round of  <c03>Mojito ! <c12> ohhhhhhh yeeeeees let's go hi hi hi!}}
+	{{!mojito}		{1}		{<c07>%sender%<c12> is in a great mood and offers <c04>%pseudo%<c12> a killer  <c03>Mojito <c12> <c01> ☠<c12> ! Time to party :D}}
+
+	{{!glace}		{0}		{<c12>What a heatwave ... <c07>%sender%<c12> has such a craving to lick ... an ice cream ^^ 🍦🍦🍦}}
+	{{!glace}		{1}		{<c07>%sender%<c12> rushes to the freezer and announces the flavors to <c04>%pseudo%<c12> : vanilla, chocolate, strawberry, rum raisin, banana bay leaf, steak fries ☚ (<‿<)☚ ... which ice cream do you waaaaant? 🍦🍦🍦}}
+
+	{{!ruisseau}	{0}		{<c12>You're sitting by a stream and you're thirsty; even if you're a fool, you know the water will quench you. <c04>That's what understanding is...}}
+	{{!ruisseau}	{1}		{<c07>%sender%<c12> would love to make <c04>%pseudo%<c12> understand that if you're sitting by a stream and you're thirsty, even if you're a fool, you know the water will quench you.<c04> That's what understanding is...}}
+
+	{{!lune}		{0}		{<c12>When the wise man points at the moon 🌛, the fool looks at the finger... look at the 🌜 moon ☽ please🌙 !}}
+	{{!lune}		{1}		{<c07>%sender%<c12> has so much wisdom... 🌛 When the wise man points at the 🌜 moon ☽, the fool looks at the finger... <c04>%pseudo%<c12> look at the moon 🌙 please!}}
+
+	{{!zen}			{0}		{<c12>Every time someone smiles, they add something to the length of their life, stay ZeN ☯ and you'll live long.}}
+	{{!zen}			{1}		{<c12>Every time someone smiles, they add something to the length of their life, stay ZeN ☯ <c04>%pseudo%<c12> and you'll live long.}}
+
+	{{!noir}		{0}		{<c12>it's about to go <c01> daaaaaaaaaark<c12> ...! <c07>%sender%<c12> is shutting their trap!}}
+	{{!noir}		{1}		{<c12>it's about to go <c01> daaaaaaaaaark !!! <c07>%sender%<c12> asks <c04>%pseudo%<c12> to shut their trap!}}
+
+	{{!vidéo}		{0}		{<c07>%sender%<c12> is off to watch a goooooooooooooooooood video <c04><b> [\●▪▪●]\\}}
+	{{!vidéo}		{1}		{<c07>%sender%<c12> whispers in <c04>%pseudo%<c12>'s ear that they'd better go watch a video<c04> [\●▪▪●]\ <c12> ... it relaxes ^^ you'll be less stressed and more chilled :)}}
+
+	{{!clope}		{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to a well-earned 🚬 ciggy 🚬 break (smoking is bad)}}
+	{{!clope}		{1}		{<c07>%sender%<c12> offers a 🚬 cigarette 🚬 (<u><c01,07>)¯¯¯¯</c>)<c01> ¯<c12> )<c01,00>¯¯¯¯¯¯¯<u><b>))</c> <c04,00>)<c15>~~\017 <c12> to <c04>%pseudo%<c12> (smoking is bad)}}
+
+	{{!mord}		{0}		{<c12>It seems <c07>%sender%<c12> is biting themself, sado maso?}}
+	{{!mord}		{1}		{<c07>%sender%<c12> grabs <c04>%pseudo%<c12> and bites their butt hmm that taste of <c13><b><3 <3 <3}}
+
+	{{!tendresse}	{0}		{<c07>%sender%<c12> gives themself a little 💖 tenderness 💖, since nobody else does <c13>(♥‿♥)}}
+	{{!tendresse}	{1}		{<c07>%sender%<c12> takes<c04> %pseudo%<c12> in their arms, and gives them a super hug <3 That's 💖 love 💖 <c13>♥(Ɔ ˘⌣˘)˘⌣˘ C)♥}}
+
+	{{!bière}		{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to a nice cold beer <c04>!}}
+	{{!bière}		{1}		{<c07>%sender%<c12> offers a nice cold beer to<c04> %pseudo%}}
+
+	{{!pelle}		{0}		{<c12>It seems <c07>%sender%<c12> is snogging <c04>themself !}}
+	{{!pelle}		{1}		{<c07>%sender%<c12> plants a big snog on<c04> %pseudo%}}
+
+	{{!kiss}		{0}		{<c12>It seems <c07>%sender%<c12> is giving themself a huge 💋💋💋 <c04>K <c07>iii<c06> ii<c02> sss 😘😘<c12> to <c04>themself !}}
+	{{!kiss}		{1}		{<c07>%sender%<c12> plants a huge <c04>K <c07>iii<c06> ii<c02> sss 😘😘 on<c04> %pseudo% 💋💋💋}}
+
+	{{!champagne}	{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to a glass of champagne <c04>!}}
+	{{!champagne}	{1}		{<c07>%sender%<c12> offers a nice glass of champagne to<c04> %pseudo%}}
+
+	{{!sexy}		{0}		{<c12>It seems <c07>%sender%<c12> finds <c04>themself ! <c12> very sexy. <c04>٩(- ̮̮̃-̃)۶<c12> ( Ankles swelling :o) )}}
+	{{!sexy}		{1}		{<c07>%sender%<c12> finds you really <c04>so <c13>very <c07>SEXY!!!<c04> %pseudo%}}
+
+	{{!aime}		{0}		{<c12>It seems <c07>%sender%<c12> loves <c04>themself ! <c13> ♥‿♥}}
+	{{!aime}		{1}		{<c07>%sender%<c12> declares in front of the whole room that they love<c04> %pseudo% !!<c13> (ღ˘⌣˘)♥♥♥♥♥}}
+
+	{{!relou}		{0}		{<c12>It seems <c07>%sender%<c12> finds themself annoying <c04>!}}
+	{{!relou}		{1}		{<c07>%sender%<c12> really thinks <c04>%pseudo%<c12> is so annoying.}}
+
+	{{!baffe}		{0}		{<c12>It seems <c07>%sender%<c12> is slapping <c04>themself !}}
+	{{!baffe}		{1}		{<c07>%sender%<c12> lands a huuuge slap on<c04> %pseudo%}}
+
+	{{!embrasse}	{0}		{<c12>It seems <c07>%sender%<c12> is kissing <c04>themself !}}
+	{{!embrasse}	{1}		{<c07>%sender%<c12> tenderly kisses <c04>%pseudo%<c12> until there's no mouth left.<c13>(Ɔ ˘⌣˘)♥(˘⌣˘ C)}}
+
+	{{!whisky}		{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to a fine 🥃 whisky 🥃 <c04>!}}
+	{{!whisky}		{1}		{<c07>%sender%<c12> offers a fine glass of 🥃 whisky 🥃 to <c04>%pseudo%<c12> Hmmm :D}}
+
+	{{!coca}		{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to a <c04>CoCa®<c01> -<c02> Cola <c04>!}}
+	{{!coca}		{1}		{<c07>%sender%<c12> offers a can of <c04>CoCa<c01> -<c02> Cola®<c12> to <c04>%pseudo%<c12> Hmmm :D}}	
+	
+	{{!love}		{0}		{<c12>It seems <c07>%sender%<c12> loves themself with all their heart<c04> ( ˘ ³˘)<c13>❤ ᶫᵒᵛᵉᵧₒᵤ !}}
+	{{!love}		{1}		{<c07>%sender%<c12> loves you with all their heart<c04> %pseudo% ! <c12> Declaring it in front of you on <c13>%chan% ! <c04>(Ɔ ˘⌣˘)♥(˘⌣˘ C)}}
+
+	{{!fouet}		{0}		{<c12>It seems <c04>%pseudo%<c12> likes getting whipped <b><c01> ===<c05> ~~~~~~}}
+	{{!fouet}		{1}		{<c07>%sender%<c12> vigorously whips<c04> %pseudo%<c12> . You like that you naughty one huh <b><c01> ===<c05> ~~~~~~}}
+
+	{{!clé}			{0}		{<c07>%sender%<c12> Takes the 🗝️key🔑<c04> ╥―O ⚿ <c12> to the fields because they should have shut it!}}
+	{{!clé}			{1}		{<c12>Here are the 🗝️keys🔑<c04> ╥―O ⚿ <c12> to shut your mouth<c04> %pseudo%<c12>, that'll give us a holiday!}}
+
+	{{!string}		{0}		{<c07>%sender%<c12> says a thong is the first string instrument, when you fart it makes a melody<c04> PweT ! ♪ ♫ ♩}}
+	{{!string}		{1}		{<c12>don't pull too hard on your thong string <c04>%pseudo%<c12> or else... it'll end up in your butt !!!}}
+
+	{{!bjr}			{0}		{<c07>%sender%<c12> says a big Hello or Good evening to<c04> everyone ! <b> 🖐️ヽ(•‿•)ノ🖐️}}
+	{{!bjr}			{1}		{<c07>%sender%<c12> says a big Hello or Good evening to<c04> %pseudo% !<b> 🖐️ヽ(•‿•)ノ🖐️}}
+
+	{{!bye}			{0}		{<c07>%sender%<c12> wishes a good night ☾ to<c04> everyone ! <b>(*・‿・)ノ*`*`*<b><c12> See you tomorrow Friends!}}
+	{{!bye}			{1}		{<c07>%sender%<c12> wishes a good night ☾ to<c04> %pseudo% <c04><b> ! (*・‿・)ノ*`*`*<b><c12> Bye Bye!}}
+
+	{{!étoile}		{0}		{<c07>%sender%<c12> throws stardust 🌟 on themself <c07>';`*^',*;~`;.,*`.`*~;*~`;,.'*`.;*``;.^.*`~..;`*.^;.,*`;~..*;`~*.,:*`** <c12> because they feel truly <b> <c04>SPECIAL !}}
+	{{!étoile}		{1}		{<c07>%sender%<c12> throws stardust 🌟 all around<c04> %pseudo% <c07>';`*^',*;~`;.,*`.`*~;*~`;,.'*`.;*``;.^.*`~..;`*.^;.,*`;~..*;`~*.,:*`** <c12> because YOU are truly <b> <c04>SPECIAL !}}
+
+	{{!ange}		{0}		{<c12>It seems <c07>%sender%<c12> is an angel 👼! <c13>~Å~ <c02> ~Å~ <c12> ~Å~	}}
+	{{!ange}		{1}		{<c07>%sender%<c12> sends little guardian angels 👼👼👼 to watch over you<c04> %pseudo% <c13>~Å~ <c02> ~Å~ <c12> ~Å~<c04> %pseudo%  <c03>~Å~ <c10>~Å~ <c13>~Å~<c04> %pseudo% <c11>~Å~ <c06> ~Å~ <c14>~Å~<c04> %pseudo% <c15>~Å~ <c13>~Å~ <c14>~Å~}}
+
+	{{!orangina}	{0}		{<c12>It seems <c07>%sender%<c12> is treating themself to an <b><c08,12>~ORANGINA®~ <b><c12>,0 ! hmmm :D}}
+	{{!orangina}	{1}		{<c07>%sender%<c12> offers a can of <b><c08,12>~ORANGINA®~ <b><c12,0> to <c04,00>%pseudo% <c12> Gotta shake it well! Hmmm :D}}
+
+	{{!milkshake}	{0}		{<c04>%pseudo% <c12> is showing off to everyone with their <b> <c03>Mi<c06> L<b>kS<c13>h<b>Ak <b><c04> 凸( ^o^)ノ<c01> └┘<c12> !!!}}
+	{{!milkshake}	{1}		{<c12>It's tiiiiiiiiime for the  <c03><b>Mi<c06> L<b>kS<c13>h<b>Ak <c07>E <b>S<b><c10>hak<b><c02> e S <c04>h<b>a<c01> ki B<b> <c03>oO<b>m<c02> <b><c04> %sender% <c12> is buying a round for<c04> %pseudo% ! <b><c04> ( ^o^)ノ<c01> └┘└┘ <c04>＼(^_^ ) <b><c12> Yeeeesss!}}
+
+	{{!massage}		{0}		{<c07>%sender%<c12> asks if anyone would give them a <c00> M<c02> M <c03>M <c04>a<c05> a<c06> a <c07><c09> S<c10>S<c11>a<c12> a<c13>a<c02> G <c04>G<c05> G<c06> e <c07>e<c08> e<c12> ???<c04> I dream of it!<b><c04> (ô‿ô)}}
+	{{!massage}		{1}		{<c07>%sender%<c12> with some  <c03>❝Revitalise❞ <c12> oil launches into a <c00> M<c02> M <c03>M <c04>a<c05> a<c06> a <c07><c09> S<c10>S<c11>a<c12> a<c13>a<c02> G <c04>G<c05> G<c06> e <c07>e<c08> e<c12> on <c04>%pseudo%<c12> to boost relaxation and well-being! It feels so Gooooood!<b><c04> (Ö‿Ö)}}
+
+	{{!7up}			{0}		{<c12>How good is a nice cold <c00,03><b>7 <c04>•<c00,03>Up®<b><c02,00></c><c12>, right? <c07>%sender%<c12> grabs one for their trouble!<c04> HAaAaAaA !!!}}
+	{{!7up}			{1}		{<c00,03><b>7 <c04>•<c00,03>Up®<b><c02,00></c><c12> is a lemon-lime soft drink created in the early 1920s by Charles Leiper Grigg ... Blablabla xD want some <c04>%pseudo%<c12> ?}}
+
+	{{!tropicana}	{0}		{<c12>Look how beautiful those <c07>Oranges<b> ◯◯◯ <b><c12> are !!! <c07>%sender%<c12> is gonna make a fine juice <b> <c03,07>Tropícana® style}}
+	{{!tropicana}	{1}		{<c12>Need vitamins <c04>%pseudo%<c12> ? No worries, <c07>%sender%<c12> will squeeze you some Oranges <b> <c07>◯◯◯<b><c12> <b> <c03,07>Tropícana® style}}
+
+	{{!macdo}		{0}		{<c12>Ohhhhh yeeeeeaaah ! <c07>%sender%<c12> is gonna blow up their Belly with a <c08,04><b>Big /¥\ac®<c06,00><c04> ヽ(^。^)ノ hamburger <c12> Yum! <c07,00>🍔🍔🍔🍔}}
+	{{!macdo}		{1}		{<c07>%sender%<c12> gives a <c08,04><b>Big /¥\ac®<c06,00><b> hamburger to <c07><b><c04> %pseudo% ! ヽ(^。^)ノ <c07,00>🍔🍔🍔🍔}}
+
+	{{!perf}		{0}		{<c12>O <c03>h <c04>l<c05> a<c06> l <c07>a<c13>l<c14>a<c12> ! <c07> %sender% <b> <c04>ε(๏̯͡๏)з<b><c12> is struggling to Wake up! A good ☕ coffee ☕ IV drip so their head isn't stuck in the <b> <c04>(_|_)<c12> <b> !}}
+	{{!perf}		{1}		{<c12>O <c03>h <c04>l<c05> a<c06> l <c07>a<c13>l<c14>a<c12> ! <c07>%sender%<c12> offers a good ☕ coffee ☕ IV drip to<c04> %pseudo% <b> <c04>ε(๏̯͡๏)з<b><c12> whose head is stuck in the <b> <c04>(_|_)<c12> <b> !}}
+
+	{{!redbull}		{0}		{<c12>The energy drink <b> <c04,02>Red <c04,01>5Bull®<b><c12,0> doesn't give you wings but <c07>%sender%<c12> doesn't care, they drink a can anyway!}}
+	{{!redbull}		{1}		{<c12>Feeling wiped out<b><c14>(•̪●)<b><c12>, <c07>%sender%<c12> advises<c04> %pseudo%<c12> to grab a can of <c02>  <b> <c04,02>Red <c04,01>5Bull®<b><c12,0> apparently it gives you wings <b> <c04>Ƹ(̾●̮̮̃̾•̃̾)Ʒ}}
+
+	{{!curly}		{0}		{<c07>%sender%<c12> has no friends<b><c04> (✖╭╮✖)<b><c12> ...... who'll offer them some <b><c08,04> Curly® 🥜<b> <c02,00> ?}}
+	{{!curly}		{1}		{<c07>%sender%<c12> says If you've got no friends! Have a<c08,04><b> Curly® 🥜<b><c01,00><c04> %pseudo% ! <b>( ˘⌣˘)/(⌣́_⌣̀)}}
+
+	{{!vittel}		{0}		{<c12>Are you sick or what<c04> %sender% <b> <c04>(☉_☉)<c12> ?<b><c12> you're drinking <c01> [ <c12> ■<b> <c04>Vittel® <c01> <b>]<c12,0> ... or maybe it's to drown the <b><c00,02>[Ricard®<c08,02>☀<c00,02>]}}
+	{{!vittel}		{1}		{<c12>My <c01> [ <c12> ■<b> <c04>Vittel® <c01> <b>]<c12,0> is so good I'm sharing it with friends ;) A little glass <c04>%pseudo%<c12> ? <c07>%sender%<c12> is buying the round ...	But don't worry, we won't forget the <b><c00,02>[Ricard®<c08,02>☀<c00,02>]<b><c12,0> that goes with it!<b><c04> ( -‿•)◞└┘└┘ヽ(˘‿˘ )}}
+
+	{{!carambar}	{0}		{<c07>%sender%<c12> Treats themself to a <c00,06> <c00,00> <c05,08> <b>CaRaMbAR® <c00,06><b><c00,00> <c00,06> <c12,0> to drop a good little Joke! <c04><b> ƪ(ړײ)‎ƪ​​}}
+	{{!carambar}	{1}		{<c07>%sender%<c12> Wonders if <c04>%pseudo%<c12>'s joke isn't from the  <c03> ❝ Failed Jokes ❞<c12> series from <c00,06>	<c00,00> <c05,08>	<b>CaRaMbAR® <c00,06><b><c00,00> <c00,06> <c12,0> <c04><b> (•̪(•̪●)̪●)​​ <b><c12> <( <u>Ouch my Belly .....)<u>}}
+
+	{{!anni}		{0}		{<u> <c04>Birthday<u><c12> : An event that repeats with  <c03>inescapable<c12> regularity and precision ! ⌛. And so today, on the originally scheduled date <c07>%sender%<c12> tells you: it's <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12>  🎂MY Birthday🎂 !!!  <c03>˚✰  。 <c04>❤˚* ˚ <c07> ★}}
+	{{!anni}		{1}		{<c07>%sender%<c12> asks <c04>%pseudo%<c12> if the candles weigh more than the cake! Because today it's <b> <c07>★ *˛ ˚ <c04>❤*  <c03>✰。˚ <c12> THEIR  Birthday !!!  <c03>˚✰	。 <c04>❤˚* ˚ <c07> ★<c12> <b> happy 🎂Birthday🎂<c04> %pseudo%<c12> ! <b><c13>(っ˘з(˘⌣˘ )}}
+
+	{{!pizza}		{0}		{<c07>%sender%<c12> treats themself to a 🍕 PizZa 🍕 fresh from the oven <c04>♨<c12> at  <c03,03>[ ]<c00,00>[ ]<c00,04> Pizza Hut® <c00,00>[ ] <c03,03>[ ]</c><c12,0> Hummm !!! <b> <c04>(∩_∩)}}
+	{{!pizza}		{1}		{<c07>%sender%<c12> offers a slice of their 🍕 PizZa 🍕 fresh from the oven <c04>♨<c12> at  <c03,03>[ ]<c00,00>[ ]<c00,04> Pizza Hut® <c00,00>[ ] <c03,03>[ ]</c><c12,0> to <c04>%pseudo%<c12> !!! <b> <c04>(∩_∩)}}
+
+	{{!mms}			{0}		{<c07>%sender%<c12> is eating <c05> <b>M&M'<c01> s®<c01>  <b> <c04>( <c04>m <c04>)<c04> <b> <c03>( <c03>m <c03>) <c03> <b> <c04>( <c04>m <c04>)<c04> <b><c12> (<c12> m<c12> )<c01>  <b><c14>(<c14>m<c14>)<c12> Mmmm So Good! <b><c04> (｡●́‿●̀｡)}}
+	{{!mms}			{1}		{<c07>%sender%<c12> gives some <c05> <b>M&M'<c01> s®<c01>  <b> <c04>( <c04>m <c04>)<c04> <b> <c03>( <c03>m <c03>) <c03> <b> <c04>( <c04>m <c04>)<c04> <b><c12> (<c12> m<c12> )<c01>  <b><c14>(<c14>m<c14>)<c12> to <c04>%pseudo%<c12> !! Go sort your <c05> M&M'<c01> s<c12> that'll keep you busy! <b><c04> ٩(×̯×)۶}}
+
+	{{!mars}		{0}		{<c12>A chocolate bar? <c07>%sender%<c12> chows down on a <b> <c04,01> MarS® <b><c12,0> and they're Back! <c04><b> °\(^▿^)/}}
+	{{!mars}		{1}		{<c07>%sender%<c12> kindly offers <c13>❤<c12> a chocolate bar <b> <c04,01> MarS® <b><c12,0> to <c04>%pseudo%<c12>, and they're Back! <c04><b> °\(^▿^)/}}
+
+	{{!plouf}		{0}		{<c12>A little splash? <c07>%sender%<c12> dives into the pool to cool off!<c02> <b> ._.·´¯(_..·´¯(_<c04> (^▿^)<c02> ..·´¯(_..·´¯(.}}
+	{{!plouf}		{1}		{<c07>%sender%<c12> pushes <c04>%pseudo%<c12> into the pool to get rid of them <c07>! SPLASH !!! <c02> <b> ._.·´¯(_..·´¯(_<c04> t(>.<t)<c02> ..·´¯(_..·´¯(.}}
+
+	{{!croissant}	{0}		{<c07>%sender%<c12> is about to demolish a croissant<c12> all alone! <c04><b> (>‿◠)✌}}
+	{{!croissant}	{1}		{<c07>%sender%<c12> offers <c04>%pseudo%<c12> a nice warm croissant! <c04><b> (乂˘⌣˘)ノ <c04>ヽ(ˆ⌣ˆ)ヾ}}
+
+	{{!chocolatine}	{0}		{<c07>%sender%<c12> is going to eat a fine Chocolatine! (And not a pain au chocolat!) <c04><b> (>‿◠)✌}}
+	{{!chocolatine}	{1}		{<c07>%sender%<c12> offers <c04>%pseudo%<c12> a nice warm Chocolatine! <c04><b> (乂˘⌣˘)ノ <c07> <c04>ヽ(ˆ⌣ˆ)ヾ}}
+
+	{{!patate}		{0}		{<c07>%sender%<c12> is like Potatoes! they've got the <c04>FRIES<c12> today! <c04><b> (ړײ)}}
+	{{!patate}		{1}		{<c07>%sender%<c12> says: the difference between <c04>%pseudo%<c12> and a potato is that at least the potato is cultured! <c04><b> ☜(ˆ▽ˆ)}}
+
+	{{!pouet}		{0}		{<c07>%sender%<c12> just let out a <c04>Fart !<c01>  (._.)ᔆᵒʳʳᵞ<c12> so the whole lounge can enjoy! <c04><b>(•̪(•̪●)̪●).｡oO( ... )}}
+	{{!pouet}		{1}		{<c07>%sender%<c12> launches a fart <c01> ☁☁☁<c12> at<c04> %pseudo% (¤﹏¤) <c12> that stings!!! <c04><b> ☜(ˆ▽ˆ)}}
+
+	{{!oignon}		{0}		{<c07>%sender%<c12> says: some people are so annoying that when they peel an onion, it's the onion that cries! <c04>(´∀`)Lmao}}
+	{{!oignon}		{1}		{<c07>%sender%<c12> says <c04>%pseudo%<c12> is so annoying that when they peel an onion it's the onion that cries! <c04>☜(´∀`)Lmao}}
+
+	{{!vent}		{0}		{<c07>%sender%<c12> just got <c01> ≋<c12> left hanging<c01>  ≋<c12> ! nobody replied! <c04><b>(¬_¬”)}}
+	{{!vent}		{1}		{<c07>%sender%<c12> says: Feel that fresh air? that's what getting <c01> ≋<c12> left hanging<c01>  ≋<c12> feels like!<c04> %pseudo% <c04><b>(¬_¬”)}}
+
+	{{!écran}		{0}		{<c07>%sender%<c12> thinks: <c04>WOOOOW <c12> what I see on my screen is truly fascinating! (I'm pretending to listen...) <c04><b>(O﹏o)}}
+	{{!écran}		{1}		{<c12>Weird, my screen only shows nonsense, oh wait, that's <c04>%pseudo%<c12> talking ... <c04><b>(O﹏o)}}
+
+	{{!boude}		{0}		{<c07>%sender%<c12> is sulking and going to pout in their corner! <b> <c04>(╥﹏╥)}}
+	{{!boude}		{1}		{<c07>%sender%<c12> tells <c04>%pseudo%<c12> awwww sulking isn't nice! <b> <c04>(╥﹏╥)}}
+
+	{{!gratte}		{0}		{<c07>%sender%<c12> scratches their back <c04>ahahahah... it itches! <b> <c04>m(><)m	}}
+	{{!gratte}		{1}		{<c07>%sender%<c12> tells <c04>%pseudo%<c12> you can go scratch yourself I think! <b> <c04>m(><)m}}
+
+	{{!popcorn}		{0}		{<c07>%sender%<c12> brings out the popcorn 🍿, settles in comfortably and watches! <b><c04> (˚▽˚)}}
+	{{!popcorn}		{1}		{<c07>%sender%<c12> offers popcorn 🍿 to <c04>%pseudo%<c12>, settle in and watch! <b><c04> (˚▽˚)}}
+
+	{{!choqué}		{0}		{<c07>%sender%<c12> is shocked by what's being said! <b> <c04>(─‿‿─)}}
+	{{!choqué}		{1}		{<c07>%sender%<c12> is shocked by what<c04> %pseudo%	<c12> is saying! <b> <c04>(─‿‿─)}}
+
+	{{!mariage}		{0}		{<c07>%sender%<c12> is ready for the WEDDING! 💒 <b><c04> ✿ ❀(っ◔◡◔)っ ❤}}
+	{{!mariage}		{1}		{<c07>%sender%<c12> proposes marriage to<c04> %pseudo%<c12> 💒 ! ! <b><c04> ✿ ❀ (>‿♥) ❤❤❤}}
+
+	{{!bus}			{0}		{<c12>Oh la la la! <c07>%sender%<c12> says a bus🚌 just arrived 🚐! <b><c04> ⚠ (☉̃ₒ☉) ⚠}}
+	{{!bus}			{1}		{<c07>%sender%<c12> tells <c04>%pseudo%<c12>, can you get back on the bus 🚌 and ride to the next stop 🚐? (thanks)<b><c04> ⚠ (☉̃ₒ☉) ⚠	}}
+
+	{{!kebab}		{0}		{<c07>%sender%<c12> is hungry, and is off to eat a fine 🥙kebab🥙 !<b><c04> (>‿◠)✌}}
+	{{!kebab}		{1}		{<c07>%sender%<c12> offers a 🥙kebab🥙 to <c04>%pseudo%<c12>, enjoy!<b><c04> (>‿◠)}}
+
+	{{!triste}		{0}		{<c07>%sender%<c12> is sad!<b><c04> （ つ︣﹏╰）}}
+	{{!triste}		{1}		{<c07>%sender%<c12> thinks <c04>%pseudo%<c12> looks really sad!<b><c04> （ つ︣﹏╰）}}
+
+	{{!vnr}			{0}		{<c07>%sender%<c12> is pissed off!<b><c04> (>‘o’)>}}
+	{{!vnr}			{1}		{<c07>%sender%<c12> thinks <c04>%pseudo%<c12> is really pissed off!<b><c04> (>‘o’)>}}
+
+	{{!câlin}		{0}		{<c12>It seems <c03>%sender% <c12> is hugging <c07>themself ! <c13>❤❤❤}}
+	{{!câlin}		{1}		{<c04> %sender% <c12> takes <c04>%pseudo%<c12> in their arms and gives them a huge hug <c13>❤❤❤}}
+
+	{{!rose}		{0}		{<c12>It seems <c07>%sender%<c12> is giving themself a rose <c04>! <c03>--------\{--- <c04>(@}}
+	{{!rose}		{1}		{<c07>%sender%<c12> offers a lovely rose  <c03>---<--´,--<\{- <c04>@ <c12> to<c04> %pseudo%}}
+
+	{{!fessée}		{0}		{<c07>%sender%<c12> is going to give a good spanking to those who deserve it! Watch out!!<c04> :PPP}}
+	{{!fessée}		{1}		{<c07>%sender%<c12> lands a big spank that SMAAAAACKS on <c04>%pseudo%<c12>'s bouncy butt they must love it to ask for more, sado maso??<c04> :PPP}}
+
+	{{!fesses}		{0}		{<c12>It seems <c07>%sender%<c12> is shaking their little butt on the floor <c04>(_\_) (_|_) (_/_) (_|_) (_\_) !}}
+	{{!fesses}		{1}		{<c07>%sender%<c12> climbs on the dance floor and shakes their little butt<c04> (_\_) (_|_) (_/_) (_|_) (_\_)<c12> with<c04> %pseudo% !}}
+
+	{{!café}		{0}		{<c12>Awesome! <c07>%sender%<c12> heads to the kitchen to make some <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04,04>_<c00> o <c04>_<b> <c04,00>]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03,03>_<c00> fee_<b> <c03,00>]}}
+	{{!café}		{1}		{<c07>%sender%<c12> offers a nice hot cup of <c01,01>_<c00> C<c01> _<b><c01,00>]<b> <c04,04>_<c00> o <c04>_<b> <c04,00>]<b> <c02,02>_<c00> f<c02> _<b><c02,00>]<b>  <c03,03>_<c00> fee <c03>_<b> <c03,00>]<b></c><c12> to <c04>%pseudo%<c12> >> A bit of milk, sugar?}}
+
+	{{!gâteau}		{0}		{<c07>%sender%<c12> is about to eat a fine slice of 🥞 cake 🍰<c12> all alone! <c04><b> ≧✯◡✯≦✌}}
+	{{!gâteau}		{1}		{<c07>%sender%<c12> gives a fine slice of 🥞 cake 🍰<c12> to %pseudo%! <c04><b> ≧✯◡✯≦✌}}
+	
+	{{!merci}		{0}		{<c07>%sender%<c12> says a big thank you to themself✌}}
+	{{!merci}		{1}		{<c07>%sender%<c12> is happy and says a big thank you to <c12>%pseudo%! <c04><b> ≧✯◡✯≦✌}}
+
+	{{!salut}		{0}		{<c07>%sender%<c12> greets everyone with a smile.<s>}}
+	{{!salut}		{1}		{<c07>%sender%<c12> says hi to <c06>%pseudo%<c12> !<s>}}
+
+	{{!bienvenue}		{0}		{<c07>%sender%<c12> welcomes themself… and it's a bit weird.<s>}}
+	{{!bienvenue}		{1}		{<c07>%sender%<c12> welcomes <c06>%pseudo%<c12> !<s>}}
+
+	{{!bravo}		{0}		{<c07>%sender%<c12> applauds themself: <c04>bravo<c12> !<s>}}
+	{{!bravo}		{1}		{<c07>%sender%<c12> sends a big <c04>bravo<c12> to <c06>%pseudo%<c12> !<s>}}
+
+	{{!courage}		{0}		{<c07>%sender%<c12> cheers themself up: <c04>hang in there<c12> !<s>}}
+	{{!courage}		{1}		{<c07>%sender%<c12> sends <c04>courage<c12> to <c06>%pseudo%<c12>.<s>}}
+
+	{{!chance}		{0}		{<c07>%sender%<c12> crosses their fingers for some <c04>luck<c12>.<s>}}
+	{{!chance}		{1}		{<c07>%sender%<c12> wishes good <c04>luck<c12> to <c06>%pseudo%<c12> !<s>}}
+
+	{{!sourire}		{0}		{<c07>%sender%<c12> flashes a wide smile.<s>}}
+	{{!sourire}		{1}		{<c07>%sender%<c12> draws a smile from <c06>%pseudo%<c12>.<s>}}
+
+	{{!applaudir}		{0}		{<c07>%sender%<c12> claps with enthusiasm. <c04>*clap clap*<c12><s>}}
+	{{!applaudir}		{1}		{<c07>%sender%<c12> applauds <c06>%pseudo%<c12> : <c04>*clap clap*<c12><s>}}
+
+	{{!bouquet}		{0}		{<c07>%sender%<c12> treats themself to a little bouquet of flowers.<s>}}
+	{{!bouquet}		{1}		{<c07>%sender%<c12> hands a pretty bouquet to <c06>%pseudo%<c12>.<s>}}
+
+	{{!jus}		{0}		{<c07>%sender%<c12> pours themself a glass of nice cold juice.<s>}}
+	{{!jus}		{1}		{<c07>%sender%<c12> offers a fruity juice to <c06>%pseudo%<c12>.<s>}}
+
+	{{!musique}		{0}		{<c07>%sender%<c12> puts a catchy tune in their head.<s>}}
+	{{!musique}		{1}		{<c07>%sender%<c12> shares a music moment with <c06>%pseudo%<c12>.<s>}}
+
+	{{!amitié}		{0}		{<c07>%sender%<c12> celebrates friendship… even solo.<s>}}
+	{{!amitié}		{1}		{<c07>%sender%<c12> extends the hand of friendship to <c06>%pseudo%<c12>.<s>}}
+
+	{{!bonnejournée}	{0}		{<c07>%sender%<c12> wishes themself a <c04>good day<c12>.<s>}}
+	{{!bonnejournée}	{1}		{<c07>%sender%<c12> wishes a <c04>good day<c12> to <c06>%pseudo%<c12> !<s>}}
+
+	{{!bonnesoirée}	{0}		{<c07>%sender%<c12> wishes themself a <c04>good evening<c12>.<s>}}
+	{{!bonnesoirée}	{1}		{<c07>%sender%<c12> wishes a <c04>good evening<c12> to <c06>%pseudo%<c12> !<s>}}
+
+	{{!bonnenuit}		{0}		{<c07>%sender%<c12> yawns and wishes themself a <c04>good night<c12>.<s>}}
+	{{!bonnenuit}		{1}		{<c07>%sender%<c12> wishes a <c04>good night<c12> to <c06>%pseudo%<c12>.<s>}}
+
+	{{!tope}		{0}		{<c07>%sender%<c12> high-fives their own hands. <c04>toc !<c12><s>}}
+	{{!tope}		{1}		{<c07>%sender%<c12> high-fives <c06>%pseudo%<c12> !<s>}}
+
+	{{!heureux}		{0}		{<c07>%sender%<c12> is beaming with good mood.<s>}}
+	{{!heureux}		{1}		{<c07>%sender%<c12> shares their good mood with <c06>%pseudo%<c12>.<s>}}
+
+	{{!cool}		{0}		{<c07>%sender%<c12> stays <c04>cool<c12> as ever.<s>}}
+	{{!cool}		{1}		{<c07>%sender%<c12> thinks <c06>%pseudo%<c12> is really <c04>cool<c12>.<s>}}
+
+	{{!paix}		{0}		{<c07>%sender%<c12> breathes a moment of peace.<s>}}
+	{{!paix}		{1}		{<c07>%sender%<c12> sends a wave of peace to <c06>%pseudo%<c12>.<s>}}
+
+	{{!bonapp}		{0}		{<c07>%sender%<c12> wishes everyone a good appetite. <c04>🍽️<s>}}
+	{{!bonapp}		{1}		{<c07>%sender%<c12> wishes <c06>%pseudo%<c12> a good appetite! <c04>🍽️<s>}}
+
+	{{!lasagne}		{0}		{<c07>%sender%<c12> serves themself a generous helping of lasagna. <c04>🍝<s>}}
+	{{!lasagne}		{1}		{<c07>%sender%<c12> shares lasagna with <c06>%pseudo%<c12>. <c04>🍝<s>}}
+
+	{{!mug}			{0}		{<c07>%sender%<c12> warms their hands around a mug. <c04>☕<s>}}
+	{{!mug}			{1}		{<c07>%sender%<c12> hands a steaming mug to <c06>%pseudo%<c12>. <c04>☕<s>}}
+
+	{{!tapoter}		{0}		{<c07>%sender%<c12> pats their own shoulder, pleased. <c04>👋<s>}}
+	{{!tapoter}		{1}		{<c07>%sender%<c12> pats <c06>%pseudo%<c12> on the shoulder. <c04>👋<s>}}
+
+	{{!clin}		{0}		{<c07>%sender%<c12> winks at the void. <c04>😉<s>}}
+	{{!clin}		{1}		{<c07>%sender%<c12> gives <c06>%pseudo%<c12> a knowing wink. <c04>😉<s>}}
+
+	{{!chatouille}	{0}		{<c07>%sender%<c12> tickles themself and laughs alone. <c04>😂<s>}}
+	{{!chatouille}	{1}		{<c07>%sender%<c12> tickles <c06>%pseudo%<c12> mercilessly. <c04>😂<s>}}
+
+	{{!cadeau}		{0}		{<c07>%sender%<c12> treats themself to a little gift. <c04>🎁<s>}}
+	{{!cadeau}		{1}		{<c07>%sender%<c12> gives a gift to <c06>%pseudo%<c12>. <c04>🎁<s>}}
+
+	{{!boire}		{0}		{<c07>%sender%<c12> raises a glass solo. <c04>🍹<s>}}
+	{{!boire}		{1}		{<c07>%sender%<c12> clinks glasses with <c06>%pseudo%<c12>. <c04>🍹<s>}}
+
+	{{!manger}		{0}		{<c07>%sender%<c12> savors a fine meal. <c04>🍽️<s>}}
+	{{!manger}		{1}		{<c07>%sender%<c12> shares a meal with <c06>%pseudo%<c12>. <c04>🍽️<s>}}
+
+	{{!serrer}		{0}		{<c07>%sender%<c12> wraps themself in a hug. <c04>🤗<s>}}
+	{{!serrer}		{1}		{<c07>%sender%<c12> wraps <c06>%pseudo%<c12> in a hug. <c04>🤗<s>}}
+
+	{{!soupçon}		{0}		{<c07>%sender%<c12> raises a suspicious eyebrow. <c04>🤨<s>}}
+	{{!soupçon}		{1}		{<c07>%sender%<c12> shoots a suspicious look at <c06>%pseudo%<c12>. <c04>🤨<s>}}
+
+	{{!encourage}	{0}		{<c07>%sender%<c12> motivates themself. Come on! <c04>💪<s>}}
+	{{!encourage}	{1}		{<c07>%sender%<c12> cheers <c06>%pseudo%<c12> on with all their might. <c04>💪<s>}}
+
+	{{!complice}	{0}		{<c07>%sender%<c12> smiles knowingly… at nobody. <c04>🤭<s>}}
+	{{!complice}	{1}		{<c07>%sender%<c12> shares a knowing look with <c06>%pseudo%<c12>. <c04>🤭<s>}}
+
+	{{!salutations}	{0}		{<c07>%sender%<c12> greets the whole room. <c04>👋<s>}}
+	{{!salutations}	{1}		{<c07>%sender%<c12> sends greetings to <c06>%pseudo%<c12>. <c04>👋<s>}}
+
+	{{!réconfort}	{0}		{<c07>%sender%<c12> whispers sweet words to themself. <c04>🩹<s>}}
+	{{!réconfort}	{1}		{<c07>%sender%<c12> comforts <c06>%pseudo%<c12> gently. <c04>🩹<s>}}
+
+	{{!fête}		{0}		{<c07>%sender%<c12> starts the party… even alone. <c04>🎉<s>}}
+	{{!fête}			{1}		{<c07>%sender%<c12> celebrates with <c06>%pseudo%<c12> ! <c04>🎉<s>}}
+
+	{{!silence}		{0}		{<c07>%sender%<c12> calls for a minute of silence. <c04>🤫<s>}}
+	{{!silence}		{1}		{<c07>%sender%<c12> asks <c06>%pseudo%<c12> for silence. <c04>🤫<s>}}
+
+	{{!écoute}		{0}		{<c07>%sender%<c12> lends an ear to the quiet. <c04>👂<s>}}
+	{{!écoute}		{1}		{<c07>%sender%<c12> really listens to <c06>%pseudo%<c12>. <c04>👂<s>}}
+
+	{{!regard}		{0}		{<c07>%sender%<c12> stares at the horizon. <c04>👀<s>}}
+	{{!regard}		{1}		{<c07>%sender%<c12> meets <c06>%pseudo%<c12>'s gaze. <c04>👀<s>}}
+
+	{{!soupire}		{0}		{<c07>%sender%<c12> lets out a long sigh. <c04>😮‍💨<s>}}
+	{{!soupire}		{1}		{<c07>%sender%<c12> sighs in <c06>%pseudo%<c12>'s direction. <c04>😮‍💨<s>}}
+
+	{{!rire}		{0}		{<c07>%sender%<c12> bursts out laughing. <c04>😄<s>}}
+	{{!rire}		{1}		{<c07>%sender%<c12> makes <c06>%pseudo%<c12> laugh. <c04>😄<s>}}
+
+	{{!étonne}		{0}		{<c07>%sender%<c12> is left speechless. <c04>😮<s>}}
+	{{!étonne}		{1}		{<c07>%sender%<c12> is amazed by <c06>%pseudo%<c12>. <c04>😮<s>}}
+
+	{{!ovation}		{0}		{<c07>%sender%<c12> silently gives themself a bravo. <c04>✨<s>}}
+	{{!ovation}		{1}		{<c07>%sender%<c12> gives <c06>%pseudo%<c12> an ovation. <c04>✨<s>}}
+
+	{{!prospérité}	{0}		{<c07>%sender%<c12> wishes prosperity… upon themself. <c04>🍀<s>}}
+	{{!prospérité}	{1}		{<c07>%sender%<c12> wishes prosperity to <c06>%pseudo%<c12>. <c04>🍀<s>}}
+
+	{{!goûter}		{0}		{<c07>%sender%<c12> prepares a tasty snack. <c04>🍪<s>}}
+	{{!goûter}		{1}		{<c07>%sender%<c12> invites <c06>%pseudo%<c12> for a snack. <c04>🍪<s>}}
+
+	{{!soupe}		{0}		{<c07>%sender%<c12> enjoys a comforting soup. <c04>🥣<s>}}
+	{{!soupe}		{1}		{<c07>%sender%<c12> serves soup to <c06>%pseudo%<c12>. <c04>🥣<s>}}
+
+	{{!entremets}	{0}		{<c07>%sender%<c12> saves a dessert for themself. <c04>🍮<s>}}
+	{{!entremets}	{1}		{<c07>%sender%<c12> shares a dessert with <c06>%pseudo%<c12>. <c04>🍮<s>}}
+
+	{{!invitation}	{0}		{<c07>%sender%<c12> invites themself to their own table. <c04>📨<s>}}
+	{{!invitation}	{1}		{<c07>%sender%<c12> politely invites <c06>%pseudo%<c12>. <c04>📨<s>}}
+
+	{{!partage}		{0}		{<c07>%sender%<c12> learns to share… with themself. <c04>🤝<s>}}
+	{{!partage}		{1}		{<c07>%sender%<c12> shares a moment with <c06>%pseudo%<c12>. <c04>🤝<s>}}
+
+	{{!toast}		{0}		{<c07>%sender%<c12> raises their glass to the ceiling. <c04>🥂<s>}}
+	{{!toast}		{1}		{<c07>%sender%<c12> raises a toast to <c06>%pseudo%<c12>. <c04>🥂<s>}}
+
+	{{!farce}		{0}		{<c07>%sender%<c12> is preparing a joke… for later. <c04>🃏<s>}}
+	{{!farce}		{1}		{<c07>%sender%<c12> pulls <c06>%pseudo%<c12> into a joyful prank. <c04>🃏<s>}}
 }

@@ -74,11 +74,11 @@ Les formes sans accent (`!cafe`, `!biere`, `!calin`, `!the`, …) correspondent 
 
 | Fichier | État |
 |---|---|
-| `db/database.fr.db` | Production FR |
-| `db/aliases.fr.db` / `variants.fr.db` / `fails.fr.db` | Enrichissement FR |
-| `db/database.en.db` | **Exemple seulement** — traduction reportée |
+| `db/database.fr.db` | Production FR (~140 cmds) |
+| `db/database.en.db` | Production EN (traduction de la FR) |
+| `db/aliases.fr.db` / `variants.fr.db` / `fails.fr.db` | Enrichissement (chargé quel que soit `db_lang`) |
 
-Format historique : `{{!cmd} {0\|1} {texte}}` dans `variable database { … }`. UTF-8.
+Format : `{{!cmd} {0\|1} {texte}}` dans `variable database { … }`. UTF-8. Langue active : `config(db_lang)` → `database.<lang>.db`.
 
 ### Rendu IRC
 
@@ -88,7 +88,7 @@ Le moteur `Render:Outgoing` :
 
 - applique les balises ;
 - impose **un** reset final si un style est présent ;
-- borne le texte à **400 octets** UTF-8 (**DÉDUIT**) sans couper un codepoint ni une séquence de contrôle en fin.
+- borne le texte à **400 octets** UTF-8 sans couper un codepoint ni une séquence de contrôle en fin.
 
 Palette pour **nouvelles** lignes : texte `12`, expéditeur `07`, cible `06`/`13`, accent `04`, fin `<s>`.
 

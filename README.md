@@ -4,7 +4,7 @@
 
 ## Capacités
 
-- Catalogue d’animations FR (~140 cmds ; EN = exemple), commandes privées et publiques
+- Catalogue d’animations FR/EN (~140 cmds), commandes privées et publiques
 - Alias (`db/aliases.fr.db`), variantes / fails optionnels, cible multi-mots, `%keyword%`
 - Aide `!cmds` / `!help` ; suggestion si faute de frappe proche (distance 1)
 - Rendu IRC avec reset final ; pseudos nettoyés des contrôles
@@ -51,15 +51,12 @@ touch run/claraserv.stop
 # multi-instance : touch run/<instance>/claraserv.stop
 ```
 
-## Tests et vérifications (hors réseau IRCd)
+## Tests (hors réseau IRCd)
 
 ```bash
 make check
 make test
-make test-local-process
-make verify-screen
-make verify-systemd
-make preflight-config   # nécessite ClaraServ.conf locale
+make verify-systemd   # optionnel
 ```
 
 ## Exploitation
@@ -70,7 +67,7 @@ make preflight-config   # nécessite ClaraServ.conf locale
 | GNU Screen | `bin/claraserv-screen start\|stop\|restart\|status\|attach\|join\|logs\|foreground` |
 | systemd | exemple `systemd/claraserv.service` (non activé par le dépôt) |
 
-Guide complet : [docs/OPERATIONS.md](docs/OPERATIONS.md). Les sessions screen réelles et l’activation systemd ne sont **pas** exécutées par les cibles `make`.
+Guide : [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ## Documentation
 
@@ -81,11 +78,10 @@ Guide complet : [docs/OPERATIONS.md](docs/OPERATIONS.md). Les sessions screen r�
 | Commandes / animations | [docs/COMMANDS_AND_ANIMATIONS.md](docs/COMMANDS_AND_ANIMATIONS.md) |
 | Sécurité | [docs/SECURITY.md](docs/SECURITY.md) |
 | S2S UnrealIRCd | [docs/UNREALIRCD.md](docs/UNREALIRCD.md) |
-| Suppressions dépôt | [docs/CLEANUP_MANIFEST.md](docs/CLEANUP_MANIFEST.md) |
 
 ## Contribution
 
-- Issues : modèles FR/EN sous `.github/ISSUE_TEMPLATE/`
+- Issues : modèles sous `.github/ISSUE_TEMPLATE/`
 - Avant une PR : `make check` et `make test`
 - Ne pas versionner `ClaraServ.conf`, logs, PID ou secrets
 - Ne pas synchroniser automatiquement les modules vendored depuis l’amont

@@ -35,13 +35,14 @@ Placeholders :
 
 ## Côté ClaraServ (rappel)
 
-Dans `ClaraServ.conf` (locale) : `uplink_*`, `serverinfo_name`, `serverinfo_id`, identité service. Préflight :
+Dans `ClaraServ.conf` (locale) : `uplink_*`, `serverinfo_name`, `serverinfo_id`, identité service.
 
 ```bash
-make preflight-config
+make check
+make test
 ```
 
-N’affiche aucune valeur. Corrige localement les FAIL (placeholders, port, debug, SID).
+Corriger localement les problèmes (placeholders, port, debug, SID). Ne jamais afficher les secrets.
 
 ## Comportement observé dans le code
 
@@ -92,7 +93,7 @@ Identique à A, avec `<IRCD_HOST>` joignable, pare-feu source ClaraServ → port
 2. Sauvegarde conf IRCd.
 3. Blocs adaptés + `configtest` (ou équivalent version) **PASS**.
 4. Rehash seulement après configtest + GO.
-5. ClaraServ : préflight PASS, `uplink_debug=0`, conf 0600.
+5. ClaraServ : `make check` / `make test`, `uplink_debug=0`, conf 0600.
 6. Démarrage foreground : `tclsh ClaraServ.tcl`.
 7. Observer : pas d’`ERROR :Closing Link` auth, présence service/SID, PING/PONG, commandes salon labo.
 8. Arrêt : `touch run/claraserv.stop`.

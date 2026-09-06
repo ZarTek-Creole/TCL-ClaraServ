@@ -54,10 +54,11 @@ Clés principales : uplink (host/port/ssl/password), `serverinfo_*`, identité s
 
 ## Données `db/`
 
-- `database.fr.db` / `database.en.db` : catalogue sourcé au démarrage, indexé en `dict` (commande `!…`, niveau 0|1, pas de doublons). EN = exemple non prêt prod.
-- `salon.db` : créé/mis à jour à l’exécution ; égalité de canal littérale insensible à la casse ; écriture atomique (tmp + rename).
-- Rendu sortant : `Render:Outgoing` (ZCT apply + reset `\x0f` si style + plafond octets). Détail UX : [COMMANDS_AND_ANIMATIONS.md](COMMANDS_AND_ANIMATIONS.md).
-- Validation statique : `tools/validate-animations-db.tcl` (via `make check`).
+- `database.fr.db` / `database.en.db` : catalogues FR et EN (~140 cmds chacun), indexés en `dict` (`!cmd`, niveau 0|1).
+- `aliases.fr.db`, `variants.fr.db`, `fails.fr.db` : enrichissement (parsers non exécutables).
+- `salon.db` : runtime, non versionné ; écriture atomique.
+- Rendu sortant : `Render:Outgoing` (ZCT + reset + plafond octets). Voir [COMMANDS_AND_ANIMATIONS.md](COMMANDS_AND_ANIMATIONS.md).
+- Validation : `tools/validate-animations-db.tcl` (`make check`).
 
 ## Logs
 
@@ -79,7 +80,7 @@ Clés principales : uplink (host/port/ssl/password), `serverinfo_*`, identité s
 | Erreur conf / init | non zéro (typ. `1`) |
 | EOF S2S inattendu | `1` (pour `Restart=on-failure`) |
 | SIGTERM sans Tclx | non intercepté (OS) |
-| SIGTERM avec Tclx | `0` si trap OK (**NOT_TESTED** si Tclx absent) |
+| SIGTERM avec Tclx | `0` si trap OK (si Tclx installé) |
 
 ## Architecture S2S (résumé)
 
