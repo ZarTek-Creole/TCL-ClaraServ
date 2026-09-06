@@ -38,13 +38,15 @@ Tout après le nom de commande forme la **cible multi-mots** (espaces conservés
 
 Fichier `db/aliases.fr.db` (lignes `!alias !canonique`, parser non-exécutable).
 
+Commande dédiée : **`!alias`** (salon) ou **`alias`** (privé) — liste tous les liens `alias → canonique`.
+
 Exemples : `!bisous` → `!kiss`, `!applause` → `!applaudir`, `!cacao` → `!chocolat`, `!prout` → `!pouet`, `!beer` → `!bière`, …
 
 `!pelle` est une **commande propre** (pas un alias de `!kiss`).
 
 Les formes sans accent (`!cafe`, `!biere`, `!calin`, `!the`, …) correspondent déjà aux commandes accentuées via la normalisation.
 
-`!cmds` liste les **canoniques** et mentionne les alias en privé.
+`!cmds` liste les **canoniques** et renvoie vers `!alias` pour les liens.
 
 ## Variantes et échecs
 
@@ -62,7 +64,8 @@ Les formes sans accent (`!cafe`, `!biere`, `!calin`, `!the`, …) correspondent 
 | Commande | Public / privé | Notes |
 |---|---|---|
 | `!help` / `help` | PUB+PRIV / PRIV | Aide |
-| `!cmds` / `cmds` | PUB+PRIV / PRIV | Liste animations + alias |
+| `!cmds` / `cmds` | PUB+PRIV / PRIV | Liste animations |
+| `!alias` / `alias` | PUB+PRIV / PRIV | Liste alias → canoniques |
 | `!about` / `about` | PUB+PRIV / PRIV | Version |
 | `!random` | PUB | Tire au sort (voir sensible) |
 | `join` / `part` / `reload` | PRIV admin | Salons / recharge DB animations |

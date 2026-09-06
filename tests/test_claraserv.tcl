@@ -489,6 +489,52 @@ assertTrue {[string match "*refus*" [string tolower [lindex [lindex $::TestBot::
 set renderedKw [::ClaraServ::FCT::Render:Template "kw=%keyword% s=%sender%" Alice Bob kiss #chan]
 assertEqual "kw=kiss s=Alice" $renderedKw "RenderTemplate %keyword%"
 
+# !random ne doit pas être tué par un double rate-limit
+set ::ClaraServ::rateLimitCooldown 2
+array unset ::ClaraServ::rateLimit
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PUB:RANDOM Alice #lounge !random {}] \
+    "!random produit une animation (pas de double cooldown)"
+assertTrue {[llength $::TestBot::messages] >= 1} "!random a émis au moins un PRIVMSG"
+set ::ClaraServ::rateLimitCooldown 0
+array unset ::ClaraServ::rateLimit
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PUB:RANDOM Alice #lounge !random [list ClaraServ]] \
+    "!random avec cible"
+assertTrue {[llength $::TestBot::messages] >= 1} "!random+cible a émis un message"
+set randTargetMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "ClaraServ" $randTargetMsg] >= 0} "!random+cible insère la cible"
+set ::ClaraServ::rateLimitCooldown 0
+array unset ::ClaraServ::rateLimit
+
+# Nickmap UID → nick (affichage !cmds / logs / %sender%)
+::ClaraServ::FCT::Nickmap:Set 001NWME3E me
+assertEqual "me" [::ClaraServ::FCT::Display:Nick 001NWME3E] "UID résolu en nick"
+assertEqual "me" [::ClaraServ::FCT::Display:Nick me] "Nick inchangé"
+assertTrue {[::ClaraServ::FCT::Looks:Like:Uid 001NWME3E]} "Détection UID TS6"
+assertTrue {![::ClaraServ::FCT::Looks:Like:Uid me]} "Nick n’est pas un UID"
+
+set ::ClaraServ::config(log_command) 1
+set ::ClaraServ::config(service_channel) #services
+set ::TestBot::messages {}
+::ClaraServ::FCT::Log:Command !cmds 001NWME3E
+set logMsg [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "me" $logMsg] >= 0} "Log commande affiche le nick"
+assertTrue {[string first "001NWME3E" $logMsg] < 0} "Log commande n’affiche pas l’UID"
+set ::ClaraServ::config(log_command) 0
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PUB:CMDS 001NWME3E #lounge !cmds {}
+set announce [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "me" $announce] >= 0} "!cmds annonce le nick pas l’UID"
+
+set ::TestBot::messages {}
+::ClaraServ::IRC:CMD:PRIV:ALIAS Alice - alias {}
+assertTrue {[llength $::TestBot::messages] >= 2} "!alias / alias liste au moins en-tête + lignes"
+set aliasBlob [join $::TestBot::messages " "]
+assertTrue {[string match "*!bisous*" $aliasBlob] || [string match "*bisous*" $aliasBlob]} \
+    "Liste alias contient bisous"
+
 if {$failures > 0} {
     puts stderr "\n$failures échec(s) de test."
     exit 1

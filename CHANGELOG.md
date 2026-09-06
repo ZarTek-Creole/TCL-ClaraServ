@@ -20,6 +20,14 @@ Ce fichier suit les changements fonctionnels et de maintenance de ClaraServ.
 | Qualité DB | Validateur `tools/validate-animations-db.tcl` intégré à `make check` (aliases/variants/fails). |
 | **v1.3 enrichissement** | Alias (`db/aliases.fr.db`), variantes, fails optionnels (`failrate` défaut 0), `%keyword%`, cible multi-mots, `reload` admin PRIV, anti-flood 2s, ~30 nouvelles canoniques (réécriture originale, licence jokes non importée verbatim). |
 
+## 1.3.1 — 2026-09-06
+
+| Domaine | Évolution |
+|---|---|
+| Correctif | `!random` : suppression du double anti-flood qui empêchait toute exécution. |
+| Correctif | Affichage nick : carte UID↔nick (plus d’UUID TS6 dans `!cmds` / logs / `%sender%`). |
+| UX | Commande `!alias` / `alias` pour lister tous les liens alias → canonique. |
+
 ## 1.3.0 — 2026-09-05
 
 | Domaine | Évolution |

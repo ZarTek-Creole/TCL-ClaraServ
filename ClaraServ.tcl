@@ -44,11 +44,16 @@ namespace eval ::ClaraServ {
     variable randForceIndex -1
     # Hooks tests : "" = aléatoire ; 0/1 force ShouldFail.
     variable randForceFail {}
+    # Carte UID TS6 ↔ nick (who2 peut rester un UID si le burst n’a pas peuplé IRCServices).
+    variable nickByUid
+    array set nickByUid {}
+    variable uidByNick
+    array set uidByNick {}
 
     set scriptDirectory [file dirname [file normalize [info script]]]
     array set SCRIPT [list \
         name        "ClaraServ Service" \
-        version     "1.3.0" \
+        version     "1.3.1" \
         author      "ZarTek Creole" \
         url         "https://github.com/ZarTek-Creole/TCL-ClaraServ" \
         needZct     "0.1.0" \
@@ -93,8 +98,9 @@ proc ::ClaraServ::FCT::Get:ScriptDir {{directory ""}} {
 proc ::ClaraServ::FCT::Log:Command {command sender} {
     variable ::ClaraServ::config
     if {$config(log_command) && $command ne ""} {
+        set shown [::ClaraServ::FCT::Display:Nick $sender]
         ::ClaraServ::FCT::SENT:MSG:TO:CHAN:LOG \
-            [format "<c12>Commande :<c04> %s <c12>par<c04> %s" $command $sender]
+            [format "<c12>Commande :<c04> %s <c12>par<c04> %s" $command $shown]
     }
 }
 
@@ -184,6 +190,75 @@ proc ::ClaraServ::FCT::Parse:Target {raw} {
     return [string trim $raw]
 }
 
+# UID TS6 Unreal typique : 3 (SID) + 6 = 9 caractères alphanum.
+proc ::ClaraServ::FCT::Looks:Like:Uid {token} {
+    return [regexp {^[0-9][A-Za-z0-9]{2}[A-Za-z0-9]{6}$} $token]
+}
+
+proc ::ClaraServ::FCT::Nickmap:Set {uid nick} {
+    variable ::ClaraServ::nickByUid
+    variable ::ClaraServ::uidByNick
+    set uid [string toupper [string trim $uid]]
+    set nick [string trim $nick]
+    if {$uid eq "" || $nick eq ""} {
+        return
+    }
+    if {[info exists nickByUid($uid)]} {
+        set oldNick $nickByUid($uid)
+        if {[info exists uidByNick([string toupper $oldNick])]} {
+            unset uidByNick([string toupper $oldNick])
+        }
+    }
+    if {[info exists uidByNick([string toupper $nick])]} {
+        set oldUid $uidByNick([string toupper $nick])
+        if {$oldUid ne $uid && [info exists nickByUid($oldUid)]} {
+            unset nickByUid($oldUid)
+        }
+    }
+    set nickByUid($uid) $nick
+    set uidByNick([string toupper $nick]) $uid
+}
+
+proc ::ClaraServ::FCT::Nickmap:Remove:Uid {uid} {
+    variable ::ClaraServ::nickByUid
+    variable ::ClaraServ::uidByNick
+    set uid [string toupper [string trim $uid]]
+    if {![info exists nickByUid($uid)]} {
+        return
+    }
+    set nick $nickByUid($uid)
+    unset nickByUid($uid)
+    if {[info exists uidByNick([string toupper $nick])]} {
+        unset uidByNick([string toupper $nick])
+    }
+}
+
+# Préfère un nick affichable ; laisse l’identifiant tel quel si inconnu.
+proc ::ClaraServ::FCT::Nickmap:Resolve {token} {
+    variable ::ClaraServ::nickByUid
+    variable ::ClaraServ::CONNECT_ID
+    set token [string trim $token]
+    if {$token eq ""} {
+        return $token
+    }
+    set key [string toupper $token]
+    if {[info exists nickByUid($key)]} {
+        return $nickByUid($key)
+    }
+    # Secours : table IRCServices si exposée sur l’objet connexion.
+    if {$CONNECT_ID ne "" && [info commands ${CONNECT_ID}::UID_CONVERT] ne ""} {
+        set converted [${CONNECT_ID}::UID_CONVERT $token]
+        if {$converted ne "" && $converted ne $token} {
+            return $converted
+        }
+    }
+    return $token
+}
+
+proc ::ClaraServ::FCT::Display:Nick {token} {
+    return [::ClaraServ::FCT::Sanitize:Irc:Text [::ClaraServ::FCT::Nickmap:Resolve $token]]
+}
+
 # Distance d’édition exactement 1 (substitution, insertion ou suppression).
 proc ::ClaraServ::FCT::Is:Edit:Distance:One {a b} {
     set la [string length $a]
@@ -235,7 +310,7 @@ proc ::ClaraServ::FCT::Is:Edit:Distance:One {a b} {
 proc ::ClaraServ::FCT::Suggest:Public:Command {unknownCommand} {
     set unknown [::ClaraServ::FCT::Command:Normalise $unknownCommand]
     set candidates [::ClaraServ::FCT::DB:CMD:LIST]
-    foreach meta {!help !cmds !about !random} {
+    foreach meta {!help !cmds !alias !about !random} {
         if {$meta ni $candidates} {
             lappend candidates $meta
         }
@@ -833,6 +908,37 @@ proc ::ClaraServ::FCT::CMD:SHOW:LIST {destination} {
     }
 }
 
+proc ::ClaraServ::FCT::CMD:SHOW:ALIASES {destination} {
+    variable ::ClaraServ::aliasesDict
+    if {[dict size $aliasesDict] == 0} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
+            "<c04>.: <c12>Aucun alias n’est configuré.<s>"
+        return 0
+    }
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
+        "<c04>.: <c12>Alias → commande canonique<c04> :.<s>"
+    set maximumPerLine 6
+    set lineParts {}
+    set count 0
+    foreach aliasName [lsort -dictionary [dict keys $aliasesDict]] {
+        set targetName [dict get $aliasesDict $aliasName]
+        lappend lineParts [format "<c07>%s<c12>→<c06>%s" $aliasName $targetName]
+        incr count
+        if {$count >= $maximumPerLine} {
+            ::ClaraServ::FCT::SENT:MSG:TO:USER $destination [join $lineParts " <c12>|<c12> "]
+            set lineParts {}
+            set count 0
+        }
+    }
+    if {[llength $lineParts] > 0} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $destination [join $lineParts " <c12>|<c12> "]
+    }
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
+        [format "<c04>.: <c12>%d alias(s). Les formes sans accent (!cafe, !biere, …) matchent déjà via normalisation.<s>" \
+            [dict size $aliasesDict]]
+    return 1
+}
+
 proc ::ClaraServ::FCT::Dispatch:Command {procedure sender destination command data} {
     if {[catch [list {*}$procedure $sender $destination $command $data] result options]} {
         set errorInfo [dict get $options -errorinfo]
@@ -843,6 +949,10 @@ proc ::ClaraServ::FCT::Dispatch:Command {procedure sender destination command da
 }
 
 proc ::ClaraServ::FCT::Dispatch:Message {sender destination message} {
+    # Affichage / placeholders : nick si connu ; rate-limit : identifiant brut (UID stable).
+    set senderId $sender
+    set sender [::ClaraServ::FCT::Display:Nick $senderId]
+
     set words [::ClaraServ::FCT::Message:Words $message]
     if {[llength $words] == 0} {
         return 0
@@ -854,10 +964,10 @@ proc ::ClaraServ::FCT::Dispatch:Message {sender destination message} {
     if {[string index $destination 0] ne "#"} {
         set procedure "::ClaraServ::IRC:CMD:PRIV:[string toupper $command]"
         if {[info commands $procedure] eq ""} {
-            ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "Commande %s inconnue." $command]
-            return [::ClaraServ::IRC:CMD:PRIV:HELP $sender $destination $command $data]
+            ::ClaraServ::FCT::SENT:MSG:TO:USER $senderId [format "Commande %s inconnue." $command]
+            return [::ClaraServ::IRC:CMD:PRIV:HELP $senderId $destination $command $data]
         }
-        return [::ClaraServ::FCT::Dispatch:Command $procedure $sender $destination $command $data]
+        return [::ClaraServ::FCT::Dispatch:Command $procedure $senderId $destination $command $data]
     }
 
     if {![string match "!*" $command]} {
@@ -867,13 +977,13 @@ proc ::ClaraServ::FCT::Dispatch:Message {sender destination message} {
     set commandName [string range $command 1 end]
     set procedure "::ClaraServ::IRC:CMD:PUB:[string toupper $commandName]"
     if {[info commands $procedure] ne ""} {
-        return [::ClaraServ::FCT::Dispatch:Command $procedure $sender $destination $command $data]
+        return [::ClaraServ::FCT::Dispatch:Command $procedure $senderId $destination $command $data]
     }
 
     if {[::ClaraServ::FCT::DB:GET [::ClaraServ::FCT::DB:ResolveAlias $command] 0] ne "-1"} {
-        return [::ClaraServ::FCT::Dispatch:Command ::ClaraServ::IRC:CMD:PUB:DYNAMIC $sender $destination $command $data]
+        return [::ClaraServ::FCT::Dispatch:Command ::ClaraServ::IRC:CMD:PUB:DYNAMIC $senderId $destination $command $data]
     }
-    return [::ClaraServ::FCT::Reply:Unknown:Public $sender $command]
+    return [::ClaraServ::FCT::Reply:Unknown:Public $senderId $command]
 }
 
 proc ::ClaraServ::INIT {} {
@@ -1072,6 +1182,27 @@ proc ::ClaraServ::FCT::Create:Service {} {
         ::ClaraServ::FCT::Dispatch:Message [who2] [target] [msg]
     }
 
+    # Suivi UID↔nick (corrige l’affichage quand who2 reste un UID TS6).
+    $CONNECT_ID registerevent UID {
+        set add [additional]
+        if {[llength $add] >= 5} {
+            ::ClaraServ::FCT::Nickmap:Set [lindex $add 4] [target]
+        }
+    }
+    $CONNECT_ID registerevent NICK {
+        set src [who]
+        set newNick [target]
+        if {$newNick eq "" && [msg] ne ""} {
+            set newNick [lindex [regexp -all -inline {\S+} [msg]] 0]
+        }
+        if {$newNick ne ""} {
+            ::ClaraServ::FCT::Nickmap:Set $src $newNick
+        }
+    }
+    $CONNECT_ID registerevent QUIT {
+        ::ClaraServ::FCT::Nickmap:Remove:Uid [who]
+    }
+
     # EOF inattendu : quitter avec code non nul pour permettre Restart=on-failure.
     # Pas de reconnect in-process (état UID/bot ambigu). Arrêt volontaire = stop-file (code 0).
     $CONNECT_ID registerevent EOF {
@@ -1083,9 +1214,8 @@ proc ::ClaraServ::FCT::Create:Service {} {
 proc ::ClaraServ::IRC:CMD:PUB:RANDOM {sender destination command data} {
     variable ::ClaraServ::randomExcludeCommands
 
-    if {![::ClaraServ::FCT::RateLimit:Allowed $destination $sender]} {
-        return 0
-    }
+    # Pas de rate-limit ici : DYNAMIC l’applique une seule fois (évite un double cooldown
+    # qui faisait échouer !random systématiquement).
 
     set commands {}
     foreach candidate [::ClaraServ::FCT::DB:CMD:LIST] {
@@ -1119,7 +1249,7 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC {sender destination command data} {
     set typedCommand [::ClaraServ::FCT::Command:Normalise $command]
     set keyword [string range $typedCommand 1 end]
     set resolved [::ClaraServ::FCT::DB:ResolveAlias $typedCommand]
-    set sender [::ClaraServ::FCT::Sanitize:Irc:Text $sender]
+    set senderDisplay [::ClaraServ::FCT::Sanitize:Irc:Text [::ClaraServ::FCT::Display:Nick $sender]]
 
     if {[llength $data] == 0} {
         set level 0
@@ -1149,35 +1279,43 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC {sender destination command data} {
         return 0
     }
 
-    set response [::ClaraServ::FCT::Render:Template $response $sender $pseudo $keyword $destination]
+    set response [::ClaraServ::FCT::Render:Template $response $senderDisplay $pseudo $keyword $destination]
     ::ClaraServ::FCT::SENT:PRIVMSG $destination $response
     ::ClaraServ::FCT::Log:Command $typedCommand $sender
     return 1
 }
 
 proc ::ClaraServ::IRC:CMD:PUB:CMDS {sender destination command data} {
+    set shown [::ClaraServ::FCT::Display:Nick $sender]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
-        [format "<c04>.: <c12>Liste des commandes envoyée en privé à %s<c04> :." $sender]
+        [format "<c04>.: <c12>Liste des commandes envoyée en privé à %s<c04> :.<s>" $shown]
     return [::ClaraServ::IRC:CMD:PRIV:CMDS $sender $destination $command $data]
 }
 
 proc ::ClaraServ::IRC:CMD:PRIV:CMDS {sender destination command data} {
-    variable ::ClaraServ::aliasesDict
-    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Liste des commandes d’animations<c04> :."
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Liste des commandes d’animations<c04> :.<s>"
     ::ClaraServ::FCT::CMD:SHOW:LIST $sender
-    if {[dict size $aliasesDict] > 0} {
-        set aliasBits {}
-        foreach {aliasName targetName} $aliasesDict {
-            lappend aliasBits [format "%s→%s" $aliasName $targetName]
-        }
-        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
-            [format "<c04>.: <c12>Alias<c04> : <c06>%s<s>" [join [lsort -dictionary $aliasBits] " <c12>|<c06> "]]
-    }
-    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Autres commandes<c04> :."
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
+        "<c04>.: <c12>Alias<c04> : <c06>!alias<c12> (ou <c06>alias<c12> en privé) pour la liste des liens.<s>"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Autres commandes<c04> :.<s>"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!help <c12>-<c04> Affiche l’aide"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!alias <c12>-<c04> Liste alias → commandes"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!<s><<c06>commande<s>> \[<c06>cible multi-mots<s>\] <c12>-<c04> Exécute une animation"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c12>!random <s>\[<c06>cible<s>\] <c12>-<c04> Choisit une animation aléatoire"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c12>!about <c12>-<c04> Affiche les informations sur %s" ${::ClaraServ::config(service_nick)}]
+    ::ClaraServ::FCT::Log:Command $command $sender
+    return 1
+}
+
+proc ::ClaraServ::IRC:CMD:PUB:ALIAS {sender destination command data} {
+    set shown [::ClaraServ::FCT::Display:Nick $sender]
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $destination \
+        [format "<c04>.: <c12>Liste des alias envoyée en privé à %s<c04> :.<s>" $shown]
+    return [::ClaraServ::IRC:CMD:PRIV:ALIAS $sender $destination $command $data]
+}
+
+proc ::ClaraServ::IRC:CMD:PRIV:ALIAS {sender destination command data} {
+    ::ClaraServ::FCT::CMD:SHOW:ALIASES $sender
     ::ClaraServ::FCT::Log:Command $command $sender
     return 1
 }
@@ -1210,12 +1348,14 @@ proc ::ClaraServ::IRC:CMD:PRIV:HELP {sender destination command data} {
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Commandes en salon<c04> :."
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>!help <c07>-<c06> Affiche cette aide"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>!cmds <c07>-<c06> Affiche la liste des commandes"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>!alias <c07>-<c06> Affiche les alias → commandes"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>!<s><<c07>commande<s>> \[<c06>pseudonyme<s>\] <c07>-<c06> Exécute une animation"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>!random <s>\[<c06>pseudonyme<s>\] <c07>-<c06> Choisit une animation aléatoire"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>!about <c07>-<c06> À propos de %s" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c04>.: <c12>Commandes privées<c04> :."
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>help <c07>-<c06> Affiche cette aide"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>cmds <c07>-<c06> Affiche la liste des commandes"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>alias <c07>-<c06> Affiche les alias → commandes"
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>about <c07>-<c06> À propos de %s" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>join <s><<c06>#salon<s>> <<c06>mot_de_passe_admin<s>> <c07>-<c06> Ajoute %s au salon" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>part <s><<c06>#salon<s>> <<c06>mot_de_passe_admin<s>> <c07>-<c06> Retire %s du salon" $config(service_nick)]
