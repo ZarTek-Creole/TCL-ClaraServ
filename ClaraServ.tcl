@@ -49,11 +49,18 @@ namespace eval ::ClaraServ {
     array set nickByUid {}
     variable uidByNick
     array set uidByNick {}
+    # Ops @ par salon (suivi MODE +o/-o) — clés « CHANNEL\0UID ».
+    variable chanOps
+    array set chanOps {}
+    # Flags contenu par salon : channel → dict adult/vulgar 0|1
+    variable salonFlags [dict create]
+    # Hook tests : chemin forcé pour salon_flags.db ("" = défaut db/).
+    variable salonFlagsPathOverride ""
 
     set scriptDirectory [file dirname [file normalize [info script]]]
     array set SCRIPT [list \
         name        "ClaraServ Service" \
-        version     "1.3.3" \
+        version     "1.4.0" \
         author      "ZarTek Creole" \
         url         "https://github.com/ZarTek-Creole/TCL-ClaraServ" \
         needZct     "0.1.0" \
@@ -71,7 +78,12 @@ namespace eval ::ClaraServ {
         service_chanmodes service_usermodes admin_password \
         log_command db_lang \
     ]
-    set config(optionalKeys) [list serverinfo_id service_chanmodes service_usermodes runtime_dir instance_name failrate rate_limit_cooldown]
+    set config(optionalKeys) [list serverinfo_id service_chanmodes service_usermodes \
+        runtime_dir instance_name failrate rate_limit_cooldown \
+        content_adult_global content_vulgar_global]
+    # Défauts gates contenu (surchargés par ClaraServ.conf si présents).
+    set config(content_adult_global) 0
+    set config(content_vulgar_global) 0
 }
 
 namespace eval ::ClaraServ::FCT {}
@@ -116,7 +128,11 @@ proc ::ClaraServ::FCT::Check:Config {} {
         }
     }
 
-    foreach key {uplink_ssl uplink_useprivmsg uplink_debug log_command} {
+    foreach key {uplink_ssl uplink_useprivmsg uplink_debug log_command \
+            content_adult_global content_vulgar_global} {
+        if {![info exists config($key)]} {
+            continue
+        }
         if {![string is boolean -strict $config($key)]} {
             return -code error "Configuration ClaraServ invalide : config($key) doit être booléen (0 ou 1)."
         }
@@ -159,6 +175,12 @@ proc ::ClaraServ::FCT::Check:Config {} {
     if {$sid ne "" && ![regexp {^[0-9][0-9A-Z]{2}$} $sid]} {
         return -code error {Configuration ClaraServ invalide : config(serverinfo_id) doit être un SID TS6 de la forme [0-9][0-9A-Z]{2}.}
     }
+
+    set lang [string tolower [string trim $config(db_lang)]]
+    if {![regexp {^[a-z0-9]{1,8}$} $lang]} {
+        return -code error "Configuration ClaraServ invalide : config(db_lang) doit être alphanumérique court (ex. fr, en)."
+    }
+    set config(db_lang) $lang
 
     if {$config(uplink_debug)} {
         ::ClaraServ::log warn "uplink_debug=1 : le trafic S2S (dont PASS) peut être journalisé. Réserver au labo ; désactiver ensuite."
@@ -558,8 +580,25 @@ proc ::ClaraServ::FCT::DB:LoadAliases {path} {
     return [dict size $aliasesDict]
 }
 
-# Charge variants/fails : en-tête « !cmd 0|1 » puis lignes de texte jusqu’au prochain en-tête.
-proc ::ClaraServ::FCT::DB:Load:Text:Sections {path} {
+# Préfixe optionnel « [adult] » / « [vulgar] » / « [adult vulgar] » sur une ligne de variante.
+proc ::ClaraServ::FCT::DB:Parse:Variant:Line {line} {
+    set tags {}
+    if {[regexp -nocase {^\[([^\]]+)\]\s+(.*)$} $line -> tagStr rest]} {
+        foreach chunk [split $tagStr {,}] {
+            foreach raw [split [string trim $chunk]] {
+                set t [string tolower [string trim $raw]]
+                if {$t in {adult vulgar} && $t ni $tags} {
+                    lappend tags $t
+                }
+            }
+        }
+        return [dict create text $rest tags $tags]
+    }
+    return [dict create text $line tags {}]
+}
+
+# Charge variants : en-tête « !cmd 0|1 » puis entrées {text tags} jusqu’au prochain en-tête.
+proc ::ClaraServ::FCT::DB:Load:Text:Sections {path {asEntries 1}} {
     set result [dict create]
     set currentKey {}
     set bucket {}
@@ -576,7 +615,12 @@ proc ::ClaraServ::FCT::DB:Load:Text:Sections {path} {
         if {$currentKey eq ""} {
             return -code error "Texte hors section (manque en-tête !cmd niveau) : $line"
         }
-        lappend bucket $line
+        set entry [::ClaraServ::FCT::DB:Parse:Variant:Line $line]
+        if {$asEntries} {
+            lappend bucket $entry
+        } else {
+            lappend bucket [dict get $entry text]
+        }
     }
     if {$currentKey ne "" && [llength $bucket] > 0} {
         dict set result $currentKey $bucket
@@ -586,13 +630,14 @@ proc ::ClaraServ::FCT::DB:Load:Text:Sections {path} {
 
 proc ::ClaraServ::FCT::DB:LoadVariants {path} {
     variable ::ClaraServ::variantsDict
-    set variantsDict [::ClaraServ::FCT::DB:Load:Text:Sections $path]
+    set variantsDict [::ClaraServ::FCT::DB:Load:Text:Sections $path 1]
     return [dict size $variantsDict]
 }
 
 proc ::ClaraServ::FCT::DB:LoadFails {path} {
     variable ::ClaraServ::failsDict
-    set failsDict [::ClaraServ::FCT::DB:Load:Text:Sections $path]
+    # Fails : textes seuls (préfixe tag ignoré s’il apparaît).
+    set failsDict [::ClaraServ::FCT::DB:Load:Text:Sections $path 0]
     return [dict size $failsDict]
 }
 
@@ -605,7 +650,8 @@ proc ::ClaraServ::FCT::DB:ResolveAlias {command} {
     return $normalised
 }
 
-proc ::ClaraServ::FCT::DB:GetVariants {command level} {
+# Entrées structurées (historique + variants.db) pour filtrage contenu.
+proc ::ClaraServ::FCT::DB:GetVariantEntries {command level} {
     variable ::ClaraServ::variantsDict
     set normalised [::ClaraServ::FCT::Command:Normalise $command]
     set key [list $normalised $level]
@@ -614,16 +660,29 @@ proc ::ClaraServ::FCT::DB:GetVariants {command level} {
     if {[dict exists $variantsDict $key]} {
         set extras [dict get $variantsDict $key]
     }
-    if {$historical eq "-1"} {
-        return $extras
+    set entries {}
+    set seenTexts {}
+    if {$historical ne "-1"} {
+        lappend entries [dict create text $historical tags {}]
+        dict set seenTexts $historical 1
     }
-    if {[llength $extras] == 0} {
-        return [list $historical]
+    foreach entry $extras {
+        set text [dict get $entry text]
+        if {[dict exists $seenTexts $text]} {
+            continue
+        }
+        dict set seenTexts $text 1
+        lappend entries $entry
     }
-    if {$historical ni $extras} {
-        return [concat [list $historical] $extras]
+    return $entries
+}
+
+proc ::ClaraServ::FCT::DB:GetVariants {command level} {
+    set texts {}
+    foreach entry [::ClaraServ::FCT::DB:GetVariantEntries $command $level] {
+        lappend texts [dict get $entry text]
     }
-    return $extras
+    return $texts
 }
 
 proc ::ClaraServ::FCT::DB:GetFails {command level} {
@@ -649,6 +708,267 @@ proc ::ClaraServ::FCT::DB:ChooseVariant {variants} {
         return [lindex $variants [expr {$randForceIndex % $n}]]
     }
     return [lindex $variants [expr {int(rand() * $n)}]]
+}
+
+# --- Gates contenu adult / vulgar (global + salon) ---
+
+proc ::ClaraServ::FCT::Content:Global:Enabled {tag} {
+    variable ::ClaraServ::config
+    set tag [string tolower $tag]
+    if {$tag eq "adult"} {
+        if {![info exists config(content_adult_global)]} {
+            return 0
+        }
+        return [expr {$config(content_adult_global) ? 1 : 0}]
+    }
+    if {$tag eq "vulgar"} {
+        if {![info exists config(content_vulgar_global)]} {
+            return 0
+        }
+        return [expr {$config(content_vulgar_global) ? 1 : 0}]
+    }
+    return 1
+}
+
+proc ::ClaraServ::FCT::Content:Salon:Enabled {channel tag} {
+    variable ::ClaraServ::salonFlags
+    set channel [string tolower [string trim $channel]]
+    set tag [string tolower $tag]
+    if {![dict exists $salonFlags $channel]} {
+        return 0
+    }
+    set flags [dict get $salonFlags $channel]
+    if {![dict exists $flags $tag]} {
+        return 0
+    }
+    return [expr {[dict get $flags $tag] ? 1 : 0}]
+}
+
+# Tag autorisé sur ce salon ssi global ON et salon ON (sauf tags hors adult/vulgar).
+proc ::ClaraServ::FCT::Content:Tag:Allowed {channel tag} {
+    set tag [string tolower $tag]
+    if {$tag ni {adult vulgar}} {
+        return 1
+    }
+    if {![::ClaraServ::FCT::Content:Global:Enabled $tag]} {
+        return 0
+    }
+    return [::ClaraServ::FCT::Content:Salon:Enabled $channel $tag]
+}
+
+proc ::ClaraServ::FCT::DB:Filter:Content {channel entries} {
+    set out {}
+    foreach entry $entries {
+        set ok 1
+        foreach tag [dict get $entry tags] {
+            if {![::ClaraServ::FCT::Content:Tag:Allowed $channel $tag]} {
+                set ok 0
+                break
+            }
+        }
+        if {$ok} {
+            lappend out $entry
+        }
+    }
+    return $out
+}
+
+proc ::ClaraServ::FCT::DB:Entry:Texts {entries} {
+    set texts {}
+    foreach entry $entries {
+        lappend texts [dict get $entry text]
+    }
+    return $texts
+}
+
+proc ::ClaraServ::FCT::SalonFlags:Path {} {
+    variable ::ClaraServ::salonFlagsPathOverride
+    if {[info exists salonFlagsPathOverride] && $salonFlagsPathOverride ne ""} {
+        return $salonFlagsPathOverride
+    }
+    return [file join [::ClaraServ::FCT::Get:ScriptDir db] salon_flags.db]
+}
+
+proc ::ClaraServ::FCT::SalonFlags:Load {} {
+    variable ::ClaraServ::salonFlags
+    set salonFlags [dict create]
+    set path [::ClaraServ::FCT::SalonFlags:Path]
+    if {![file exists $path]} {
+        return 0
+    }
+    set fh [open $path r]
+    try {
+        while {[gets $fh line] >= 0} {
+            set line [string trim $line]
+            if {$line eq "" || [string match "#*" $line]} {
+                continue
+            }
+            # #salon adult 0|1 vulgar 0|1
+            if {![regexp -nocase {^(#[^\s]+)\s+adult\s+([01])\s+vulgar\s+([01])$} $line -> ch a v]} {
+                ::ClaraServ::log warn "salon_flags.db : ligne ignorée"
+                continue
+            }
+            if {![::ClaraServ::FCT::Channel:IsValid $ch]} {
+                continue
+            }
+            set ch [string tolower $ch]
+            set adult $a
+            set vulgar $v
+            # Impossible d’avoir un flag salon ON si le global est OFF.
+            if {$adult && ![::ClaraServ::FCT::Content:Global:Enabled adult]} {
+                set adult 0
+            }
+            if {$vulgar && ![::ClaraServ::FCT::Content:Global:Enabled vulgar]} {
+                set vulgar 0
+            }
+            dict set salonFlags $ch [dict create adult $adult vulgar $vulgar]
+        }
+    } finally {
+        close $fh
+    }
+    return [dict size $salonFlags]
+}
+
+proc ::ClaraServ::FCT::SalonFlags:Save {} {
+    variable ::ClaraServ::salonFlags
+    set path [::ClaraServ::FCT::SalonFlags:Path]
+    set lines {}
+    lappend lines "# ClaraServ salon_flags.db — runtime, non versionné"
+    lappend lines "# Format : #salon adult 0|1 vulgar 0|1"
+    foreach ch [lsort [dict keys $salonFlags]] {
+        set flags [dict get $salonFlags $ch]
+        set a 0
+        set v 0
+        if {[dict exists $flags adult]} { set a [dict get $flags adult] }
+        if {[dict exists $flags vulgar]} { set v [dict get $flags vulgar] }
+        lappend lines [format "%s adult %d vulgar %d" $ch $a $v]
+    }
+    set temporaryFile "${path}.[pid].tmp"
+    set fh [open $temporaryFile w]
+    try {
+        foreach line $lines {
+            puts $fh $line
+        }
+    } finally {
+        close $fh
+    }
+    file rename -force $temporaryFile $path
+    return 1
+}
+
+# Définit un flag salon ; refuse ON si global OFF. Retourne message statut.
+proc ::ClaraServ::FCT::SalonFlags:Set {channel tag value} {
+    variable ::ClaraServ::salonFlags
+    set channel [string tolower [string trim $channel]]
+    set tag [string tolower [string trim $tag]]
+    set value [expr {$value ? 1 : 0}]
+    if {$tag ni {adult vulgar}} {
+        return -code error "flag inconnu (adult|vulgar)"
+    }
+    if {$value && ![::ClaraServ::FCT::Content:Global:Enabled $tag]} {
+        return -code error "flag global $tag désactivé dans ClaraServ.conf"
+    }
+    if {![dict exists $salonFlags $channel]} {
+        dict set salonFlags $channel [dict create adult 0 vulgar 0]
+    }
+    dict set salonFlags $channel $tag $value
+    ::ClaraServ::FCT::SalonFlags:Save
+    return 1
+}
+
+proc ::ClaraServ::FCT::SalonFlags:Status:Text {channel} {
+    set channel [string tolower [string trim $channel]]
+    set ga [::ClaraServ::FCT::Content:Global:Enabled adult]
+    set gv [::ClaraServ::FCT::Content:Global:Enabled vulgar]
+    set sa [::ClaraServ::FCT::Content:Salon:Enabled $channel adult]
+    set sv [::ClaraServ::FCT::Content:Salon:Enabled $channel vulgar]
+    set ea [expr {$ga && $sa}]
+    set ev [expr {$gv && $sv}]
+    return [format "salon %s : adult global=%d salon=%d effectif=%d | vulgar global=%d salon=%d effectif=%d" \
+        $channel $ga $sa $ea $gv $sv $ev]
+}
+
+# --- Ops @ (suivi MODE) ---
+
+proc ::ClaraServ::FCT::ChanOp:Key {channel uidOrNick} {
+    set channel [string toupper [string trim $channel]]
+    set id [string toupper [string trim $uidOrNick]]
+    return [format "%s\0%s" $channel $id]
+}
+
+proc ::ClaraServ::FCT::ChanOp:Set {channel uidOrNick on} {
+    variable ::ClaraServ::chanOps
+    set key [::ClaraServ::FCT::ChanOp:Key $channel $uidOrNick]
+    if {$on} {
+        set chanOps($key) 1
+    } elseif {[info exists chanOps($key)]} {
+        unset chanOps($key)
+    }
+}
+
+proc ::ClaraServ::FCT::ChanOp:Is {channel sender} {
+    variable ::ClaraServ::chanOps
+    variable ::ClaraServ::uidByNick
+    set channel [string trim $channel]
+    set sender [string trim $sender]
+    if {$channel eq "" || $sender eq ""} {
+        return 0
+    }
+    set key [::ClaraServ::FCT::ChanOp:Key $channel $sender]
+    if {[info exists chanOps($key)]} {
+        return 1
+    }
+    # Si sender est un nick, tenter via UID mappé.
+    if {![::ClaraServ::FCT::Looks:Like:Uid $sender]} {
+        set nk [string toupper $sender]
+        if {[info exists uidByNick($nk)]} {
+            set key2 [::ClaraServ::FCT::ChanOp:Key $channel $uidByNick($nk)]
+            if {[info exists chanOps($key2)]} {
+                return 1
+            }
+        }
+    }
+    return 0
+}
+
+# Applique une chaîne de modes salon (+o/-o …) avec arguments positionnels.
+proc ::ClaraServ::FCT::ChanOp:ApplyMode {channel modeStr argList} {
+    set channel [string trim $channel]
+    if {![::ClaraServ::FCT::Channel:IsValid $channel]} {
+        return
+    }
+    set sign "+"
+    set argIdx 0
+    foreach ch [split $modeStr {}] {
+        if {$ch eq "+" || $ch eq "-"} {
+            set sign $ch
+            continue
+        }
+        # Modes avec argument nick/UID courants Unreal (o/v/h/a/q/b/e/I/k).
+        if {$ch in {o v h a q b e I k}} {
+            set target [lindex $argList $argIdx]
+            incr argIdx
+            if {$target eq ""} {
+                continue
+            }
+            if {$ch eq "o"} {
+                ::ClaraServ::FCT::ChanOp:Set $channel $target [expr {$sign eq "+"}]
+            }
+        }
+    }
+}
+
+# Admin (mdp) ou @ du salon si déjà observé via MODE.
+proc ::ClaraServ::FCT::Auth:Admin:Or:ChanOp {sender channel password} {
+    variable ::ClaraServ::config
+    if {$password ne "" && [string equal $password $config(admin_password)]} {
+        return 1
+    }
+    if {[::ClaraServ::FCT::Channel:IsValid $channel] \
+            && [::ClaraServ::FCT::ChanOp:Is $channel $sender]} {
+        return 1
+    }
+    return 0
 }
 
 proc ::ClaraServ::FCT::DB:ShouldFail {command level} {
@@ -689,7 +1009,24 @@ proc ::ClaraServ::FCT::RateLimit:Cleanup {now} {
     }
 }
 
-# Retourne 1 si autorisé, 0 si limité. bypass=1 ignore le cooldown (tests / admin).
+# Identité stable pour anti-flood : UID TS6 si possible, sinon nick normalisé.
+proc ::ClaraServ::FCT::RateLimit:Identity {sender} {
+    variable ::ClaraServ::uidByNick
+    set s [string trim $sender]
+    if {$s eq ""} {
+        return {}
+    }
+    if {[::ClaraServ::FCT::Looks:Like:Uid $s]} {
+        return [string toupper $s]
+    }
+    set key [string toupper $s]
+    if {[info exists uidByNick($key)]} {
+        return $uidByNick($key)
+    }
+    return $key
+}
+
+# Retourne 1 si le cooldown autorise encore (ne marque pas). bypass=1 ignore.
 proc ::ClaraServ::FCT::RateLimit:Allowed {salon sender {bypass 0}} {
     variable ::ClaraServ::rateLimitCooldown
     variable ::ClaraServ::rateLimit
@@ -699,14 +1036,23 @@ proc ::ClaraServ::FCT::RateLimit:Allowed {salon sender {bypass 0}} {
     }
     set now [clock seconds]
     ::ClaraServ::FCT::RateLimit:Cleanup $now
-    set key [list $salon $sender]
+    set key [list $salon [::ClaraServ::FCT::RateLimit:Identity $sender]]
     if {[info exists rateLimit($key)]} {
         if {($now - $rateLimit($key)) < $rateLimitCooldown} {
             return 0
         }
     }
-    set rateLimit($key) $now
     return 1
+}
+
+# Enregistre le timestamp après un envoi réussi.
+proc ::ClaraServ::FCT::RateLimit:Commit {salon sender} {
+    variable ::ClaraServ::rateLimitCooldown
+    variable ::ClaraServ::rateLimit
+    if {![string is integer -strict $rateLimitCooldown] || $rateLimitCooldown <= 0} {
+        return
+    }
+    set rateLimit([list $salon [::ClaraServ::FCT::RateLimit:Identity $sender]]) [clock seconds]
 }
 
 proc ::ClaraServ::FCT::DB:Load:Enrichment:Files {} {
@@ -809,17 +1155,38 @@ proc ::ClaraServ::FCT::DB:SALON:ADD {channel} {
     if {![::ClaraServ::FCT::Channel:IsValid $channel]} {
         return 0
     }
-    if {[::ClaraServ::FCT::DB:DATA:EXIST salon $channel] != 0} {
+    # 1 = déjà présent ; 0 = absent ; -1 = fichier manquant (traité comme vide).
+    if {[::ClaraServ::FCT::DB:DATA:EXIST salon $channel] == 1} {
         return -1
     }
 
     set databaseFile [file join [::ClaraServ::FCT::Get:ScriptDir db] salon.db]
-    set fileHandle [open $databaseFile a]
+    set retainedLines {}
+    if {[file exists $databaseFile]} {
+        set fileHandle [open $databaseFile r]
+        try {
+            while {[gets $fileHandle line] >= 0} {
+                set line [string trim $line]
+                if {$line ne ""} {
+                    lappend retainedLines $line
+                }
+            }
+        } finally {
+            close $fileHandle
+        }
+    }
+    lappend retainedLines $channel
+
+    set temporaryFile "${databaseFile}.[pid].tmp"
+    set fileHandle [open $temporaryFile w]
     try {
-        puts $fileHandle $channel
+        foreach line $retainedLines {
+            puts $fileHandle $line
+        }
     } finally {
         close $fileHandle
     }
+    file rename -force $temporaryFile $databaseFile
     return 1
 }
 
@@ -1017,6 +1384,7 @@ proc ::ClaraServ::INIT {} {
     }
     ::ClaraServ::FCT::DB:Index
     ::ClaraServ::FCT::DB:Load:Enrichment:Files
+    ::ClaraServ::FCT::SalonFlags:Load
 
     ::ClaraServ::log info [format "%s v%s chargé (par %s)." $SCRIPT(name) $SCRIPT(version) $SCRIPT(author)]
 }
@@ -1110,6 +1478,23 @@ proc ::ClaraServ::FCT::Install:Standalone:Controls {} {
     if {[catch {file delete -force $stopFile} err]} {
         ::ClaraServ::log warn "Nettoyage stop-file résiduel échoué : $err"
     }
+    if {[file exists $pidFile]} {
+        set oldPid ""
+        if {[catch {
+            set pfh [open $pidFile r]
+            try {
+                gets $pfh oldPid
+            } finally {
+                close $pfh
+            }
+        }]} {
+            set oldPid ""
+        }
+        set oldPid [string trim $oldPid]
+        if {[string is integer -strict $oldPid] && $oldPid > 1 && [file exists [file join /proc $oldPid]]} {
+            return -code error "ClaraServ semble déjà actif (PID $oldPid, runtime $runDir). Arrêtez l’instance ou changez runtime_dir/instance_name."
+        }
+    }
     set fh [open $pidFile w]
     try {
         puts $fh [pid]
@@ -1167,37 +1552,50 @@ proc ::ClaraServ::FCT::Create:Service {} {
         }
 
         set channelsFile [file join [::ClaraServ::FCT::Get:ScriptDir db] salon.db]
-        set channelsHandle [open $channelsFile r]
-        try {
-            while {[gets $channelsHandle channel] >= 0} {
-                set channel [string trim $channel]
-                if {$channel eq "" || ![::ClaraServ::FCT::Channel:IsValid $channel]} {
-                    continue
+        if {[catch {open $channelsFile r} channelsHandle]} {
+            ::ClaraServ::log warn "Impossible d’ouvrir salon.db au EOS : $channelsHandle"
+        } else {
+            try {
+                while {[gets $channelsHandle channel] >= 0} {
+                    set channel [string trim $channel]
+                    if {$channel eq "" || ![::ClaraServ::FCT::Channel:IsValid $channel]} {
+                        continue
+                    }
+                    [bid] join $channel
+                    if {${::ClaraServ::config(service_usermodes)} ne ""} {
+                        [sid] mode $channel ${::ClaraServ::config(service_usermodes)} ${::ClaraServ::config(service_nick)}
+                    }
                 }
-                [bid] join $channel
-                if {${::ClaraServ::config(service_usermodes)} ne ""} {
-                    [sid] mode $channel ${::ClaraServ::config(service_usermodes)} ${::ClaraServ::config(service_nick)}
-                }
+            } finally {
+                close $channelsHandle
             }
-        } finally {
-            close $channelsHandle
         }
     }
 
     $BOT_ID registerevent PRIVMSG {
-        # who2 = UID_CONVERT(who) : bidirectionnel — apprendre UID↔nick puis router.
+        # who = préfixe IRC (souvent UID TS6) ; who2 = UID_CONVERT bidirectionnel (peut être stale après NICK).
+        # Router en UID ; n’apprendre depuis who2 que si Nickmap n’a pas encore d’entrée pour cet UID.
         set w [who]
         set w2 [who2]
-        if {[::ClaraServ::FCT::Looks:Like:Uid $w] && $w2 ne "" \
-                && ![::ClaraServ::FCT::Looks:Like:Uid $w2]} {
-            ::ClaraServ::FCT::Nickmap:Set $w $w2
-        } elseif {[::ClaraServ::FCT::Looks:Like:Uid $w2] && $w ne "" \
-                && ![::ClaraServ::FCT::Looks:Like:Uid $w]} {
-            ::ClaraServ::FCT::Nickmap:Set $w2 $w
-        }
-        set senderId $w2
-        if {$senderId eq ""} {
+        if {[::ClaraServ::FCT::Looks:Like:Uid $w]} {
             set senderId $w
+            set ukey [string toupper $w]
+            if {![info exists ::ClaraServ::nickByUid($ukey)] \
+                    && $w2 ne "" && ![::ClaraServ::FCT::Looks:Like:Uid $w2]} {
+                ::ClaraServ::FCT::Nickmap:Set $w $w2
+            }
+        } elseif {[::ClaraServ::FCT::Looks:Like:Uid $w2]} {
+            set senderId $w2
+            set ukey [string toupper $w2]
+            if {![info exists ::ClaraServ::nickByUid($ukey)] \
+                    && $w ne "" && ![::ClaraServ::FCT::Looks:Like:Uid $w]} {
+                ::ClaraServ::FCT::Nickmap:Set $w2 $w
+            }
+        } else {
+            set senderId $w2
+            if {$senderId eq ""} {
+                set senderId $w
+            }
         }
         ::ClaraServ::FCT::Dispatch:Message $senderId [target] [msg]
     }
@@ -1223,6 +1621,31 @@ proc ::ClaraServ::FCT::Create:Service {} {
         ::ClaraServ::FCT::Nickmap:Remove:Uid [who]
     }
 
+    # Suivi @ salon (+o/-o) pour auth chanflag sans mdp admin.
+    $CONNECT_ID registerevent MODE {
+        set dest [target]
+        if {![string match "#*" $dest]} {
+            return
+        }
+        set add [additional]
+        set modeStr [lindex $add 0]
+        set args [lrange $add 1 end]
+        if {$modeStr eq "" && [msg] ne ""} {
+            set words [regexp -all -inline {\S+} [msg]]
+            set modeStr [lindex $words 0]
+            set args [lrange $words 1 end]
+        }
+        if {$modeStr ne ""} {
+            ::ClaraServ::FCT::ChanOp:ApplyMode $dest $modeStr $args
+        }
+    }
+
+    # ERROR uplink (auth/SID/…) : IRCServices ne dispatchait pas — patch local + handler ici.
+    $CONNECT_ID registerevent ERROR {
+        ::ClaraServ::log error "ERROR reçu de l’uplink — arrêt du processus."
+        ::ClaraServ::FCT::Request:Shutdown uplink-error 1
+    }
+
     # EOF inattendu : quitter avec code non nul pour permettre Restart=on-failure.
     # Pas de reconnect in-process (état UID/bot ambigu). Arrêt volontaire = stop-file (code 0).
     $CONNECT_ID registerevent EOF {
@@ -1237,6 +1660,15 @@ proc ::ClaraServ::IRC:CMD:PUB:RANDOM {sender destination command data} {
     # Pas de rate-limit ici : DYNAMIC l’applique une seule fois (évite un double cooldown
     # qui faisait échouer !random systématiquement).
 
+    if {[llength $data] == 0} {
+        set level 0
+    } else {
+        set level 1
+        if {[::ClaraServ::FCT::Parse:Target [join $data " "]] eq ""} {
+            set level 0
+        }
+    }
+
     set commands {}
     foreach candidate [::ClaraServ::FCT::DB:CMD:LIST] {
         set resolved [::ClaraServ::FCT::DB:ResolveAlias $candidate]
@@ -1248,9 +1680,15 @@ proc ::ClaraServ::IRC:CMD:PUB:RANDOM {sender destination command data} {
                 break
             }
         }
-        if {!$excluded} {
-            lappend commands $candidate
+        if {$excluded} {
+            continue
         }
+        set playable [::ClaraServ::FCT::DB:Filter:Content $destination \
+            [::ClaraServ::FCT::DB:GetVariantEntries $resolved $level]]
+        if {[llength $playable] == 0} {
+            continue
+        }
+        lappend commands $candidate
     }
     if {[llength $commands] == 0} {
         ::ClaraServ::FCT::SENT:MSG:TO:USER $destination "Aucune animation n’est disponible."
@@ -1282,11 +1720,15 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC {sender destination command data} {
         }
     }
 
-    set variants [::ClaraServ::FCT::DB:GetVariants $resolved $level]
-    if {[llength $variants] == 0} {
+    set entries [::ClaraServ::FCT::DB:GetVariantEntries $resolved $level]
+    set entries [::ClaraServ::FCT::DB:Filter:Content $destination $entries]
+    if {[llength $entries] == 0} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
+            "Contenu désactivé pour ce salon (gates adult/vulgar). Demandez à un op ou à l’admin."
         return 0
     }
 
+    set variants [::ClaraServ::FCT::DB:Entry:Texts $entries]
     if {[::ClaraServ::FCT::DB:ShouldFail $resolved $level]} {
         set fails [::ClaraServ::FCT::DB:GetFails $resolved $level]
         if {[llength $fails] > 0} {
@@ -1301,6 +1743,7 @@ proc ::ClaraServ::IRC:CMD:PUB:DYNAMIC {sender destination command data} {
 
     set response [::ClaraServ::FCT::Render:Template $response $senderDisplay $pseudo $keyword $destination]
     ::ClaraServ::FCT::SENT:PRIVMSG $destination $response
+    ::ClaraServ::FCT::RateLimit:Commit $destination $sender
     ::ClaraServ::FCT::Log:Command $typedCommand $sender
     return 1
 }
@@ -1382,6 +1825,8 @@ proc ::ClaraServ::IRC:CMD:PRIV:HELP {sender destination command data} {
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>join <s><<c06>#salon<s>> <<c06>mot_de_passe_admin<s>> <c07>-<c06> Ajoute %s au salon" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "<c07>part <s><<c06>#salon<s>> <<c06>mot_de_passe_admin<s>> <c07>-<c06> Retire %s du salon" $config(service_nick)]
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>reload <s><<c06>mot_de_passe_admin<s>> <c07>-<c06> Recharge les bases d’animations"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>chanflag <s><<c06>#salon<s>> <<c06>adult|vulgar<s>> <<c06>on|off<s>> \[<c06>mdp_admin<s>\] <c07>-<c06> Flag contenu salon"
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "<c07>chanflags <s><<c06>#salon<s>> \[<c06>mdp_admin<s>\] <c07>-<c06> Statut flags contenu"
     ::ClaraServ::FCT::Log:Command $command $sender
     return 1
 }
@@ -1468,6 +1913,55 @@ proc ::ClaraServ::IRC:CMD:PRIV:PART {sender destination command data} {
     $BOT_ID part $channel
     ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [format "Le service a quitté %s." $channel]
     ::ClaraServ::FCT::Log:Command "part $channel" $sender
+    return 1
+}
+
+proc ::ClaraServ::IRC:CMD:PRIV:CHANFLAG {sender destination command data} {
+    variable ::ClaraServ::config
+
+    set channel [lindex $data 0]
+    set tag [string tolower [lindex $data 1]]
+    set stateRaw [string tolower [lindex $data 2]]
+    set password [lindex $data 3]
+
+    if {![::ClaraServ::FCT::Channel:IsValid $channel] \
+            || $tag ni {adult vulgar} \
+            || $stateRaw ni {on off 0 1}} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
+            [format "Syntaxe : /msg %s chanflag <#salon> <adult|vulgar> <on|off> \[mdp_admin\]" $config(service_nick)]
+        return 0
+    }
+    set value [expr {$stateRaw in {on 1} ? 1 : 0}]
+    if {![::ClaraServ::FCT::Auth:Admin:Or:ChanOp $sender $channel $password]} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Accès refusé (admin ou @ du salon requis)."
+        ::ClaraServ::FCT::Log:Command "chanflag refusé $channel $tag" $sender
+        return 0
+    }
+    if {[catch {::ClaraServ::FCT::SalonFlags:Set $channel $tag $value} err]} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Impossible : $err"
+        return 0
+    }
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [::ClaraServ::FCT::SalonFlags:Status:Text $channel]
+    ::ClaraServ::FCT::Log:Command "chanflag $channel $tag $value" $sender
+    return 1
+}
+
+proc ::ClaraServ::IRC:CMD:PRIV:CHANFLAGS {sender destination command data} {
+    variable ::ClaraServ::config
+
+    set channel [lindex $data 0]
+    set password [lindex $data 1]
+    if {![::ClaraServ::FCT::Channel:IsValid $channel]} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender \
+            [format "Syntaxe : /msg %s chanflags <#salon> \[mdp_admin\]" $config(service_nick)]
+        return 0
+    }
+    if {![::ClaraServ::FCT::Auth:Admin:Or:ChanOp $sender $channel $password]} {
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Accès refusé (admin ou @ du salon requis)."
+        return 0
+    }
+    ::ClaraServ::FCT::SENT:MSG:TO:USER $sender [::ClaraServ::FCT::SalonFlags:Status:Text $channel]
+    ::ClaraServ::FCT::Log:Command "chanflags $channel" $sender
     return 1
 }
 

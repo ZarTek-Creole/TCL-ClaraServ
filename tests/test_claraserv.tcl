@@ -91,7 +91,10 @@ set ::ClaraServ::config(uplink_host) $savedHost
 set ::ClaraServ::config(serverinfo_id) AB1
 assertTrue {[catch {::ClaraServ::FCT::Check:Config}]} "Un SID de forme invalide est rejeté"
 set ::ClaraServ::config(serverinfo_id) 00C
-assertEqual "" [::ClaraServ::FCT::Check:Config] "Configuration valide après restauration SID"
+set ::ClaraServ::config(db_lang) "fr/../../etc"
+assertTrue {[catch {::ClaraServ::FCT::Check:Config}]} "db_lang avec traversée de chemin rejeté"
+set ::ClaraServ::config(db_lang) fr
+assertEqual "" [::ClaraServ::FCT::Check:Config] "Configuration valide après restauration SID/db_lang"
 
 # Stockage des salons : égalité littérale et réécriture atomique.
 set temporaryDirectory [file normalize [file join $testDirectory tmp-[pid]]]
@@ -106,6 +109,12 @@ assertEqual "0" [::ClaraServ::FCT::DB:SALON:ADD "#test *"] "Un salon contenant u
 assertEqual "1" [::ClaraServ::FCT::DB:DATA:EXIST salon #test] "La recherche de salon est une égalité exacte"
 assertEqual "1" [::ClaraServ::FCT::DB:DATA:REMOVE salon #test] "Un salon enregistré est retiré"
 assertEqual "0" [::ClaraServ::FCT::DB:DATA:EXIST salon #test] "Le salon retiré n’est plus présent"
+
+# salon.db absent → EXIST -1 mais ADD OK (recréation)
+file delete -force [file join $temporaryDirectory db salon.db]
+assertEqual "-1" [::ClaraServ::FCT::DB:DATA:EXIST salon #recreate] "EXIST fichier absent = -1"
+assertEqual "1" [::ClaraServ::FCT::DB:SALON:ADD #recreate] "ADD recrée salon.db manquant"
+assertEqual "1" [::ClaraServ::FCT::DB:DATA:EXIST salon #recreate] "salon recréé présent"
 set ::ClaraServ::SCRIPT(dirname) $originalDirectory
 file delete -force $temporaryDirectory
 
@@ -467,9 +476,26 @@ set ::ClaraServ::failRate 0
 
 set ::ClaraServ::rateLimitCooldown 2
 array unset ::ClaraServ::rateLimit
-assertEqual "1" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood 1er OK"
-assertEqual "0" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood 2e limité"
+assertEqual "1" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood peek 1er OK"
+assertEqual "1" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood peek ne marque pas"
+::ClaraServ::FCT::RateLimit:Commit #t Alice
+assertEqual "0" [::ClaraServ::FCT::RateLimit:Allowed #t Alice] "flood après Commit limité"
 assertEqual "1" [::ClaraServ::FCT::RateLimit:Allowed #t Alice 1] "flood bypass"
+
+# Même identité UID et nick → même bucket
+array unset ::ClaraServ::rateLimit
+::ClaraServ::FCT::Nickmap:Set 001AAAAAA Alice
+assertEqual "001AAAAAA" [::ClaraServ::FCT::RateLimit:Identity Alice] "Identity nick→UID"
+assertEqual "001AAAAAA" [::ClaraServ::FCT::RateLimit:Identity 001AAAAAA] "Identity UID"
+::ClaraServ::FCT::RateLimit:Commit #c Alice
+assertEqual "0" [::ClaraServ::FCT::RateLimit:Allowed #c 001AAAAAA] "flood partagé nick/UID"
+
+# Après NICK, Display reste le nouveau nick (pas d’écrasement who2 stale)
+::ClaraServ::FCT::Nickmap:Set 001BBBBBB Alice
+::ClaraServ::FCT::Nickmap:Set 001BBBBBB Bob
+assertEqual "Bob" [::ClaraServ::FCT::Display:Nick 001BBBBBB] "NICK met à jour le nick"
+assertTrue {[info exists ::ClaraServ::nickByUid(001BBBBBB)]} "Nickmap UID présent (pas de réécriture who2)"
+
 set ::ClaraServ::rateLimitCooldown 0
 array unset ::ClaraServ::rateLimit
 
@@ -556,6 +582,85 @@ assertTrue {[llength $::TestBot::messages] >= 2} "!alias / alias liste au moins 
 set aliasBlob [join $::TestBot::messages " "]
 assertTrue {[string match "*!bisous*" $aliasBlob] || [string match "*bisous*" $aliasBlob]} \
     "Liste alias contient bisous"
+
+# --- v1.4.0 content gates adult/vulgar ---
+set ::ClaraServ::config(content_adult_global) 0
+set ::ClaraServ::config(content_vulgar_global) 0
+set ::ClaraServ::salonFlags [dict create]
+set ::ClaraServ::salonFlagsPathOverride [file join $::ClaraServ::SCRIPT(dirname) tests tmp-salon-flags.db]
+catch {file delete -force $::ClaraServ::salonFlagsPathOverride}
+
+set taggedAdult [dict create text "ADULT_ONLY" tags [list adult]]
+set taggedSafe [dict create text "SAFE_OK" tags {}]
+set mixed [list $taggedAdult $taggedSafe]
+set filteredOff [::ClaraServ::FCT::DB:Filter:Content #lounge $mixed]
+assertEqual 1 [llength $filteredOff] "Filtre : exclut adult si gates off"
+assertEqual "SAFE_OK" [dict get [lindex $filteredOff 0] text] "Filtre : garde safe"
+
+# Salon flag ignoré si global off
+assertTrue {[catch {::ClaraServ::FCT::SalonFlags:Set #lounge adult 1} errSet]} \
+    "Salon adult ON refusé si global off"
+assertTrue {[string match "*global*" $errSet]} "Message refuse global off"
+
+set ::ClaraServ::config(content_adult_global) 1
+assertEqual "1" [::ClaraServ::FCT::SalonFlags:Set #lounge adult 1] "Salon adult ON si global on"
+assertEqual "1" [::ClaraServ::FCT::Content:Tag:Allowed #lounge adult] "Tag adult autorisé global+salon"
+set filteredOn [::ClaraServ::FCT::DB:Filter:Content #lounge $mixed]
+assertEqual 2 [llength $filteredOn] "Filtre : adult inclus si gates on"
+
+# Parse tag ligne variante
+set parsed [::ClaraServ::FCT::DB:Parse:Variant:Line {[adult] texte adulte}]
+assertEqual "texte adulte" [dict get $parsed text] "Parse tag adult texte"
+assertEqual "adult" [lindex [dict get $parsed tags] 0] "Parse tag adult liste"
+
+# DYNAMIC : variante adult filtrée ; historique kiss reste
+set ::ClaraServ::config(content_adult_global) 0
+set ::ClaraServ::salonFlags [dict create]
+set ::ClaraServ::variantsDict [dict create]
+dict set ::ClaraServ::variantsDict [list !kiss 0] [list [dict create text "KISS_ADULT" tags [list adult]]]
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PUB:DYNAMIC Alice #lounge !kiss {}] \
+    "kiss joue safe historique même si variante adult filtrée"
+set kissOut [lindex [lindex $::TestBot::messages 0] 2]
+assertTrue {[string first "KISS_ADULT" $kissOut] < 0} "Variante adult absente quand gate off"
+
+::ClaraServ::FCT::DB:Load:Enrichment:Files
+
+# chanflag admin
+set ::ClaraServ::config(content_adult_global) 1
+set ::ClaraServ::config(admin_password) test-admin-pass-for-unit
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PRIV:CHANFLAG Alice - chanflag \
+    [list #lounge adult on test-admin-pass-for-unit]] "chanflag admin OK"
+assertTrue {[string match "*effectif=1*" [lindex [lindex $::TestBot::messages 0] 2]]} \
+    "chanflag statut effectif adult"
+
+# @ sans mdp — vulgar global encore off → refus
+::ClaraServ::FCT::ChanOp:Set #lounge 001OPTEST 1
+set ::TestBot::messages {}
+assertEqual "0" [::ClaraServ::IRC:CMD:PRIV:CHANFLAG 001OPTEST - chanflag \
+    [list #lounge vulgar on]] "chanflag vulgar @ refusé si global off"
+
+set ::ClaraServ::config(content_vulgar_global) 1
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PRIV:CHANFLAG 001OPTEST - chanflag \
+    [list #lounge vulgar on]] "chanflag vulgar @ avec global on"
+
+set ::TestBot::messages {}
+assertEqual "1" [::ClaraServ::IRC:CMD:PRIV:CHANFLAGS Alice - chanflags \
+    [list #lounge test-admin-pass-for-unit]] "chanflags admin"
+
+# DuckHunt aliases
+assertEqual "!anni" [::ClaraServ::FCT::DB:ResolveAlias !anniv] "Alias !anniv → !anni"
+assertEqual "!pouet" [::ClaraServ::FCT::DB:ResolveAlias !proutt] "Alias !proutt → !pouet"
+assertTrue {[::ClaraServ::FCT::DB:GET !serveur 0] ne "-1"} "Nouvelle cmd !serveur"
+assertTrue {[::ClaraServ::FCT::DB:GET !tampax 1] ne "-1"} "Nouvelle cmd !tampax"
+
+catch {file delete -force $::ClaraServ::salonFlagsPathOverride}
+set ::ClaraServ::salonFlagsPathOverride ""
+set ::ClaraServ::config(content_adult_global) 0
+set ::ClaraServ::config(content_vulgar_global) 0
+set ::ClaraServ::salonFlags [dict create]
 
 if {$failures > 0} {
     puts stderr "\n$failures échec(s) de test."

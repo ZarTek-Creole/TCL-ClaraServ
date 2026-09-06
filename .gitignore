@@ -10,6 +10,8 @@ eggdrop.conf
 # Runtime
 db/salon.db
 db/salon.db.*.tmp
+db/salon_flags.db
+db/salon_flags.db.*.tmp
 *.pid
 *.stop
 *.tmp

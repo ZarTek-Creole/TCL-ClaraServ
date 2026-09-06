@@ -39,6 +39,7 @@ make test
 | Runtime dir | `<racine>/run` | `config(runtime_dir)` / `CLARASERV_RUNTIME_DIR` |
 | Instance | (vide) | `config(instance_name)` → `run/<instance>/` |
 | PID / stop | `$runtime_dir/claraserv.pid` / `.stop` | via runtime dir |
+| Flags contenu salon | `db/salon_flags.db` | runtime gitignoré ; `chanflag` / `chanflags` |
 
 Le répertoire `run/` est créé au démarrage (non versionné). Ne pas utiliser `/tmp` en production.
 

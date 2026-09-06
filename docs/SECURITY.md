@@ -14,7 +14,7 @@
 |---|---|---|
 | `ClaraServ.conf` | gitignoré | Depuis Example ; `chmod 600` |
 | `ClaraServ.Example.conf` | versionné | Placeholders uniquement |
-| `db/salon.db`, `run/*`, `*.pid`, `*.log`, `.env` | gitignorés | Runtime |
+| `db/salon.db`, `db/salon_flags.db`, `run/*`, `*.pid`, `*.log`, `.env` | gitignorés | Runtime |
 | `systemd/*.service` | versionné | Sans secret |
 
 Un ancien `eggdrop.conf` peut exister dans l’**historique** Git (runtime Eggdrop abandonné). Secrets historiquement exposés → **rotation**. `.gitignore` bloque une réintroduction accidentelle.
@@ -38,3 +38,10 @@ Un ancien `eggdrop.conf` peut exister dans l’**historique** Git (runtime Eggdr
 ## Divulgation
 
 Extraits de logs **expurgés** uniquement (pas de `PASS`, password, SID/IP sensibles).
+
+## Contenu adult / vulgar
+
+- Défaut **OFF** global et salon.
+- Les textes tagués `[adult]` / `[vulgar]` ne sortent que si **global et salon** sont ON.
+- Ne pas activer en production sans accord ops du réseau / salon.
+- `violent` n’est pas un gate v1 (pas de flag dédié).

@@ -2,8 +2,23 @@
 
 ## [Unreleased]
 
+## 1.4.0 — 2026-09-06
+
 | Domaine | Évolution |
 |---|---|
+| Contenu | Gates `adult` / `vulgar` (global conf + `db/salon_flags.db`) ; tags par variante `[adult]` / `[vulgar]`. |
+| Admin | `chanflag` / `chanflags` (mdp admin ou `@` si MODE +o vu). |
+| Animations | Import DuckHunt : ~49 cmds + aliases + variantes ; morts `truite`/`commandes`/`regle` ; `clou` omis. |
+| Docs | Example conf, COMMANDS, SECURITY. |
+
+## 1.3.4 — 2026-09-06
+
+| Domaine | Évolution |
+|---|---|
+| Correctif | PRIVMSG : routage par UID ; Nickmap non écrasé par `who2` stale après NICK. |
+| Correctif | Anti-flood : identité canonique UID ; commit seulement après envoi réussi. |
+| Correctif | `ERROR` uplink → shutdown (dispatch IRCServices + handler ClaraServ). |
+| Correctif | `db_lang` restreint ; `salon.db` ADD atomique + fichier absent OK ; EOS `catch` ; garde PID. |
 | Dépôt | Scripts atelier hors produit ; docs allégées ; Example conf sans dump modes IRCd ; retrait `run/.gitkeep`. |
 | Qualité | Un seul `tools/healthcheck.tcl` (plus de `.sh`) ; validateur sans WARN style historique. |
 | Animations | `database.en.db` : traduction complète depuis `database.fr.db` (278 entrées). |

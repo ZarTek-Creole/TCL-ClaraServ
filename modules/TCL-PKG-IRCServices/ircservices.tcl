@@ -695,6 +695,12 @@ proc ::IRCServices::connection { args } {
 					if {[catch {GetError $line} errorMessage]} {
 						cmd-log error $errorMessage
 					}
+					# Permettre à ClaraServ (et autres) d’arrêter proprement sur ERROR uplink.
+					if {[info exists dispatch(ERROR)] && $dispatch(ERROR) ne ""} {
+						if {[catch {namespace eval [namespace current] $dispatch(ERROR)} callbackError]} {
+							cmd-log error "ERROR callback failed: $callbackError"
+						}
+					}
 					return
 				}
 

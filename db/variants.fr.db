@@ -126,3 +126,113 @@ Auto-massage express : <c07>%sender%<c12>. <c04>💆<s>
 !massage 1
 <c07>%sender%<c12> offre un massage relaxant à <c06>%pseudo%<c12>. <c04>💆<s>
 Les tensions de <c06>%pseudo%<c12> fondent grâce à <c07>%sender%<c12>. <c04>💆<s>
+
+# --- DuckHunt harvest variants (v1.4.0) — tags [adult]/[vulgar] ---
+
+!ange 0
+<c07>%sender%<c12> t'envoie des petits anges gardiens a <c07>%sender%<c12> pour te surveiller et te mettre la fessée si tu fait des grosse betises<s>
+
+!ange 1
+<c07>%sender%<c12> t'envoie des petits anges gardiens a <c04>%pseudo%<c12> pour te surveiller et te mettre la fessée si tu fait des grosse betises<s>
+
+!anni 0
+<c07>%sender%<c12> demande à <c07>%sender%<c12> si le poids des bougies dépasse celui du gâteau ! Car aujourdhui c'est SoN Anniversaire !!! bon Anni <c07>%sender%<c12><s>
+
+!anni 1
+<c07>%sender%<c12> demande à <c04>%pseudo%<c12> si le poids des bougies dépasse celui du gâteau ! Car aujourdhui c'est SoN Anniversaire !!! bon Anni <c04>%pseudo%<c12><s>
+
+!bouge 0
+<c07>%sender%<c12> allez bouge ton petit (_|_) (_/_) (_|_) (__)(_|_) (_|_) (__)(_|_) (_/_) (__)(_|_) (__)(_|_) (__)(_|_) (_|_) (__)(_|_) (_/_) (__)(_|_) (__)<s>
+
+!bouge 1
+<c04>%pseudo%<c12> allez bouge ton petit (_|_) (_/_) (_|_) (__)(_|_) (_|_) (__)(_|_) (_/_) (__)(_|_) (__)(_|_) (__)(_|_) (_|_) (__)(_|_) (_/_) (__)(_|_) (__)<s>
+
+!clope 0
+<c07>%sender%<c12> offre une cigarette ¯¯¯¯)¯¯¯¯¯¯¯¯¯¯¯~~~ à <c07>%sender%<c12> (c'est pas bien de fumer)<s>
+
+!clope 1
+<c07>%sender%<c12> offre une cigarette ¯¯¯¯)¯¯¯¯¯¯¯¯¯¯¯~~~ à <c04>%pseudo%<c12> (c'est pas bien de fumer)<s>
+
+!grincer 0
+[adult] <c07>%sender%<c12> je sens que l on va entendre grincer un sommier toute la nuit car <c07>%sender%<c12> fait des galipettes dans le lit toute la nuit<s>
+
+!grincer 1
+[adult] <c04>%pseudo%<c12> je sens que l on va entendre grincer un sommier toute la nuit car <c04>%pseudo%<c12> fait des galipettes dans le lit toute la nuit<s>
+
+!jus 0
+<c07>%sender%<c12> a branche trop de machines a laver et pan !!!!! plus de jus tous dans le caca<s>
+
+!jus 1
+<c04>%pseudo%<c12> a branche trop de machines a laver et pan !!!!! plus de jus tous dans le caca<s>
+
+!love 0
+<c07>%sender%<c12> aime beaucoup a la folie comme un fou <c07>%sender%<c12> ... j'ai plus de mots<s>
+
+!love 1
+<c07>%sender%<c12> aime beaucoup a la folie comme un fou <c04>%pseudo%<c12> ... j'ai plus de mots<s>
+
+!manger 0
+<c07>%sender%<c12> mange pas trop tu va grossir sa risque de faire CRAAAAAAAAAAAAAAAAAAAAACK !!!!!!!!!!! c'est a dire ecraser ta chaise<s>
+
+!manger 1
+<c04>%pseudo%<c12> mange pas trop tu va grossir sa risque de faire CRAAAAAAAAAAAAAAAAAAAAACK !!!!!!!!!!! c'est a dire ecraser ta chaise<s>
+
+!meules 0
+[adult] <c07>%sender%<c12> dit a <c07>%sender%<c12> que tu as de belles fesses bien dodue bien ferme sa donne bien envie de les mordre a pleine dents<s>
+
+!meules 1
+[adult] <c07>%sender%<c12> dit a <c04>%pseudo%<c12> que tu as de belles fesses bien dodue bien ferme sa donne bien envie de les mordre a pleine dents<s>
+
+!mord 0
+[adult] <c07>%sender%<c12> choppe <c07>%sender%<c12> sort ses crocs et lui mord ses belles fesses bien ferme bien dodues humm ce gout de ces fesses bien dodues , bien ferme qui croustillent sous la dent <3 <3 <3<s>
+
+!mord 1
+[adult] <c07>%sender%<c12> choppe <c04>%pseudo%<c12> sort ses crocs et lui mord ses belles fesses bien ferme bien dodues humm ce gout de ces fesses bien dodues , bien ferme qui croustillent sous la dent <3 <3 <3<s>
+
+!plouf 0
+<c07>%sender%<c12> pousse <c07>%sender%<c12> dans la piscine pour se debarrasser de <c07>%sender%<c12> PLOUUUUUF ._.B7B4AF(_..B7B4AF(_ t(>.<t)..B7B4AF(_..B7B4AF(.<s>
+
+!plouf 1
+<c07>%sender%<c12> pousse <c04>%pseudo%<c12> dans la piscine pour se debarrasser de <c04>%pseudo%<c12> PLOUUUUUF ._.B7B4AF(_..B7B4AF(_ t(>.<t)..B7B4AF(_..B7B4AF(.<s>
+
+!pouet 0
+[vulgar] <c12>attention !!!!! attention !!!!! attention !!!!!! <c07>%sender%<c12> va faire prouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut !!!!!!! et merde ! sa pue vraimant ! et merde ! il en ai fait le plein froc !!! et pouah sa pue vraiment<s>
+
+!pouet 1
+[vulgar] <c12>attention !!!!! attention !!!!! attention !!!!!! <c04>%pseudo%<c12> va faire prouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut !!!!!!! et merde ! sa pue vraimant ! et merde ! il en ai fait le plein froc !!! et pouah sa pue vraiment<s>
+
+!relou 0
+<c07>%sender%<c12> trouve vraiment que <c07>%sender%<c12> est très relou<s>
+
+!relou 1
+<c07>%sender%<c12> trouve vraiment que <c04>%pseudo%<c12> est très relou<s>
+
+!serveur 0
+[adult] <c07>%sender%<c12> Vous etes sur un chat , pas sur un site porno ! Restez soft dans vos propos ! Merci d'ecrire en francais ! Evitez de gener tout le monde en floodant, ca encombre le Chat pour rien La pub et le spam sont interdits sur le chat !;)<s>
+
+!serveur 1
+[adult] <c04>%pseudo%<c12> Vous etes sur un chat , pas sur un site porno ! Restez soft dans vos propos ! Merci d'ecrire en francais ! Evitez de gener tout le monde en floodant, ca encombre le Chat pour rien La pub et le spam sont interdits sur le chat !;)<s>
+
+!silence 0
+<c12>chut !!!! <c07>%sender%<c12> baisse le son on entend que toi<s>
+
+!silence 1
+<c12>chut !!!! <c04>%pseudo%<c12> baisse le son on entend que toi<s>
+
+!tampax 0
+[adult] <c07>%sender%<c12> voila du boum boum preparez les tampax<s>
+
+!tampax 1
+[adult] <c04>%pseudo%<c12> voila du boum boum preparez les tampax<s>
+
+!vaisselle 0
+[adult] <c07>%sender%<c12> vaisselle cassée c'est pan !!!! pan !!!!! cul cul<s>
+
+!vaisselle 1
+[adult] <c04>%pseudo%<c12> vaisselle cassée c'est pan !!!! pan !!!!! cul cul<s>
+
+!zizicoptere 0
+[adult] <c07>%sender%<c12> il est tout petit ton zizicoptere il faut un microscope pour voir ton zizicoptere ;)<s>
+
+!zizicoptere 1
+[adult] <c04>%pseudo%<c12> il est tout petit ton zizicoptere il faut un microscope pour voir ton zizicoptere ;)<s>
