@@ -663,7 +663,7 @@ set mord1 [::ClaraServ::FCT::DB:GET !mord 1]
 assertTrue {[string first "fesses" [string tolower $mord1]] < 0} "!mord historique sans fesses (adult en variante)"
 
 # Fusion de sections variants dupliquées (!mord soft puis [adult])
-set mergeFixture [file join $::ClaraServ::SCRIPT(dirname) tests fixtures merge-variants.fr.db]
+set mergeFixture [file join $testDirectory tmp-merge-variants.fr.db]
 set mergeFh [open $mergeFixture w]
 puts $mergeFh "!mord 0"
 puts $mergeFh "SOFT_A"
