@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## 1.4.1 — 2026-09-06
+
+| Domaine | Évolution |
+|---|---|
+| Correctif | `variants*.db` : fusion des blocs répétés (`!mord` / `!pouet`) au lieu d’écraser les variantes soft. |
+| Correctif | `!missile` niveau 1 : texte miaou erroné remplacé (FR/EN). |
+| Correctif | Historique `!mord` adouci (contenu fesses hors tag `[adult]`). |
+| Correctif | `!random` sans anim jouable : notice privée à l’auteur (plus au salon). |
+
 ## 1.4.0 — 2026-09-06
 
 | Domaine | Évolution |
