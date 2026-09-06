@@ -662,6 +662,36 @@ assertTrue {[string first "missile" [string tolower $missile1]] >= 0} "!missile/
 set mord1 [::ClaraServ::FCT::DB:GET !mord 1]
 assertTrue {[string first "fesses" [string tolower $mord1]] < 0} "!mord historique sans fesses (adult en variante)"
 
+# Fusion de sections variants dupliquées (!mord soft puis [adult])
+set mergeFixture [file join $::ClaraServ::SCRIPT(dirname) tests fixtures merge-variants.fr.db]
+set mergeFh [open $mergeFixture w]
+puts $mergeFh "!mord 0"
+puts $mergeFh "SOFT_A"
+puts $mergeFh "!mord 0"
+puts $mergeFh {[adult] ADULT_A}
+puts $mergeFh "!mord 1"
+puts $mergeFh "SOFT_B"
+puts $mergeFh "!mord 1"
+puts $mergeFh {[adult] ADULT_B}
+close $mergeFh
+set merged [::ClaraServ::FCT::DB:Load:Text:Sections $mergeFixture 1]
+set m0 [dict get $merged [list !mord 0]]
+set m1 [dict get $merged [list !mord 1]]
+assertEqual "2" [llength $m0] "Merge !mord 0 : 2 entrées"
+assertEqual "2" [llength $m1] "Merge !mord 1 : 2 entrées"
+assertEqual "SOFT_A" [dict get [lindex $m0 0] text] "Merge conserve soft en premier"
+assertTrue {[dict get [lindex $m0 1] tags] eq {adult}} "Merge conserve tag adult"
+file delete -force $mergeFixture
+
+# Historique !mord / !missile corrigés
+set mord1 [::ClaraServ::FCT::DB:GET !mord 1]
+assertTrue {[string first "fesses" $mord1] < 0} "!mord historique sans fesses"
+assertTrue {[string first "mordille" $mord1] >= 0 || [string first "nibbles" $mord1] >= 0} \
+    "!mord historique soft"
+set miss1 [::ClaraServ::FCT::DB:GET !missile 1]
+assertTrue {[string first "miaou" $miss1] < 0} "!missile 1 sans miaou"
+assertTrue {[string first "missile" $miss1] >= 0} "!missile 1 parle de missile"
+
 catch {file delete -force $::ClaraServ::salonFlagsPathOverride}
 set ::ClaraServ::salonFlagsPathOverride ""
 set ::ClaraServ::config(content_adult_global) 0

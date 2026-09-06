@@ -598,6 +598,8 @@ proc ::ClaraServ::FCT::DB:Parse:Variant:Line {line} {
 }
 
 # Charge variants : en-tête « !cmd 0|1 » puis entrées {text tags} jusqu’au prochain en-tête.
+# Plusieurs blocs pour la même clé (!cmd niveau) sont **fusionnés** (pas écrasés) —
+# ex. variantes soft puis bloc DuckHunt [adult]/[vulgar] plus bas dans le fichier.
 proc ::ClaraServ::FCT::DB:Load:Text:Sections {path {asEntries 1}} {
     set result [dict create]
     set currentKey {}
@@ -605,7 +607,11 @@ proc ::ClaraServ::FCT::DB:Load:Text:Sections {path {asEntries 1}} {
     foreach line [::ClaraServ::FCT::DB:Read:Data:Lines $path] {
         if {[regexp {^(![^\s]+)\s+([01])$} $line -> cmd level]} {
             if {$currentKey ne "" && [llength $bucket] > 0} {
-                dict set result $currentKey $bucket
+                if {[dict exists $result $currentKey]} {
+                    dict set result $currentKey [concat [dict get $result $currentKey] $bucket]
+                } else {
+                    dict set result $currentKey $bucket
+                }
             }
             set norm [::ClaraServ::FCT::Command:Normalise $cmd]
             set currentKey [list $norm $level]
@@ -623,7 +629,11 @@ proc ::ClaraServ::FCT::DB:Load:Text:Sections {path {asEntries 1}} {
         }
     }
     if {$currentKey ne "" && [llength $bucket] > 0} {
-        dict set result $currentKey $bucket
+        if {[dict exists $result $currentKey]} {
+            dict set result $currentKey [concat [dict get $result $currentKey] $bucket]
+        } else {
+            dict set result $currentKey $bucket
+        }
     }
     return $result
 }
@@ -1691,7 +1701,8 @@ proc ::ClaraServ::IRC:CMD:PUB:RANDOM {sender destination command data} {
         lappend commands $candidate
     }
     if {[llength $commands] == 0} {
-        ::ClaraServ::FCT::SENT:MSG:TO:USER $destination "Aucune animation n’est disponible."
+        # Notice privée à l’auteur — $destination est le salon.
+        ::ClaraServ::FCT::SENT:MSG:TO:USER $sender "Aucune animation n’est disponible."
         return 0
     }
 

@@ -468,8 +468,8 @@ variable database {
 	{{!meules}		{1}		{<c07>%sender%<c12> lance !meules vers <c04>%pseudo%<c12>.<s>}}
 	{{!miaou}		{0}		{<c07>%sender%<c12> miaou miaou miaou miaou miaou miaou miaou miaou miaou<s>}}
 	{{!miaou}		{1}		{<c04>%pseudo%<c12> miaou miaou miaou miaou miaou miaou miaou miaou miaou<s>}}
-	{{!missile}		{0}		{<c07>%sender%<c12> sort son missile nucleaire a tete chercheuse et vise la tete de <c07>%sender%<c12><s>}}
-	{{!missile}		{1}		{<c07>%sender%<c12> sort son missile nucleaire a tete chercheuse et vise la tete de <c04>%pseudo%<c12><s>}}
+	{{!missile}		{0}		{<c07>%sender%<c12> pulls out a heat-seeking nuke missile aimed at <c07>%sender%<c12>'s own head<s>}}
+	{{!missile}		{1}		{<c07>%sender%<c12> pulls out a heat-seeking nuke missile aimed at <c04>%pseudo%<c12>'s head<s>}}
 	{{!moi}		{0}		{<c07>%sender%<c12> va aller faire les 10000000 de Starship au decollage !<s>}}
 	{{!moi}		{1}		{<c07>%sender%<c12> va aller faire les 10000000 de Starship au decollage !<s>}}
 	{{!moustique}		{0}		{<c07>%sender%<c12> attention les moustiques sa fait BIZZ !!!! BIZZ !!!! pique !!!!! pique !!!!! et sa gratte beaucoup<s>}}

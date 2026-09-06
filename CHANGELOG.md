@@ -6,8 +6,10 @@
 
 | Domaine | Évolution |
 |---|---|
-| Correctif | `!missile` niveau 1 : texte miaou (corruption import) → missile correct. |
+| Correctif | `variants*.db` : fusion des blocs répétés (`!mord` / `!pouet`) au lieu d’écraser les variantes soft. |
+| Correctif | `!missile` niveau 1 : texte miaou (corruption import) → missile correct (FR/EN). |
 | Contenu | `!mord` historique adouci (sans « fesses ») ; harvest adult reste en variante `[adult]`. |
+| Correctif | `!random` sans anim jouable : notice privée à l’auteur (plus au salon). |
 
 ## 1.4.0 — 2026-09-06
 
