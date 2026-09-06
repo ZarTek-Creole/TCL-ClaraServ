@@ -53,7 +53,7 @@ namespace eval ::ClaraServ {
     set scriptDirectory [file dirname [file normalize [info script]]]
     array set SCRIPT [list \
         name        "ClaraServ Service" \
-        version     "1.3.1" \
+        version     "1.3.2" \
         author      "ZarTek Creole" \
         url         "https://github.com/ZarTek-Creole/TCL-ClaraServ" \
         needZct     "0.1.0" \
@@ -1155,7 +1155,9 @@ proc ::ClaraServ::FCT::Create:Service {} {
     $BOT_ID join $config(service_channel)
 
     $BOT_ID registerevent EOS {
-        [sid] mode ${::ClaraServ::config(service_channel)} ${::ClaraServ::config(service_chanmodes)}
+        if {${::ClaraServ::config(service_chanmodes)} ne ""} {
+            [sid] mode ${::ClaraServ::config(service_channel)} ${::ClaraServ::config(service_chanmodes)}
+        }
         if {${::ClaraServ::config(service_usermodes)} ne ""} {
             [sid] mode ${::ClaraServ::config(service_channel)} ${::ClaraServ::config(service_usermodes)} ${::ClaraServ::config(service_nick)}
         }

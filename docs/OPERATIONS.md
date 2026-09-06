@@ -164,6 +164,47 @@ Harness `tests/harness_local_process.tcl` : `disableAutoStart`, runtime temporai
 
 Liaison UnrealIRCd : [UNREALIRCD.md](UNREALIRCD.md).
 
+## Salon public vs `service_chanmodes`
+
+`config(service_chanmodes)` est appliqué sur `service_channel` **à l’EOS** (si non vide).
+
+| Valeur | Effet typique Unreal | Usage |
+|---|---|---|
+| `""` (défaut Example) | Aucun MODE forcé | **Recommandé** si `service_channel` = salon d’accueil / animations public |
+| `+nt` | topic lock + no external msgs | Acceptable sur salon public |
+| `+Osnt` | **+O = IRCops only** | Salon de **logs / services** uniquement — **jamais** un `#accueil` public |
+
+Avec `+O`, KiwiIRC et les users non-oper reçoivent `520 … (IRCops only)`.  
+Préflight : `make preflight-config` émet un **WARN** si `+O` est présent.
+
+## Upgrade AmiZone (exemple réel)
+
+Chemins typiques : code `/home/zartek/ClaraServ`, unit **`irc_claraserv`**, Unreal `/home/unrealircd/unrealircd`.
+
+```bash
+# 1) Backup conf (ne jamais committer)
+install -d -m 0700 /home/zartek/.claraserv
+cp -a /home/zartek/ClaraServ/ClaraServ.conf /home/zartek/.claraserv/ClaraServ.conf.bak.$(date +%Y%m%d%H%M%S)
+
+# 2) Mettre à jour le code (git pull ff-only ou rsync) SANS écraser ClaraServ.conf
+sudo -u zartek bash -lc 'cd /home/zartek/ClaraServ && git fetch origin && git checkout develop && git pull --ff-only origin develop'
+# restaurer ClaraServ.conf si besoin
+
+# 3) Validations hors réseau
+sudo -u zartek bash -lc 'cd /home/zartek/ClaraServ && make check && make test && make preflight-config'
+
+# 4) Restart
+systemctl restart irc_claraserv
+systemctl --no-pager status irc_claraserv
+journalctl -u irc_claraserv -n 30 --no-pager   # redact secrets
+
+# 5) Vérifier S2S (servers >= 2) puis smoke IRC sur le salon d’accueil
+```
+
+Après correction de `service_chanmodes` (retrait de `+O`) : restart ClaraServ, puis s’assurer que le salon n’est plus `+O` (`MODE #salon -O` une fois si le mode restait sticky).
+
+Journald : `journalctl -u irc_claraserv` (pas seulement `claraserv`).
+
 ## Rollback
 
 1. Arrêter : `bin/claraserv-screen stop` ou stop-file / `systemctl stop` si activé.

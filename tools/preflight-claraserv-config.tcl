@@ -185,6 +185,18 @@ if {$loadOk} {
         }
     }
 
+    if {[pf_has service_chanmodes]} {
+        set modes [string trim [pf_get service_chanmodes]]
+        if {$modes eq ""} {
+            pf_pass "config(service_chanmodes) vide (aucun MODE forcé au join — adapté salon public)"
+        } elseif {[string match "*O*" $modes]} {
+            # Unreal +O = salon réservé aux IRCops — bloque Kiwi / users normaux
+            pf_warn "config(service_chanmodes) contient +O (IRCops only) — inadapté à un salon public/accueil ; préférer \"\" ou +nt"
+        } else {
+            pf_pass "config(service_chanmodes) défini (sans +O)"
+        }
+    }
+
     if {[pf_has db_lang]} {
         set lang [string tolower [pf_get db_lang]]
         set dbfile [file join $root db database.$lang.db]

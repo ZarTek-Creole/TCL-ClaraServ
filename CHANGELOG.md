@@ -20,6 +20,14 @@ Ce fichier suit les changements fonctionnels et de maintenance de ClaraServ.
 | Qualité DB | Validateur `tools/validate-animations-db.tcl` intégré à `make check` (aliases/variants/fails). |
 | **v1.3 enrichissement** | Alias (`db/aliases.fr.db`), variantes, fails optionnels (`failrate` défaut 0), `%keyword%`, cible multi-mots, `reload` admin PRIV, anti-flood 2s, ~30 nouvelles canoniques (réécriture originale, licence jokes non importée verbatim). |
 
+## 1.3.2 — 2026-09-06
+
+| Domaine | Évolution |
+|---|---|
+| Conf | Example : `service_chanmodes` défaut `""` ; doc anti-`+O` sur salon public. |
+| Runtime | EOS n’envoie plus `MODE` salon si `service_chanmodes` vide. |
+| Ops | Préflight WARN si `+O` ; runbook upgrade AmiZone / `irc_claraserv` dans OPERATIONS. |
+
 ## 1.3.1 — 2026-09-06
 
 | Domaine | Évolution |
